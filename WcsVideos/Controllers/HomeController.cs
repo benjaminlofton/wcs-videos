@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
+using WcsVideos.Models;
 
 namespace WcsVideos.Controllers
 {
@@ -10,7 +11,11 @@ namespace WcsVideos.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            IndexViewModel model = new IndexViewModel();
+            model.Videos = new List<VideoListItemViewModel>();
+            model.Videos.Add(new VideoListItemViewModel { Url = "#", Title = "Awesome Video 1" });
+            model.Videos.Add(new VideoListItemViewModel { Url = "#", Title = "Awesome Video 2" });
+            return this.View(model);
         }
 
         public IActionResult About()

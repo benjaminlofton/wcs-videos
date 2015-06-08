@@ -5,9 +5,11 @@
 <div class="row">
     <div class="col-md-12">
         <h2>Welcome to WCS Videos!</h2>
+        <h3>Trending Videos:</h3>
         <ul>
-            <li>Sample pages showing basic nav</li>
-            <li>Theming using <a href="http://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
+            @foreach (var video in this.Model.Videos) {
+                <li><a href="@video.Url">@video.Title</a></li>    
+            }
         </ul>
     </div>
 </div>
