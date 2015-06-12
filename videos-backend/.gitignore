@@ -24,7 +24,8 @@ gen/
 target
 */target/*
 *-SNAPSHOT
-
+temp/
+TEMP/
 
 
 # gradle

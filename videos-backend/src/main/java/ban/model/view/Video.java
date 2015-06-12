@@ -1,5 +1,8 @@
 package ban.model.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Video class as presented as Resource in REST endpoints 
  */
@@ -29,5 +32,9 @@ public class Video {
 
   private String title;
   public String getTitle() { return title; }
-  public void setTitle(String title) { this.title = title; }
+  public void setTitle(String title) { this.title = title;  }
+
+  private List<Integer> dancerIdList = new ArrayList<Integer>();
+  public List<Integer> getDancerIdList() { return dancerIdList; }
+  public void setDancerIdList(List<Integer> dancerIdList) { this.dancerIdList = dancerIdList; }
 }

@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import ban.exception.ResourceNotFoundException;
 import ban.model.view.Video;
-import ban.service.DancerSearchService;
+import ban.service.DancerService;
 import ban.service.VideoSearchService;
 
 @RestController
@@ -24,9 +25,9 @@ public class VideoSearchController {
   VideoSearchService videoSearchService;
 
   @Autowired
-  DancerSearchService dancerSearchService;
+  DancerService dancerService;
 
-  @RequestMapping(value="/v/{videoId}",method= RequestMethod.GET)
+  @RequestMapping(value="/v/{videoId}",method = RequestMethod.GET)
   public Video getVideo(
       @PathVariable String videoId
   ) {
@@ -40,22 +41,12 @@ public class VideoSearchController {
     return video;
   }
 
-  @RequestMapping(value="/v")
-  public List<Video> searchVideos(
+  @RequestMapping(value="/v", method = RequestMethod.GET)
+  public Set<String> searchVideos(
       @RequestParam(value = "wsdc-id", required = false) Integer wsdcId) {
 
-    List<Video> videos = new ArrayList<Video>();
+    return dancerService.getVideosByWsdcId(wsdcId);
 
-    for(Integer videoId : dancerSearchService.getVideosByWsdcId(wsdcId)) {
-
-      Video v = videoSearchService.getVideo(videoId.toString());
-
-      if(v!=null) {
-        videos.add(v);
-      }
-    }
-
-    return videos;
   }
 
 }

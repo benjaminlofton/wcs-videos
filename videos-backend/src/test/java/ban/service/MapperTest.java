@@ -10,11 +10,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MapperTest {
 
-  Mapper mapper = new Mapper();
+  VideoMapper videoMapper = new VideoMapper();
 
   @Test
   public void shouldReturnNull_whenSourceIsNull() {
-    assertThat(mapper.mapToViewModel(null),is(nullValue()));
+    assertThat(videoMapper.mapToViewModel(null),is(nullValue()));
   }
 
   @Test
@@ -22,7 +22,7 @@ public class MapperTest {
     VideoD source = new VideoD();
     source.setId("TESTID");
 
-    assertThat(mapper.mapToViewModel(source).getId(),is(source.getId()));
+    assertThat(videoMapper.mapToViewModel(source).getId(),is(source.getId()));
   }
 
 }

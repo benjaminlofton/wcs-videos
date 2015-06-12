@@ -14,7 +14,7 @@ public class VideoSearchService {
   private AwsDynamoClient dynamoClient;
 
   @Autowired
-  Mapper mapper;
+  VideoMapper videoMapper;
 
   /**
    * Determines if an existing video key already exists
@@ -33,7 +33,7 @@ public class VideoSearchService {
    */
   public Video getVideo(String videoId){
     VideoD pVideo = dynamoClient.getVideo(videoId);
-    return mapper.mapToViewModel(pVideo);
+    return videoMapper.mapToViewModel(pVideo);
   }
 
 }
