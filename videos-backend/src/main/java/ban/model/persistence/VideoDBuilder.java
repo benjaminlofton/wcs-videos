@@ -1,7 +1,7 @@
 package ban.model.persistence;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by bnorrish on 6/10/15.
@@ -12,7 +12,7 @@ public class VideoDBuilder {
   private Integer providerId = null;
   private String providerVideoId = null;
   private String title = null;
-  private List<Integer> dancerIdList = new ArrayList<Integer>();
+  private Set<Integer> dancerIdList = new HashSet<>();
 
   public VideoDBuilder withId(String id) {
     this.id = id;
@@ -34,7 +34,7 @@ public class VideoDBuilder {
     return this;
   }
 
-  public VideoDBuilder withDancerIdList(List<Integer> dancerIdList) {
+  public VideoDBuilder withDancerIdList(Set<Integer> dancerIdList) {
     this.dancerIdList = dancerIdList;
     return this;
   }
