@@ -5,8 +5,14 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
@@ -26,6 +32,19 @@ public class AwsDynamoClient {
 
   public VideoD getVideo(String id) {
     return dynamoMapper.load(VideoD.class,id);
+  }
+
+  public List<VideoD> getVideoByProviderVideoId(String id) {
+
+    VideoD tempVid = new VideoD();
+    tempVid.setId(id);
+
+
+    DynamoDBQueryExpression<VideoD> queryExpression = new DynamoDBQueryExpression<VideoD>()
+        .withIndexName("ProviderVideoId-index")
+        .withHashKeyValues(tempVid);
+
+    return dynamoMapper.query(VideoD.class, queryExpression);
   }
 
   public VideoD createVideo(VideoD video) {

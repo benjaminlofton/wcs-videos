@@ -3,13 +3,11 @@ package ban.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import ban.client.AwsDynamoClient;
 import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
-import ban.model.view.Dancer;
 import ban.model.view.Video;
 
 /**
@@ -17,7 +15,7 @@ import ban.model.view.Video;
  */
 
 @Component
-public class VideoAddService {
+public class VideoService {
 
   @Autowired
   private AwsDynamoClient dynamoClient;
@@ -25,7 +23,39 @@ public class VideoAddService {
   @Autowired
   private VideoMapper videoMapper;
 
+  /**
+   * Determines if an existing video key already exists
+   * @param id key for the video
+   * @return true if the video exists, false otherwise
+   */
+  public boolean exists(String id) {
+    return dynamoClient.getVideo(id) == null;
+  }
+
+  public boolean existsByProviderId(String providerVideoId) {
+    for(VideoD video : dynamoClient.getVideoByProviderVideoId(providerVideoId)) {
+      if(video.getId().equals(providerVideoId)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Retrieves the persistence Video from DynamoClient, maps to View model
+   * @param videoId Video Identifier
+   * @return The video in View model
+   */
+  public Video getVideo(String videoId){
+    VideoD pVideo = dynamoClient.getVideo(videoId);
+    return videoMapper.mapToViewModel(pVideo);
+  }
+
   public Video addVideo(Video video) {
+
+    if(existsByProviderId(video.getProviderVideoId())) {
+      throw new IllegalStateException("Cannot add video that already exists; id: " + video.getId() + " providedVideoId: " + video.getProviderVideoId());
+    }
 
     // Save the video
     VideoD pVideo = videoMapper.mapToPersistanceModel(video);

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ban.model.view.Video;
-import ban.service.VideoAddService;
+import ban.service.VideoService;
 
 /**
  * Created by bnorrish on 6/10/15.
@@ -21,13 +21,13 @@ import ban.service.VideoAddService;
 public class VideoController {
 
   @Autowired
-  VideoAddService videoAddService;
+  VideoService videoService;
 
   @ResponseStatus(HttpStatus.OK)
   @RequestMapping(value="/v", method = RequestMethod.POST)
   public Video putVideo(@RequestBody Video video)
   {
-    return videoAddService.addVideo(video);
+    return videoService.addVideo(video);
   }
 
 }

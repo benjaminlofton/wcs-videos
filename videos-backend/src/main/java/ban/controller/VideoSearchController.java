@@ -8,21 +8,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import ban.exception.ResourceNotFoundException;
 import ban.model.view.Video;
 import ban.service.DancerService;
-import ban.service.VideoSearchService;
+import ban.service.VideoService;
 
 @RestController
 @ComponentScan
 public class VideoSearchController {
 
   @Autowired
-  VideoSearchService videoSearchService;
+  VideoService videoService;
 
   @Autowired
   DancerService dancerService;
@@ -32,7 +30,7 @@ public class VideoSearchController {
       @PathVariable String videoId
   ) {
 
-    Video video =  videoSearchService.getVideo(videoId);
+    Video video =  videoService.getVideo(videoId);
 
     if(video == null) {
       throw new ResourceNotFoundException();
