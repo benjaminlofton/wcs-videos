@@ -4,17 +4,30 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using WcsVideos.Models;
+using WcsVideos.Contracts;
 
 namespace WcsVideos.Controllers
 {
     public class HomeController : Controller
     {
+        private IDataAccess dataAccess;
+        
+        public HomeController(IDataAccess dataAccess)
+        {
+            this.dataAccess = dataAccess;
+        }
+        
         public IActionResult Index()
         {
             IndexViewModel model = new IndexViewModel();
-            model.Videos = new List<VideoListItemViewModel>();
-            model.Videos.Add(new VideoListItemViewModel { Url = "#", Title = "Awesome Video 1" });
-            model.Videos.Add(new VideoListItemViewModel { Url = "#", Title = "Awesome Video 2" });
+            var videos = this.dataAccess.GetTrendingVideos();
+            model.Videos = videos.Select(
+                x => new VideoListItemViewModel
+                {
+                    Url = this.Url.Link("default", new { controller = "Home", action = "Watch", id = x.Id }),
+                    Title = x.Title
+                }).ToList(); 
+            
             return this.View(model);
         }
 
@@ -32,6 +45,80 @@ namespace WcsVideos.Controllers
             return View();
         }
 
+        public IActionResult Watch(string id)
+        {
+            Video video = this.dataAccess.GetVideoById(id);
+            
+            if (video == null)
+            {
+                return this.HttpNotFound();    
+            }
+            
+            WatchViewModel model = new WatchViewModel();
+            model.ExternalUrl = string.Format("https://www.youtube.com/watch?v={0}", video.ProviderVideoId);
+            model.ProviderName = "YouTube";
+            model.Title = video.Title;
+            model.ProviderVideoId = video.ProviderVideoId;
+            model.Dancers = new List<DancerLinkViewModel>();
+            
+            foreach (string dancerId in video.DancerIds)
+            {
+                Dancer dancer = this.dataAccess.GetDancerById(dancerId);
+                if (dancer != null)
+                {
+                    DancerLinkViewModel dancerModel = new DancerLinkViewModel();
+                    dancerModel.DisplayName = dancer.FirstName + " " + dancer.LastName;
+                    dancerModel.Url = this.Url.Link("default", new { controller = "Home", action = "Dancer", id = dancer.Id });
+                    model.Dancers.Add(dancerModel);
+                }    
+            }
+            
+            return View(model);
+        }
+        
+        public IActionResult Dancer(string id)
+        {
+            Dancer dancer = this.dataAccess.GetDancerById(id);
+            
+            if (dancer == null)
+            {
+                return this.HttpNotFound();    
+            }
+            
+            DancerViewModel model = new DancerViewModel();
+            model.Title = dancer.FirstName + " " + dancer.LastName;
+            model.Videos = new List<VideoListItemViewModel>();
+            
+            foreach (string videoId in dancer.VideoIds)
+            {
+                Video video = this.dataAccess.GetVideoById(videoId);
+                if (video != null)
+                {
+                    VideoListItemViewModel listItemModel = new VideoListItemViewModel();
+                    listItemModel.Title = video.Title;
+                    listItemModel.Url = this.Url.Link("default", new { controller = "Home", action = "Watch", id = video.Id });
+                    model.Videos.Add(listItemModel);
+                }  
+            }
+            
+            return View(model);
+        }
+        
+        public IActionResult Events()
+        {
+            return View();
+        }
+        
+        public IActionResult Dancers()
+        {
+            return View();
+        }
+        
+        public IActionResult Search()
+        {
+            return View();
+        }
+        
         public IActionResult Error()
         {
             return View("~/Views/Shared/Error.cshtml");

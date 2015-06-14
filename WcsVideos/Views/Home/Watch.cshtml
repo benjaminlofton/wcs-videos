@@ -1,0 +1,26 @@
+@{
+    ViewBag.Title = this.Model.Title;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>
+            @this.Model.Title
+        </h2>
+        <div style="width:640px;height:480px;background-color:#aaa;">
+            Video Placeholder
+        </div>
+        <p>
+            Watch video at <a href=@this.Model.ExternalUrl>@this.Model.ProviderName</a>
+        </p>
+        @if (this.Model.Dancers.Count > 0) {
+            <p>Dancers in this video: 
+            @{ bool first = true; }
+            @foreach (var dancer in this.Model.Dancers) {
+                @if (!first) { <text>,</text> }<a href=@dancer.Url>@dancer.DisplayName</a>
+                first = false;
+            }
+            </p>
+        }
+    </div>
+</div>
