@@ -1,0 +1,75 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.1.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'gs-rest-service'
+    version =  '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    testIntegration {
+        java {
+            srcDir 'src/test-integration/java'
+        }
+        resources {
+            srcDir 'src/test-integration/resources'
+        }
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("com.amazonaws:aws-java-sdk-dynamodb:1.10.0")
+
+    testCompile("junit:junit")
+    testCompile("info.cukes:cucumber-java:1.2.2")
+
+    testIntegrationCompile("info.cukes:cucumber-java:1.2.2")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testIntegrationRuntime
+    }
+}
+
+task cucumber() {
+    dependsOn assemble, compileTestIntegrationJava
+    doLast {
+        javaexec {
+            main = "cucumber.api.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.testIntegration.output
+            args = ['--plugin', 'pretty', '--glue', 'ban.steps', 'src/test-integration/resources']
+        }
+    }
+}
+
+idea {
+    module {
+        testSourceDirs += file('src/test-integration/java')
+        testSourceDirs += file('src/test-integration/resources')
+
+    }
+}
+
+

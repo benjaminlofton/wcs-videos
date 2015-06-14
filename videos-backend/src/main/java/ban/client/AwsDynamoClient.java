@@ -1,0 +1,82 @@
+package ban.client;
+
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Index;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.KeyAttribute;
+import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import ban.model.persistence.DancerD;
+import ban.model.persistence.VideoD;
+import ban.service.DancerMapper;
+
+@Component
+public class AwsDynamoClient {
+
+  AmazonDynamoDBClient dynamoClient;
+  DynamoDBMapper dynamoMapper;
+
+  public AwsDynamoClient() {
+    dynamoClient = new AmazonDynamoDBClient(new ProfileCredentialsProvider());
+    dynamoClient.setRegion(Region.getRegion(Regions.US_WEST_2));
+    dynamoMapper = new DynamoDBMapper(dynamoClient);
+  }
+
+  public VideoD getVideo(String id) {
+    return dynamoMapper.load(VideoD.class,id);
+  }
+
+  public List<String> getVideoByProviderVideoId(String providerVideoId) {
+
+    DynamoDB db = new DynamoDB(dynamoClient);
+    Index index = db.getTable("Video").getIndex("ProviderVideoId-index");
+
+    QuerySpec querySpec = new QuerySpec()
+        .withKeyConditionExpression("ProviderVideoId = :v1")
+        .withValueMap(new ValueMap()
+            .withString(":v1", providerVideoId));
+
+    Iterator<Item> iterator = index.query(querySpec).iterator();
+
+    List<String> results = new ArrayList<String>();
+    while(iterator.hasNext()) {
+      results.add(iterator.next().getString("VideoId"));
+    }
+
+    return results;
+  }
+
+  public VideoD createVideo(VideoD video) {
+
+    // Id will be Dynamo auto-generated UUID
+    video.setId(null);
+
+    dynamoMapper.save(video);
+    return video;
+  }
+
+  public DancerD getDancer(Integer wsdcId) {
+    return dynamoMapper.load(DancerD.class, wsdcId);
+  }
+
+  public void saveDancer(DancerD dancerD) {
+    dynamoMapper.save(dancerD);
+  }
+
+}
