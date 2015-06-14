@@ -33,12 +33,7 @@ public class VideoService {
   }
 
   public boolean existsByProviderId(String providerVideoId) {
-    for(VideoD video : dynamoClient.getVideoByProviderVideoId(providerVideoId)) {
-      if(video.getId().equals(providerVideoId)) {
-        return true;
-      }
-    }
-    return false;
+    return !dynamoClient.getVideoByProviderVideoId(providerVideoId).isEmpty();
   }
 
   /**

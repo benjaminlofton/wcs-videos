@@ -13,6 +13,11 @@ import ban.model.view.Dancer;
 public class DancerMapper {
 
   public Dancer mapToViewModel(DancerD dancerD) {
+
+    if(dancerD == null) {
+      return null;
+    }
+
     Dancer dancer = new Dancer();
     dancer.setWsdcId(dancerD.getWsdcId());
     dancer.setName(dancerD.getName());
@@ -21,6 +26,11 @@ public class DancerMapper {
   }
 
   public DancerD mapToPersistenceModel(Dancer dancer) {
+
+    if(dancer == null) {
+      return null;
+    }
+
     DancerD dancerD = new DancerD();
     dancerD.setWsdcId(dancer.getWsdcId());
     dancerD.setName(dancer.getName());

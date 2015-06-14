@@ -7,11 +7,19 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Index;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.KeyAttribute;
+import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import ban.model.persistence.DancerD;
@@ -34,17 +42,24 @@ public class AwsDynamoClient {
     return dynamoMapper.load(VideoD.class,id);
   }
 
-  public List<VideoD> getVideoByProviderVideoId(String id) {
+  public List<String> getVideoByProviderVideoId(String providerVideoId) {
 
-    VideoD tempVid = new VideoD();
-    tempVid.setId(id);
+    DynamoDB db = new DynamoDB(dynamoClient);
+    Index index = db.getTable("Video").getIndex("ProviderVideoId-index");
 
+    QuerySpec querySpec = new QuerySpec()
+        .withKeyConditionExpression("ProviderVideoId = :v1")
+        .withValueMap(new ValueMap()
+            .withString(":v1", providerVideoId));
 
-    DynamoDBQueryExpression<VideoD> queryExpression = new DynamoDBQueryExpression<VideoD>()
-        .withIndexName("ProviderVideoId-index")
-        .withHashKeyValues(tempVid);
+    Iterator<Item> iterator = index.query(querySpec).iterator();
 
-    return dynamoMapper.query(VideoD.class, queryExpression);
+    List<String> results = new ArrayList<String>();
+    while(iterator.hasNext()) {
+      results.add(iterator.next().getString("VideoId"));
+    }
+
+    return results;
   }
 
   public VideoD createVideo(VideoD video) {

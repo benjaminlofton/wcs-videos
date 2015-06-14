@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import ban.client.AwsDynamoClient;
+import ban.model.persistence.DancerD;
 import ban.model.view.Dancer;
 
 /**
@@ -28,6 +29,12 @@ public class DancerService {
 
   public Dancer getDancer(Integer wsdcId) {
     return dancerMapper.mapToViewModel(awsDynamoClient.getDancer(wsdcId));
+  }
+
+  public void addDancer(Dancer dancer) {
+
+    DancerD dancerD = dancerMapper.mapToPersistenceModel(dancer);
+    awsDynamoClient.saveDancer(dancerD);
   }
 
 }

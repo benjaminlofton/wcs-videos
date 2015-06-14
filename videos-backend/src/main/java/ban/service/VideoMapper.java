@@ -32,6 +32,10 @@ public class VideoMapper {
 
   public VideoD mapToPersistanceModel(Video video) {
 
+    if(video == null) {
+      return null;
+    }
+
     return new VideoDBuilder()
         .withId(video.getId())
         .withProviderId(video.getProviderId())
