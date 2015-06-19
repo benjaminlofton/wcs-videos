@@ -53,9 +53,10 @@ namespace WcsVideos.Controllers
             {
                 return this.HttpNotFound();    
             }
-            
+            //https://www.youtube.com/watch?v=JMZxfwqlmd0
             WatchViewModel model = new WatchViewModel();
             model.ExternalUrl = string.Format("https://www.youtube.com/watch?v={0}", video.ProviderVideoId);
+            model.EmbedUrl = string.Format("http://www.youtube.com/embed/{0}", video.ProviderVideoId);
             model.ProviderName = "YouTube";
             model.Title = video.Title;
             model.ProviderVideoId = video.ProviderVideoId;

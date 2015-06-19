@@ -147,7 +147,7 @@ namespace WcsVideos.Contracts
 				{
 					Id = "1",
 					ProviderId = "youtube",
-					ProviderVideoId = "vadevf89",
+					ProviderVideoId = "JMZxfwqlmd0",
 					Title = "Maxence and Tatiana Strictly Swing at Swingdiego",
 					DancerIds = new string[] { "1", "2" }, 
 				}
@@ -158,7 +158,7 @@ namespace WcsVideos.Contracts
 				{
 					Id = "2",
 					ProviderId = "youtube",
-					ProviderVideoId = "vadevdie",
+					ProviderVideoId = "EqVYEiRpYRE",
 					Title = "Kyle Redd and Patty Vo Jack and Jill to Secret by Maroon 5",
 					DancerIds = new string[] { "3", "4" },
 				}
@@ -169,7 +169,7 @@ namespace WcsVideos.Contracts
 				{
 					Id = "3",
 					ProviderId = "youtube",
-					ProviderVideoId = "vadioe3j",
+					ProviderVideoId = "0PznFu7w7CQ",
 					Title = "Ben Morris and Torri Smith at US Open",
 					DancerIds = new string[] { "5", "6" },
 				}
@@ -180,7 +180,7 @@ namespace WcsVideos.Contracts
 				{
 					Id = "4",
 					ProviderId = "youtube",
-					ProviderVideoId = "vaijvelk",
+					ProviderVideoId = "aOD-wL-qKiw",
 					Title = "Maxence and Virginie Demo at Budafest",
 					DancerIds = new string[] { "1", "7" },
 				}
@@ -191,7 +191,7 @@ namespace WcsVideos.Contracts
 				{
 					Id = "5",
 					ProviderId = "youtube",
-					ProviderVideoId = "vaiejvl",
+					ProviderVideoId = "soBV5RboKFs",
 					Title = "Jordan and Jessica dance to She Wolf",
 					DancerIds = new string[] { "8", "9" },
 				}
@@ -202,7 +202,7 @@ namespace WcsVideos.Contracts
 				{
 					Id = "6",
 					ProviderId = "youtube",
-					ProviderVideoId = "v923ljvi",
+					ProviderVideoId = "D021Irk6ByI",
 					Title = "Maxence and Tara with sweet drop",
 					DancerIds = new string[] { "1", "10" },
 				}
@@ -213,7 +213,7 @@ namespace WcsVideos.Contracts
 				{
 					Id = "7",
 					ProviderId = "youtube",
-					ProviderVideoId = "v2198ve",
+					ProviderVideoId = "smoboVc3qj8",
 					Title = "Kyle and Melissa at Chico",
 					DancerIds = new string[] { "3", "11" }
 				}
@@ -224,8 +224,8 @@ namespace WcsVideos.Contracts
 				{
 					Id = "8",
 					ProviderId = "youtube",
-					ProviderVideoId = "vaoeivb",
-					Title = "Diego Borges and Jessica Pacheco demo at Nordic Swing Dance Championships",
+					ProviderVideoId = "erI704Rza64",
+					Title = "Diego Borges and Jessica Pacheco demo at Baltic Swing",
 					DancerIds = new string[] { "12", "13" },
 				}
 			}
