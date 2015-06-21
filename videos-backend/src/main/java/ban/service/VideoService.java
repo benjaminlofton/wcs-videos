@@ -29,7 +29,7 @@ public class VideoService {
    * @return true if the video exists, false otherwise
    */
   public boolean exists(String id) {
-    return dynamoClient.getVideo(id) == null;
+    return dynamoClient.getVideo(id) != null;
   }
 
   public boolean existsByProviderId(String providerVideoId) {

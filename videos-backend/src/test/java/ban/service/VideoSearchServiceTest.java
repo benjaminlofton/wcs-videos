@@ -1,24 +1,40 @@
 package ban.service;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import static org.hamcrest.CoreMatchers.is;
+import ban.client.AwsDynamoClient;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class VideoSearchServiceTest {
 
+  @Mock
+  private AwsDynamoClient awsDynamoClient;
 
+  @Mock
+  private VideoMapper videoMapper;
+
+  @InjectMocks
   VideoService service = new VideoService();
 
-  @Test
-  public void testExists_whenDoesNotExist() {
+  @Before
+  public void initMocks() {
+    MockitoAnnotations.initMocks(this);
+  }
 
-    // Use Mockito to set up
-    
-//    boolean expected = false;
-//    boolean actual = service.exists("somekey");
-//
-//    assertThat(actual, is(expected));
+  @Test
+  public void testExistsReturnsFalse_whenVideoDoesNotExist() {
+
+    when(awsDynamoClient.getVideo(anyString())).thenReturn(null);
+
+    assertThat(service.exists("some-key-that-does-not-exist"), is(false));
   }
 
 }
