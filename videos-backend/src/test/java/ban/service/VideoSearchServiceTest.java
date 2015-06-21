@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ban.client.AwsDynamoClient;
+import ban.model.persistence.VideoD;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -36,5 +37,16 @@ public class VideoSearchServiceTest {
 
     assertThat(service.exists("some-key-that-does-not-exist"), is(false));
   }
+
+  @Test
+  public void testExistsReturnsTrue_whenVideoExist() {
+    String key = "key-that-exists";
+
+    when(awsDynamoClient.getVideo(key)).thenReturn(new VideoD());
+
+    assertThat(service.exists(key),is(true));
+  }
+
+
 
 }
