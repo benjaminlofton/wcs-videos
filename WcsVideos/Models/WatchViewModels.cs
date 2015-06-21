@@ -10,6 +10,8 @@ namespace WcsVideos.Models
 		
 		public string ExternalUrl { get; set; }
 		
+		public string EmbedUrl { get; set; }
+		
 		public string ProviderName { get; set; }
 		
 		public List<DancerLinkViewModel> Dancers { get; set; }
