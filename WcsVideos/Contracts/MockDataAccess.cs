@@ -11,130 +11,117 @@ namespace WcsVideos.Contracts
 				"1",
 				new Dancer
 				{
-					Id = "1",
-					FirstName = "Maxence",
-					LastName = "Martin",
-					VideoIds = new string[] { "1", "4", "6" },
+					WsdcId = "1",
+					Name = "Martin, Maxence",
+					VideoIdList = new string[] { "1", "4", "6" },
 				}
 			},
 			{
 				"2",
 				new Dancer
 				{
-					Id = "2",
-					FirstName = "Tatiana",
-					LastName = "Mollman",
-					VideoIds = new string[] { "1" },
+					WsdcId = "2",
+					Name = "Mollman, Tatiana",
+					VideoIdList = new string[] { "1" },
 				}
 			},
 			{
 				"3",
 				new Dancer
 				{
-					Id = "3",
-					FirstName = "Kyle",
-					LastName = "Redd",
-					VideoIds = new string[] { "2", "7" },
+					WsdcId = "3",
+					Name = "Redd, Kyle",
+					VideoIdList = new string[] { "2", "7" },
 				}
 			},
 			{
 				"4",
 				new Dancer
 				{
-					Id = "4",
-					FirstName = "Patty",
-					LastName = "Vo",
-					VideoIds = new string[] { "2" },
+					WsdcId = "4",
+					Name = "Vo, Patty",
+					VideoIdList = new string[] { "2" },
 				}
 			},
 			{
 				"5",
 				new Dancer
 				{
-					Id = "5",
-					FirstName = "Ben",
-					LastName = "Morris",
-					VideoIds = new string[] { "3" },
+					WsdcId = "5",
+					Name = "Morris, Ben",
+					VideoIdList = new string[] { "3" },
 				}
 			},
 			{
 				"6",
 				new Dancer
 				{
-					Id = "6",
-					FirstName = "Torri",
-					LastName = "Smith",
-					VideoIds = new string[] { "3" },
+					WsdcId = "6",
+					Name = "Smith, Torri",
+					VideoIdList = new string[] { "3" },
 				}
 			},
 			{
 				"7",
 				new Dancer
 				{
-					Id = "7",
-					FirstName = "Virginie",
-					LastName = "Grodin",
-					VideoIds = new string[] { "4" },
+					WsdcId = "7",
+					Name = "Grodin, Virginie",
+					VideoIdList = new string[] { "4" },
 				}
 			},
 			{
 				"8",
 				new Dancer
 				{
-					Id = "8",
-					FirstName = "Jordan",
-					LastName = "Frisbee",
-					VideoIds = new string[] { "5" },
+					WsdcId = "8",
+					Name = "Frisbee, Jordan",
+					VideoIdList = new string[] { "5" },
 				}
 			},
 			{
 				"9",
 				new Dancer
 				{
-					Id = "9",
-					FirstName = "Jessica",
-					LastName = "Cox",
-					VideoIds = new string[] { "5" },
+					WsdcId = "9",
+					Name = "Cox, Jessica",
+					VideoIdList = new string[] { "5" },
 				}
 			},
 			{
 				"10",
 				new Dancer
 				{
-					Id = "10",
-					FirstName = "Tara",
-					LastName = "Trafzer",
-					VideoIds = new string[] { "6" }
+					WsdcId = "10",
+					Name = "Trafzer, Tara",
+					VideoIdList = new string[] { "6" }
 				}
 			},
 			{
 				"11",
 				new Dancer
 				{
-					Id = "11",
-					FirstName = "Melissa",
-					LastName = "Rutz",
-					VideoIds = new string[] { "7" },
+					WsdcId = "11",
+					Name = "Rutz, Melissa",
+					VideoIdList = new string[] { "7" },
 				}
 			},
 			{
 				"12",
 				new Dancer
 				{
-					Id = "12",
-					FirstName = "Diego",
-					LastName = "Borges",
-					VideoIds = new string[] { "12" },
+					WsdcId = "12",
+					Name = "Borges, Diego",
+					VideoIdList = new string[] { "12" },
 				}
 			},
 			{
 				"13",
 				new Dancer
 				{
-					Id = "13",
-					FirstName = "Jessica",
-					LastName = "Pacheco",
-					VideoIds = new string[] { "13" },
+					WsdcId = "13",
+					Name = "Pacheco, Jessica",
+					VideoIdList = new string[] { "13" },
 				}
 			}
 		};
@@ -149,7 +136,7 @@ namespace WcsVideos.Contracts
 					ProviderId = "youtube",
 					ProviderVideoId = "JMZxfwqlmd0",
 					Title = "Maxence and Tatiana Strictly Swing at Swingdiego",
-					DancerIds = new string[] { "1", "2" }, 
+					DancerIdList = new string[] { "1", "2" }, 
 				}
 			},
 			{
@@ -160,7 +147,7 @@ namespace WcsVideos.Contracts
 					ProviderId = "youtube",
 					ProviderVideoId = "EqVYEiRpYRE",
 					Title = "Kyle Redd and Patty Vo Jack and Jill to Secret by Maroon 5",
-					DancerIds = new string[] { "3", "4" },
+					DancerIdList = new string[] { "3", "4" },
 				}
 			},
 			{
@@ -171,7 +158,7 @@ namespace WcsVideos.Contracts
 					ProviderId = "youtube",
 					ProviderVideoId = "0PznFu7w7CQ",
 					Title = "Ben Morris and Torri Smith at US Open",
-					DancerIds = new string[] { "5", "6" },
+					DancerIdList = new string[] { "5", "6" },
 				}
 			},
 			{
@@ -182,7 +169,7 @@ namespace WcsVideos.Contracts
 					ProviderId = "youtube",
 					ProviderVideoId = "aOD-wL-qKiw",
 					Title = "Maxence and Virginie Demo at Budafest",
-					DancerIds = new string[] { "1", "7" },
+					DancerIdList = new string[] { "1", "7" },
 				}
 			},
 			{
@@ -193,7 +180,7 @@ namespace WcsVideos.Contracts
 					ProviderId = "youtube",
 					ProviderVideoId = "soBV5RboKFs",
 					Title = "Jordan and Jessica dance to She Wolf",
-					DancerIds = new string[] { "8", "9" },
+					DancerIdList = new string[] { "8", "9" },
 				}
 			},
 			{
@@ -204,7 +191,7 @@ namespace WcsVideos.Contracts
 					ProviderId = "youtube",
 					ProviderVideoId = "D021Irk6ByI",
 					Title = "Maxence and Tara with sweet drop",
-					DancerIds = new string[] { "1", "10" },
+					DancerIdList = new string[] { "1", "10" },
 				}
 			},
 			{
@@ -215,7 +202,7 @@ namespace WcsVideos.Contracts
 					ProviderId = "youtube",
 					ProviderVideoId = "smoboVc3qj8",
 					Title = "Kyle and Melissa at Chico",
-					DancerIds = new string[] { "3", "11" }
+					DancerIdList = new string[] { "3", "11" }
 				}
 			},
 			{
@@ -226,7 +213,7 @@ namespace WcsVideos.Contracts
 					ProviderId = "youtube",
 					ProviderVideoId = "erI704Rza64",
 					Title = "Diego Borges and Jessica Pacheco demo at Baltic Swing",
-					DancerIds = new string[] { "12", "13" },
+					DancerIdList = new string[] { "12", "13" },
 				}
 			}
 		};

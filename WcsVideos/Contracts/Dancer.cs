@@ -2,12 +2,10 @@ namespace WcsVideos.Contracts
 {
     public class Dancer
     {
-        public string Id { get; set; }
+        public string WsdcId { get; set; }
 		
-		public string FirstName { get; set; }
+		public string Name { get; set; }
 		
-		public string LastName { get; set; }
-		
-        public string[] VideoIds { get; set; }
+        public string[] VideoIdList { get; set; }
     }
 }

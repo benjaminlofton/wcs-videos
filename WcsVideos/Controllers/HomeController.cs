@@ -53,7 +53,7 @@ namespace WcsVideos.Controllers
             {
                 return this.HttpNotFound();    
             }
-            //https://www.youtube.com/watch?v=JMZxfwqlmd0
+
             WatchViewModel model = new WatchViewModel();
             model.ExternalUrl = string.Format("https://www.youtube.com/watch?v={0}", video.ProviderVideoId);
             model.EmbedUrl = string.Format("http://www.youtube.com/embed/{0}", video.ProviderVideoId);
@@ -62,14 +62,14 @@ namespace WcsVideos.Controllers
             model.ProviderVideoId = video.ProviderVideoId;
             model.Dancers = new List<DancerLinkViewModel>();
             
-            foreach (string dancerId in video.DancerIds)
+            foreach (string dancerId in video.DancerIdList)
             {
                 Dancer dancer = this.dataAccess.GetDancerById(dancerId);
                 if (dancer != null)
                 {
                     DancerLinkViewModel dancerModel = new DancerLinkViewModel();
-                    dancerModel.DisplayName = dancer.FirstName + " " + dancer.LastName;
-                    dancerModel.Url = this.Url.Link("default", new { controller = "Home", action = "Dancer", id = dancer.Id });
+                    dancerModel.DisplayName = dancer.Name;
+                    dancerModel.Url = this.Url.Link("default", new { controller = "Home", action = "Dancer", id = dancer.WsdcId });
                     model.Dancers.Add(dancerModel);
                 }    
             }
@@ -87,10 +87,10 @@ namespace WcsVideos.Controllers
             }
             
             DancerViewModel model = new DancerViewModel();
-            model.Title = dancer.FirstName + " " + dancer.LastName;
+            model.Title = dancer.Name;
             model.Videos = new List<VideoListItemViewModel>();
             
-            foreach (string videoId in dancer.VideoIds)
+            foreach (string videoId in dancer.VideoIdList)
             {
                 Video video = this.dataAccess.GetVideoById(videoId);
                 if (video != null)

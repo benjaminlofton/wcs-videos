@@ -10,6 +10,6 @@ namespace WcsVideos.Contracts
         
         public string Title { get; set; }
         
-        public string[] DancerIds { get; set; }
+        public string[] DancerIdList { get; set; }
     }
 }
