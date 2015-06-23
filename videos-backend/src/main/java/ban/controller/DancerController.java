@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 import ban.model.view.Dancer;
 import ban.service.DancerService;
@@ -43,6 +44,12 @@ public class DancerController {
   public Dancer getDancer(@PathVariable Integer wsdcId) {
     return dancerService.getDancer(wsdcId);
   }
+
+  @RequestMapping(value="/d", method = RequestMethod.GET)
+  public List<Dancer> getDancerList() {
+    return dancerService.getDancerList();
+  }
+
 
   @RequestMapping(value="/admin/add-by-frag", method = RequestMethod.POST)
   public List<Dancer> addDancersByFrag(@RequestParam(value = "frag", required = true) String fragment) {

@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import ban.client.AwsDynamoClient;
 import ban.client.WsdcDancer;
@@ -34,6 +36,18 @@ public class DancerService {
 
   public Dancer getDancer(Integer wsdcId) {
     return dancerMapper.mapToViewModel(awsDynamoClient.getDancer(wsdcId));
+  }
+
+  public List<Dancer> getDancerList() {
+
+    List<Dancer> viewList = new ArrayList<>();
+
+    for(DancerD dancerD : awsDynamoClient.getAllDancers()) {
+      viewList.add(dancerMapper.mapToViewModel(dancerD));
+    }
+
+    // java 1.8 FTW
+    return viewList.stream().sorted((obj1,obj2) -> obj1.getWsdcId().compareTo(obj2.getWsdcId())).collect(Collectors.toList());
   }
 
   public void addDancer(Dancer dancer) {

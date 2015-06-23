@@ -14,13 +14,19 @@ import com.amazonaws.services.dynamodbv2.document.KeyAttribute;
 import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
@@ -78,5 +84,31 @@ public class AwsDynamoClient {
   public void saveDancer(DancerD dancerD) {
     dynamoMapper.save(dancerD);
   }
+
+  public List<DancerD> getAllDancers() {
+
+    ScanRequest scanRequest = new ScanRequest()
+        .withTableName("Dancer");
+
+    ScanResult scanResult = dynamoClient.scan(scanRequest);
+
+    List<DancerD> result = new ArrayList<>();
+    for (Map<String, AttributeValue> item : scanResult.getItems()) {
+
+      DancerD dancerD = new DancerD();
+      dancerD.setName(item.get("Name").getS());
+      dancerD.setWsdcId(Integer.parseInt(item.get("WsdcId").getN()));
+
+      if(item.get("VideoIdList") != null) {
+        dancerD.setVideoIdList(new HashSet<>(item.get("VideoIdList").getSS()));
+      }
+
+      result.add(dancerD);
+    }
+
+    return result;
+  }
+
+
 
 }
