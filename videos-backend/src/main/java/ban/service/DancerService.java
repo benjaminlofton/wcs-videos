@@ -13,7 +13,9 @@ import ban.client.AwsDynamoClient;
 import ban.client.WsdcDancer;
 import ban.client.WsdcRestClient;
 import ban.model.persistence.DancerD;
+import ban.model.persistence.VideoD;
 import ban.model.view.Dancer;
+import ban.model.view.Video;
 
 /**
  * Created by bnorrish on 6/7/15.
@@ -25,13 +27,24 @@ public class DancerService {
   DancerMapper dancerMapper;
 
   @Autowired
+  VideoMapper videoMapper;
+
+  @Autowired
   AwsDynamoClient awsDynamoClient;
 
   @Autowired
   WsdcRestClient wsdcRestClient;
 
-  public Set<String> getVideosByWsdcId(int wsdcId) {
-    return awsDynamoClient.getDancer(wsdcId).getVideoIdList();
+  public List<Video> getVideosByDancerWsdcId(int wsdcId) {
+    Set<String> videoIdList =  awsDynamoClient.getDancer(wsdcId).getVideoIdList();
+
+    List<Video> videos = new ArrayList<>();
+    for(String videoId : videoIdList) {
+      VideoD videoD = awsDynamoClient.getVideo(videoId);
+      videos.add(videoMapper.mapToViewModel(videoD));
+    }
+
+    return videos;
   }
 
   public Dancer getDancer(Integer wsdcId) {

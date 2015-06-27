@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 
 import ban.exception.ResourceNotFoundException;
 import ban.model.view.Video;
@@ -40,10 +40,14 @@ public class VideoSearchController {
   }
 
   @RequestMapping(value="/v", method = RequestMethod.GET)
-  public Set<String> searchVideos(
+  public List<Video> searchVideos(
       @RequestParam(value = "wsdc-id", required = false) Integer wsdcId) {
 
-    return dancerService.getVideosByWsdcId(wsdcId);
+    if(wsdcId == null) {
+      return videoService.getAllVideos();
+    }
+
+    return dancerService.getVideosByDancerWsdcId(wsdcId);
 
   }
 

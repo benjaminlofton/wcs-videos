@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
@@ -83,6 +84,41 @@ public class AwsDynamoClient {
 
   public void saveDancer(DancerD dancerD) {
     dynamoMapper.save(dancerD);
+  }
+
+  public List<VideoD> getAllVideos() {
+
+    ScanRequest scanRequest = new ScanRequest()
+        .withTableName("Video");
+
+    ScanResult scanResult = dynamoClient.scan(scanRequest);
+
+    List<VideoD> result = new ArrayList<>();
+    for(Map<String,AttributeValue> item : scanResult.getItems()) {
+
+      VideoD videoD = new VideoD();
+      videoD.setId(item.get("VideoId").getS());
+      videoD.setProviderId(Integer.parseInt(item.get("ProviderId").getN()));
+      videoD.setProviderVideoId(item.get("ProviderVideoId").getS());
+      videoD.setTitle(item.get("Title").getS());
+
+      if(item.get("DancerIdList") != null) {
+
+        Set<Integer> dancerList = new HashSet<>();
+
+        List<String> rawDancerList = item.get("DancerIdList").getNS();
+        for(String strId : rawDancerList) {
+          dancerList.add(Integer.parseInt(strId));
+        }
+
+        videoD.setDancerIdList(dancerList);
+      }
+
+      result.add(videoD);
+    }
+
+    return result;
+
   }
 
   public List<DancerD> getAllDancers() {

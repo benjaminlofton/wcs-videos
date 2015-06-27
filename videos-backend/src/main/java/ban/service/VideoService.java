@@ -3,7 +3,9 @@ package ban.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import ban.client.AwsDynamoClient;
 import ban.model.persistence.DancerD;
@@ -44,6 +46,15 @@ public class VideoService {
   public Video getVideo(String videoId){
     VideoD pVideo = dynamoClient.getVideo(videoId);
     return videoMapper.mapToViewModel(pVideo);
+  }
+
+  public List<Video> getAllVideos() {
+
+    List<Video> videos =  new ArrayList<>();
+    for(VideoD videoD : dynamoClient.getAllVideos()) {
+      videos.add(videoMapper.mapToViewModel(videoD));
+    }
+    return videos;
   }
 
   public Video addVideo(Video video) {
