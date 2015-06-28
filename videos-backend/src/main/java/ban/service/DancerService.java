@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,11 +79,17 @@ public class DancerService {
 
     List<Dancer> addedDancers = new ArrayList<>();
 
+    List<DancerD> existingDancers = awsDynamoClient.getAllDancers();
+    Map<Integer,DancerD> existingDancerMap = new HashMap<>();
+    for(DancerD dancerD: existingDancers) {
+      existingDancerMap.put(dancerD.getWsdcId(),dancerD);
+    }
+
     for(WsdcDancer d :wsdcRestClient.getDancersByFragment(fragment)) {
 
       Integer wsdcId = d.getValue();
 
-      if(getDancer(wsdcId) == null) {
+      if(!existingDancerMap.containsKey(wsdcId)) {
 
         DancerD newDancer = new DancerD();
         newDancer.setWsdcId(wsdcId);
