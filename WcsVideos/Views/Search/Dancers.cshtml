@@ -12,7 +12,7 @@
 <div class="row">
     <div class="col-md-12">
         <p>Search for a dancer:</p>
-        <form class="form-horizontal" role="form" method="get" action="">
+        <form class="form-horizontal" role="form" method="get" action="" id="searchform">
             <div class="form-group">
                 <div class="col-sm-6">
                     <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
@@ -63,6 +63,19 @@
                     timer = setTimeout(requestData, delay);
 
                     // abort any previous request which is in progress
+                    if (jqxhr)
+                    {
+                        jqxhr.abort();
+                        jqxhr = null;
+                    }
+                }
+            );
+            
+            $("#searchform").submit(
+                function() {
+                    // prevent future requests and abort any previous request
+                    clearTimeout(timer);
+                    
                     if (jqxhr)
                     {
                         jqxhr.abort();
