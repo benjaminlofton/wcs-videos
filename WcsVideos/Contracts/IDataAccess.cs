@@ -9,5 +9,9 @@ namespace WcsVideos.Contracts
 		Video GetVideoById(string id);
 
 		Dancer GetDancerById(string id);
+        
+        List<Dancer> SearchForDancer(string query);
+        
+        List<Dancer> GetAllDancers();
     }
 }

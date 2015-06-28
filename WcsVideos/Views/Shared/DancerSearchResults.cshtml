@@ -1,0 +1,35 @@
+@{
+    Layout = "";
+}
+
+<div class="col-md-12">
+    <p>
+        Showing search results @this.Model.ResultsStart
+        to @this.Model.ResultsEnd of @this.Model.ResultsTotal
+        for &quot;@this.Model.Query&quot;.
+    </p>
+    
+    <ol start="@this.Model.ResultsStart">
+        @foreach (DancerListItemViewModel dancer in this.Model.Dancers)
+        {
+            <li>
+                <a href="@dancer.Url">@dancer.Name (@dancer.WsdcId)</a> - @dancer.VideoCount Video(s)
+            </li>
+        }
+    </ol>
+    
+    @if (this.Model.ShowPreviousLink || this.Model.ShowNextLink)
+    {
+        <p>
+            @if (this.Model.ShowPreviousLink)
+            {
+                <a href="@this.Model.PreviousLinkUrl">Previous Page</a>
+            }
+            
+            @if (this.Model.ShowNextLink)
+            {
+                <a href="@this.Model.NextLinkUrl">Next Page</a>
+            }
+        </p>
+    }
+</div>

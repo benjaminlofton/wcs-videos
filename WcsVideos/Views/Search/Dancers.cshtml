@@ -1,0 +1,75 @@
+@{
+    ViewBag.Title = "Dancers";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>
+            Dancers
+        </h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p>Search for a dancer:</p>
+        <form class="form-horizontal" role="form" method="get" action="">
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
+                </div>
+                <div class="col-sm-6">
+                    <button type="submit" class="btn btn-default">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div id="results">
+        @if (this.Model.ShowResults)
+        {
+            @Html.Partial("DancerSearchResults", (DancerSearchResultsViewModel)this.Model)
+        }
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            var timer;
+            var delay = 500; // 500 millisecond delay
+            var jqxhr;
+            
+            function requestData()
+            {
+                jqxhr = $.ajax({
+                    method: "GET",
+                    url: "/Search/DancerSearchResults",
+                    data: { query: $("#query").val() }
+                });
+                
+                jqxhr.done(
+                    function(data) {
+                        $("#results").html(data);
+                    });
+            };
+                        
+            $("#query").on(
+                "input",
+                function() {
+                    clearTimeout(timer);
+                    timer = setTimeout(requestData, delay);
+
+                    // abort any previous request which is in progress
+                    if (jqxhr)
+                    {
+                        jqxhr.abort();
+                        jqxhr = null;
+                    }
+                }
+            );
+        });
+    </script>
+}

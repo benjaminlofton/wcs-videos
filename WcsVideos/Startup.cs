@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.Facebook;
@@ -27,7 +28,7 @@ namespace WcsVideos
     public class Startup
     {
         public Startup(IHostingEnvironment env)
-        {
+        {           
             // Setup configuration sources.
             var configuration = new Configuration()
                 .AddJsonFile("config.json")
@@ -54,7 +55,7 @@ namespace WcsVideos
             // Add MVC services to the services container.
             services.AddMvc();
 
-            services.AddSingleton(typeof(Contracts.IDataAccess), typeof(Contracts.DataAccess));
+            services.AddSingleton(typeof(Contracts.IDataAccess), typeof(Contracts.CachingDataAccess));
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.

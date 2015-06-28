@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace WcsVideos.Contracts
 {
@@ -13,10 +14,13 @@ namespace WcsVideos.Contracts
         public List<Video> GetTrendingVideos()
         {
             List<Video> videos = new List<Video>();
-            Dancer dancer = this.HttpGet<Dancer>("d/9068").Result;
-            foreach (string videoId in dancer.VideoIdList)
+            Dancer dancer = GetDancerById("9068");
+            if (dancer != null)
             {
-                videos.Add(this.GetVideoById(videoId));
+                foreach (string videoId in dancer.VideoIdList)
+                {
+                    videos.Add(this.GetVideoById(videoId));
+                }
             }
             
             return videos;
@@ -24,12 +28,25 @@ namespace WcsVideos.Contracts
         
 		public Video GetVideoById(string id)
         {
+            Console.WriteLine("Requesting video for id=" + id);
             return this.HttpGet<Video>("v/" + id).Result;
         }
         
         public Dancer GetDancerById(string id)
         {
+            Console.WriteLine("Requesting dancer for id=" + id);
             return this.HttpGet<Dancer>("d/" + id).Result;
+        }
+
+        public List<Dancer> SearchForDancer(string query)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public List<Dancer> GetAllDancers()
+        {
+            Console.WriteLine("Requesting all dancers");
+            return this.HttpGet<List<Dancer>>("d/").Result;
         }
 
         private async Task<T> HttpGet<T>(string relativeUrl)
