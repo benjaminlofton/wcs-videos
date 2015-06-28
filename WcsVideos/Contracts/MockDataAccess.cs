@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -244,5 +245,15 @@ namespace WcsVideos.Contracts
 			
 			return null;
 		}
+        
+        public List<Dancer> SearchForDancer(string query)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public List<Dancer> GetAllDancers()
+        {
+            return this.dancers.Values.ToList();
+        }
     }
 }

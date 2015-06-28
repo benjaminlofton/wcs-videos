@@ -105,21 +105,6 @@ namespace WcsVideos.Controllers
             return View(model);
         }
         
-        public IActionResult Events()
-        {
-            return View();
-        }
-        
-        public IActionResult Dancers()
-        {
-            return View();
-        }
-        
-        public IActionResult Search()
-        {
-            return View();
-        }
-        
         public IActionResult Error()
         {
             return View("~/Views/Shared/Error.cshtml");
