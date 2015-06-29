@@ -20,6 +20,9 @@ public class StatsService {
   @Autowired
   AwsDynamoClient dynamoClient;
 
+  @Autowired
+  LocalIndexedDataService localIndexedDataService;
+
   public WscVideoStats getBasicStats() {
 
     WscVideoStats stats = new WscVideoStats();
@@ -37,6 +40,8 @@ public class StatsService {
 
     List<VideoD> videos = dynamoClient.getAllVideos();
     stats.setNumVideos(videos.size());
+
+    stats.setCacheSizeItems(localIndexedDataService.size());
 
     return stats;
   }

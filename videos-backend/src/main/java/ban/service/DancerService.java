@@ -37,12 +37,25 @@ public class DancerService {
   WsdcRestClient wsdcRestClient;
 
   public List<Video> getVideosByDancerWsdcId(int wsdcId) {
-    Set<String> videoIdList =  awsDynamoClient.getDancer(wsdcId).getVideoIdList();
+
+    DancerD dancerD =  awsDynamoClient.getDancer(wsdcId);
+
+    if(dancerD == null) {
+      return new ArrayList<>();
+    }
+
+    Set<String> videoIdList = dancerD.getVideoIdList();
 
     List<Video> videos = new ArrayList<>();
     for(String videoId : videoIdList) {
       VideoD videoD = awsDynamoClient.getVideo(videoId);
-      videos.add(videoMapper.mapToViewModel(videoD));
+      if(videoD != null) {
+        videos.add(videoMapper.mapToViewModel(videoD));
+      } else {
+        // Log Error when logging exists: Dancer references video that does not exist
+
+      }
+
     }
 
     return videos;

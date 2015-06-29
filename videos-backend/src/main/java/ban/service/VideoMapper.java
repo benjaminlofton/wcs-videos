@@ -2,6 +2,9 @@ package ban.service;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ban.model.persistence.VideoD;
 import ban.model.persistence.VideoDBuilder;
 import ban.model.view.Video;
@@ -28,6 +31,17 @@ public class VideoMapper {
     video.setDancerIdList(pVideo.getDancerIdList());
 
     return video;
+  }
+
+  public List<Video> mapToViewModel(List<VideoD> videoDs) {
+
+    List<Video> videos = new ArrayList<>();
+
+    for(VideoD videoD : videoDs) {
+      videos.add(mapToViewModel(videoD));
+    }
+
+    return videos;
   }
 
   public VideoD mapToPersistanceModel(Video video) {

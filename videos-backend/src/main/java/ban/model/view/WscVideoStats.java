@@ -8,6 +8,15 @@ public class WscVideoStats {
   private Integer numVideos;
   private Integer numDancers;
   private Integer numDancersWithVideos;
+  private Integer cacheSizeItems;
+
+  public Integer getCacheSizeItems() {
+    return cacheSizeItems;
+  }
+
+  public void setCacheSizeItems(Integer cacheSizeItems) {
+    this.cacheSizeItems = cacheSizeItems;
+  }
 
   public Integer getNumVideos() {
     return numVideos;

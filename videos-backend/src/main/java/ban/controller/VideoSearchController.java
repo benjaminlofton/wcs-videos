@@ -13,6 +13,7 @@ import java.util.List;
 import ban.exception.ResourceNotFoundException;
 import ban.model.view.Video;
 import ban.service.DancerService;
+import ban.service.VideoSearchService;
 import ban.service.VideoService;
 
 @RestController
@@ -24,6 +25,9 @@ public class VideoSearchController {
 
   @Autowired
   DancerService dancerService;
+
+  @Autowired
+  VideoSearchService videoSearchService;
 
   @RequestMapping(value="/v/{videoId}",method = RequestMethod.GET)
   public Video getVideo(
@@ -41,13 +45,10 @@ public class VideoSearchController {
 
   @RequestMapping(value="/v", method = RequestMethod.GET)
   public List<Video> searchVideos(
-      @RequestParam(value = "wsdc-id", required = false) Integer wsdcId) {
+      @RequestParam(value = "wsdc-id", required = false) String wsdcIdList,
+      @RequestParam(value = "title-frag", required =  false) String titleFragList) {
 
-    if(wsdcId == null) {
-      return videoService.getAllVideos();
-    }
-
-    return dancerService.getVideosByDancerWsdcId(wsdcId);
+    return videoSearchService.search(wsdcIdList,titleFragList);
 
   }
 

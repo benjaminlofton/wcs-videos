@@ -6,45 +6,46 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ban.client.AwsDynamoClient;
-import ban.model.persistence.VideoD;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.anyString;
+import ban.model.persistence.VideoD;
+import ban.model.view.Video;
+
 import static org.mockito.Mockito.when;
 
 public class VideoSearchServiceTest {
 
-  @Mock
-  private AwsDynamoClient awsDynamoClient;
 
   @Mock
-  private VideoMapper videoMapper;
+  LocalIndexedDataService localIndexedDataService;
+
+  @Mock
+  VideoMapper videoMapper;
 
   @InjectMocks
-  VideoService service = new VideoService();
+  VideoSearchService videoSearchService;
 
   @Before
   public void initMocks() {
     MockitoAnnotations.initMocks(this);
+
+    VideoD one = new VideoD();
+    one.setId("one");
+    one.setTitle("Title: one");
+    videoList.add(one);
   }
 
-  @Test
-  public void testExistsReturnsFalse_whenVideoDoesNotExist() {
-
-    when(awsDynamoClient.getVideo(anyString())).thenReturn(null);
-
-    assertThat(service.exists("some-key-that-does-not-exist"), is(false));
-  }
+  public List<VideoD> videoList = new ArrayList();
 
   @Test
-  public void testExistsReturnsTrue_whenVideoExist() {
-    String key = "key-that-exists";
+  public void testShouldReturnAllVideos_whenNoSearchArgsPassed() {
 
-    when(awsDynamoClient.getVideo(key)).thenReturn(new VideoD());
+    when(localIndexedDataService.getAllVideos()).thenReturn(videoList);
 
-    assertThat(service.exists(key),is(true));
+    List<Video> results = videoSearchService.search(null,null);
+
+
   }
 
 
