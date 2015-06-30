@@ -1,5 +1,6 @@
 package ban.client;
 
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -41,7 +42,7 @@ public class AwsDynamoClient {
   DynamoDBMapper dynamoMapper;
 
   public AwsDynamoClient() {
-    dynamoClient = new AmazonDynamoDBClient(new ProfileCredentialsProvider());
+    dynamoClient = new AmazonDynamoDBClient(new DefaultAWSCredentialsProviderChain());
     dynamoClient.setRegion(Region.getRegion(Regions.US_WEST_2));
     dynamoMapper = new DynamoDBMapper(dynamoClient);
   }

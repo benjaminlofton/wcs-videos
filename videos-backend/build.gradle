@@ -7,13 +7,19 @@ buildscript {
     }
 }
 
+apply plugin: 'war'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'gs-rest-service'
+    baseName = 'wcs-rest-service'
+    version =  '0.1.0'
+}
+
+war {
+    baseName = 'wcs-rest-service'
     version =  '0.1.0'
 }
 
@@ -51,6 +57,8 @@ dependencies {
     testCompile("info.cukes:cucumber-java:1.2.2")
 
     testIntegrationCompile("info.cukes:cucumber-java:1.2.2")
+
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
 task wrapper(type: Wrapper) {
