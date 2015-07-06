@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import ban.client.AwsDynamoClient;
+import ban.exception.ResourceNotFoundException;
 import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
 import ban.model.view.Video;
@@ -36,6 +37,17 @@ public class VideoService {
 
   public boolean existsByProviderId(String providerVideoId) {
     return !dynamoClient.getVideoByProviderVideoId(providerVideoId).isEmpty();
+  }
+
+  public Video getByProviderId(String providerVideoId) {
+
+
+    List<String> videoIds = dynamoClient.getVideoByProviderVideoId(providerVideoId);
+    if(videoIds.isEmpty()) {
+      return null;
+    }
+
+    return videoMapper.mapToViewModel(dynamoClient.getVideo(videoIds.get(0)));
   }
 
   /**

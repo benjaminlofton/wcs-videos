@@ -3,6 +3,9 @@ package ban.steps;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 public class VideoSearchSteps {
 
   @cucumber.api.java.en.Given("^the video (\\d+) has been saved$")
@@ -20,6 +23,7 @@ public class VideoSearchSteps {
   @Then("^a video with ID (\\d+) is returned$")
   public void verifyVideo(int videoId) throws Throwable {
 
+    assertThat(true, is(false));
   }
 
 }
