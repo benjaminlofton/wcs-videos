@@ -13,5 +13,7 @@ namespace WcsVideos.Contracts
         List<Dancer> SearchForDancer(string query);
         
         List<Dancer> GetAllDancers();
+        
+        string AddVideo(Video video);
     }
 }

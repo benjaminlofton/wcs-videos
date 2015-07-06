@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -48,6 +49,19 @@ namespace WcsVideos.Contracts
             Console.WriteLine("Requesting all dancers");
             return this.HttpGet<List<Dancer>>("d/").Result;
         }
+        
+        public string AddVideo(Video video)
+        {
+            string serialized = JsonConvert.SerializeObject(
+                video,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                });
+                
+            Video result = this.HttpPost<Video>("v/", serialized).Result;
+            return result.Id;
+        }
 
         private async Task<T> HttpGet<T>(string relativeUrl)
         {
@@ -55,6 +69,22 @@ namespace WcsVideos.Contracts
             {
                 client.BaseAddress = DataAccess.WebserviceTarget;
                 HttpResponseMessage response = await client.GetAsync(relativeUrl);
+                string serialized = await response.Content.ReadAsStringAsync();
+                T result = JsonConvert.DeserializeObject<T>(
+                    serialized,
+                    new JsonSerializerSettings { ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() });  
+                return result;
+            }
+        }
+        
+        private async Task<T> HttpPost<T>(string relativeUrl, string content)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = DataAccess.WebserviceTarget;
+                HttpResponseMessage response = await client.PostAsync(
+                    relativeUrl,
+                    new StringContent(content));
                 string serialized = await response.Content.ReadAsStringAsync();
                 T result = JsonConvert.DeserializeObject<T>(
                     serialized,

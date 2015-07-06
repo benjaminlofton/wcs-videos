@@ -248,12 +248,62 @@ namespace WcsVideos.Contracts
         
         public List<Dancer> SearchForDancer(string query)
         {
-            throw new NotImplementedException();
+            List<Dancer> result = new List<Dancer>();
+            
+            if (string.IsNullOrEmpty(query))
+            {
+                return result;    
+            }
+            
+            IEnumerable<Dancer> all = this.GetAllDancers();
+            
+            string[] segments = query.Split(new[] { ' ' }, 5);
+            
+            foreach (Dancer dancer in all)
+            {
+                bool matches = true;
+                
+                foreach (string segment in segments)
+                {
+                    if ((dancer.Name.IndexOf(segment, StringComparison.OrdinalIgnoreCase) == -1) &&
+                        !dancer.WsdcId.Equals(segment))
+                    {
+                        matches = false;
+                        break;
+                    }                    
+                }
+                
+                if (matches)
+                {
+                    result.Add(dancer);
+                }
+            }
+            
+            return result;
         }
         
         public List<Dancer> GetAllDancers()
         {
             return this.dancers.Values.ToList();
+        }
+        
+        public string AddVideo(Video video)
+        {
+            string videoId = (this.videos.Count() + 1).ToString();
+            video.Id = videoId;
+            this.videos.Add(videoId, video);
+            
+            foreach (string dancerId in video.DancerIdList)
+            {
+                Dancer dancer = this.dancers[dancerId];
+                string[] existingVideoIdList = dancer.VideoIdList;
+                string[] newVideoIdList = new string[existingVideoIdList.Length + 1];
+                existingVideoIdList.CopyTo(newVideoIdList, 0);
+                newVideoIdList[existingVideoIdList.Length] = videoId;
+                dancer.VideoIdList = newVideoIdList;
+            }
+            
+            return videoId;
         }
     }
 }

@@ -107,5 +107,10 @@ namespace WcsVideos.Contracts
             
             return this.allDancers;
         }
+        
+        public string AddVideo(Video video)
+        {
+            return this.baseDataAccess.AddVideo(video);
+        }
 	}
 }
