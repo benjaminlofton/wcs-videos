@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Diagnostics;
@@ -84,8 +85,9 @@ namespace WcsVideos.Contracts
                 client.BaseAddress = DataAccess.WebserviceTarget;
                 HttpResponseMessage response = await client.PostAsync(
                     relativeUrl,
-                    new StringContent(content));
+                    new StringContent(content, Encoding.UTF8, "application/json"));
                 string serialized = await response.Content.ReadAsStringAsync();
+                response.EnsureSuccessStatusCode();
                 T result = JsonConvert.DeserializeObject<T>(
                     serialized,
                     new JsonSerializerSettings { ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() });  

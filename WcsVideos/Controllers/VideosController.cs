@@ -89,7 +89,7 @@ namespace WcsVideos.Controllers
             if (providerIdValid && providerVideoIdValid && titleValid && dancerIdListValid)
             {
                 Video video = new Video();
-                video.ProviderId = providerId;
+                video.ProviderId = "1";
                 video.ProviderVideoId = providerVideoId;
                 video.Title = title;
                 video.DancerIdList = dancerIds;
