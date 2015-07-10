@@ -1,19 +1,13 @@
 package ban.client;
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Index;
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.ItemCollection;
-import com.amazonaws.services.dynamodbv2.document.KeyAttribute;
-import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
-import com.amazonaws.services.dynamodbv2.document.TableWriteItems;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -23,8 +17,6 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -32,8 +24,8 @@ import java.util.Map;
 import java.util.Set;
 
 import ban.model.persistence.DancerD;
+import ban.model.persistence.ProviderD;
 import ban.model.persistence.VideoD;
-import ban.service.DancerMapper;
 
 @Component
 public class AwsDynamoClient {
@@ -142,6 +134,27 @@ public class AwsDynamoClient {
       }
 
       result.add(dancerD);
+    }
+
+    return result;
+  }
+
+  public List<ProviderD> getProviderList() {
+
+    ScanRequest scanRequest = new ScanRequest()
+        .withTableName("Provider");
+
+    ScanResult scanResult = dynamoClient.scan(scanRequest);
+
+    List<ProviderD> result = new ArrayList<>();
+    for(Map<String,AttributeValue> item : scanResult.getItems()) {
+
+      ProviderD providerD = new ProviderD();
+      providerD.setProviderId(Integer.parseInt(item.get("ProviderId").getN()));
+      providerD.setBaseUrl(item.get("BaseUrl").getS());
+      providerD.setName(item.get("Name").getS());
+
+      result.add(providerD);
     }
 
     return result;
