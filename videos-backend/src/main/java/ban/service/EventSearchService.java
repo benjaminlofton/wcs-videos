@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ban.model.view.Event;
-import ban.model.view.Video;
 import ban.service.mapper.EventMapper;
 import ban.util.CollectionUtil;
 
@@ -23,7 +22,15 @@ public class EventSearchService {
   @Autowired
   LocalIndexedDataService localIndexedDataService;
 
-  public List<Event> search(String nameFragList) {
+  public List<Event> search(String nameFragList, Boolean isWsdcPointed) {
+
+
+    List<Event> wsdcPointedSearchResults = null;
+
+    if(isWsdcPointed != null) {
+      wsdcPointedSearchResults = eventMapper.mapToViewModel(localIndexedDataService.getEventsByWsdcPointed(isWsdcPointed));
+    }
+
 
     List<Event> nameFragSearchResults = null;
 
@@ -43,6 +50,6 @@ public class EventSearchService {
       }
     }
 
-    return nameFragSearchResults;
+    return CollectionUtil.mergeEventLists(nameFragSearchResults,wsdcPointedSearchResults);
   }
 }

@@ -36,13 +36,15 @@ public class EventController {
   }
 
   @RequestMapping(value="/event", method = RequestMethod.GET)
-  public List<Event> eventList(@RequestParam(value = "name-frag", required =  false) String nameFragList) {
+  public List<Event> eventList(
+      @RequestParam(value = "name-frag", required =  false) String nameFragList,
+      @RequestParam(value = "wsdc-pointed", required =  false) Boolean isPointed) {
 
-    if(nameFragList == null) {
+    if(nameFragList == null && isPointed == null) {
       return eventService.getEventList();
     }
 
-    return eventSearchService.search(nameFragList);
+    return eventSearchService.search(nameFragList, isPointed);
   }
 
 

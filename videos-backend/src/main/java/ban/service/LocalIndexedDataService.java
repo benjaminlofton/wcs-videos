@@ -26,6 +26,7 @@ import ban.model.view.Video;
  * VideoId  - Video
  * VideoTitle    - List of Videos
  * EventTitle    - List of Events
+ * EventList
  *
  * Created by bnorrish on 6/28/15.
  */
@@ -39,12 +40,14 @@ public class LocalIndexedDataService implements InitializingBean {
   private Map<String, VideoD> videoIdToVideoMap = new HashMap<>();
   private Map<String, List<VideoD>> videoTitleFragToVideoMap = new HashMap<>();
   private Map<String, List<EventD>> eventTitleFragToEventMap = new HashMap<>();
+  private List<EventD> eventDList = new ArrayList<>();
 
   public void clear() {
     wsdcIdToDancerMap.clear();
     videoIdToVideoMap.clear();
     videoTitleFragToVideoMap.clear();
     eventTitleFragToEventMap.clear();
+    eventDList.clear();
   }
 
   public void load() {
@@ -73,6 +76,8 @@ public class LocalIndexedDataService implements InitializingBean {
     }
 
     for(EventD eventD : awsDynamoClient.getEventList()) {
+
+      eventDList.add(eventD);
 
       List<String> wordList = Arrays.asList(eventD.getName().split(" "));
 
@@ -146,8 +151,21 @@ public class LocalIndexedDataService implements InitializingBean {
     return returnList;
   }
 
+  public List<EventD> getEventsByWsdcPointed(boolean isWsdcPointed) {
+
+    List<EventD> returnList = new ArrayList<>();
+
+    for (EventD eventD : eventDList) {
+      if(eventD.isWsdcPointed().equals(isWsdcPointed)) {
+        returnList.add(eventD);
+      }
+    }
+
+    return returnList;
+  }
+
   public int size() {
-    return wsdcIdToDancerMap.size() + videoIdToVideoMap.size() + videoTitleFragToVideoMap.size();
+    return wsdcIdToDancerMap.size() + videoIdToVideoMap.size() + videoTitleFragToVideoMap.size() + eventDList.size() + eventTitleFragToEventMap.size();
   }
 
   private List<String> deDuplicate(List<String> initialList) {
