@@ -39,4 +39,11 @@ public class EventService {
 
     return result;
   }
+
+  public Event addEvent(Event event) {
+
+    EventD eventD = eventMapper.mapToPersistenceModel(event);
+
+    return eventMapper.mapToViewModel(awsDynamoClient.addEvent(eventD));
+  }
 }

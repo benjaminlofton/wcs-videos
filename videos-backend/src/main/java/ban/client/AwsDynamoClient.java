@@ -27,7 +27,6 @@ import ban.model.persistence.DancerD;
 import ban.model.persistence.EventD;
 import ban.model.persistence.ProviderD;
 import ban.model.persistence.VideoD;
-import ban.model.view.Event;
 
 @Component
 public class AwsDynamoClient {
@@ -179,13 +178,24 @@ public class AwsDynamoClient {
       EventD eventD = new EventD();
       eventD.setEventDate(item.get("EventDate").getS());
       eventD.setEventId(item.get("EventId").getS());
-      eventD.setIsWsdcPointed(item.get("IsWsdcPointed").getBOOL());
+      // AWS Dynamo is converting Boolean/boolean to Number on Save().  I have no idea why.
+      // Must convert back on read. 
+      eventD.setWsdcPointed(Integer.parseInt(item.get("IsWsdcPointed").getN()) != 0);
       eventD.setName(item.get("Name").getS());
 
       result.add(eventD);
     }
 
     return result;
+  }
+
+  public EventD addEvent(EventD eventD) {
+
+    // Event ID is an AWS Auto-generated hash key
+    eventD.setEventId(null);
+
+    dynamoMapper.save(eventD);
+    return eventD;
   }
 
 

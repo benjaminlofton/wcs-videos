@@ -20,7 +20,7 @@ public class EventMapper {
     EventD eventD = new EventD();
     eventD.setEventDate(event.getEventDate());
     eventD.setEventId(event.getEventId());
-    eventD.setIsWsdcPointed(event.isWsdcPointed());
+    eventD.setWsdcPointed(event.isWsdcPointed());
     eventD.setName(event.getName());
 
     return eventD;
@@ -35,7 +35,7 @@ public class EventMapper {
     Event event = new Event();
     event.setEventDate(eventD.getEventDate());
     event.setEventId(eventD.getEventId());
-    event.setIsWsdcPointed(eventD.isWsdcPointed());
+    event.setWsdcPointed(eventD.isWsdcPointed());
     event.setName(eventD.getName());
 
     return event;
