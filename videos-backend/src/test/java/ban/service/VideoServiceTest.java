@@ -8,6 +8,7 @@ import org.mockito.MockitoAnnotations;
 
 import ban.client.AwsDynamoClient;
 import ban.model.persistence.VideoD;
+import ban.service.mapper.VideoMapper;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

@@ -1,4 +1,4 @@
-package ban.service;
+package ban.service.mapper;
 
 import org.springframework.stereotype.Component;
 

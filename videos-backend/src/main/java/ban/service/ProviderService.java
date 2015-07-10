@@ -9,6 +9,7 @@ import java.util.List;
 import ban.client.AwsDynamoClient;
 import ban.model.persistence.ProviderD;
 import ban.model.view.Provider;
+import ban.service.mapper.ProviderMapper;
 
 /**
  * Created by bnorrish on 7/9/15.

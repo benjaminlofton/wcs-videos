@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import ban.client.AwsDynamoClient;
-import ban.exception.ResourceNotFoundException;
 import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
 import ban.model.view.Video;
+import ban.service.mapper.VideoMapper;
 
 /**
  * Created by bnorrish on 6/10/15.

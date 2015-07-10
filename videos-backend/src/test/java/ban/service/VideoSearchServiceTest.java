@@ -11,6 +11,7 @@ import java.util.List;
 
 import ban.model.persistence.VideoD;
 import ban.model.view.Video;
+import ban.service.mapper.VideoMapper;
 
 import static org.mockito.Mockito.when;
 

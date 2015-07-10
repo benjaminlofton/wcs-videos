@@ -3,6 +3,7 @@ package ban.service;
 import org.junit.Test;
 
 import ban.model.persistence.VideoD;
+import ban.service.mapper.VideoMapper;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;

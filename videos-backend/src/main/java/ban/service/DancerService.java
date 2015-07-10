@@ -17,6 +17,8 @@ import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
 import ban.model.view.Dancer;
 import ban.model.view.Video;
+import ban.service.mapper.DancerMapper;
+import ban.service.mapper.VideoMapper;
 
 /**
  * Created by bnorrish on 6/7/15.

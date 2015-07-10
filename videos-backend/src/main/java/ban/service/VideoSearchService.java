@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ban.model.view.Video;
+import ban.service.mapper.VideoMapper;
 import ban.util.CollectionUtil;
 
 /**
