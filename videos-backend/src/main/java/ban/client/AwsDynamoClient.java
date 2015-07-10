@@ -24,8 +24,10 @@ import java.util.Map;
 import java.util.Set;
 
 import ban.model.persistence.DancerD;
+import ban.model.persistence.EventD;
 import ban.model.persistence.ProviderD;
 import ban.model.persistence.VideoD;
+import ban.model.view.Event;
 
 @Component
 public class AwsDynamoClient {
@@ -155,6 +157,32 @@ public class AwsDynamoClient {
       providerD.setName(item.get("Name").getS());
 
       result.add(providerD);
+    }
+
+    return result;
+  }
+
+  public EventD getEventById(String eventId) {
+    return dynamoMapper.load(EventD.class, eventId);
+  }
+
+  public List<EventD> getEventList() {
+
+    ScanRequest scanRequest = new ScanRequest()
+        .withTableName("Event");
+
+    ScanResult scanResult = dynamoClient.scan(scanRequest);
+
+    List<EventD> result = new ArrayList<>();
+    for(Map<String,AttributeValue> item : scanResult.getItems()) {
+
+      EventD eventD = new EventD();
+      eventD.setEventDate(item.get("EventDate").getS());
+      eventD.setEventId(item.get("EventId").getS());
+      eventD.setIsWsdcPointed(item.get("IsWsdcPointed").getBOOL());
+      eventD.setName(item.get("Name").getS());
+
+      result.add(eventD);
     }
 
     return result;

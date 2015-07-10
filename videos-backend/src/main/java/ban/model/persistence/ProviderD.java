@@ -2,10 +2,12 @@ package ban.model.persistence;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 /**
  * Created by bnorrish on 7/9/15.
  */
+@DynamoDBTable(tableName="Provider")
 public class ProviderD {
 
   @DynamoDBHashKey(attributeName="ProviderId")
