@@ -14,6 +14,7 @@ import java.util.Set;
 
 import ban.client.AwsDynamoClient;
 import ban.model.persistence.DancerD;
+import ban.model.persistence.EventD;
 import ban.model.persistence.VideoD;
 import ban.model.view.Video;
 
@@ -23,7 +24,8 @@ import ban.model.view.Video;
  * [Key]    - [Object]
  * WsdcId   - Dancer
  * VideoId  - Video
- * Title    - List of Videos
+ * VideoTitle    - List of Videos
+ * EventTitle    - List of Events
  *
  * Created by bnorrish on 6/28/15.
  */
@@ -36,11 +38,13 @@ public class LocalIndexedDataService implements InitializingBean {
   private Map<Integer,DancerD> wsdcIdToDancerMap = new HashMap<>();
   private Map<String, VideoD> videoIdToVideoMap = new HashMap<>();
   private Map<String, List<VideoD>> videoTitleFragToVideoMap = new HashMap<>();
+  private Map<String, List<EventD>> eventTitleFragToEventMap = new HashMap<>();
 
   public void clear() {
     wsdcIdToDancerMap.clear();
     videoIdToVideoMap.clear();
     videoTitleFragToVideoMap.clear();
+    eventTitleFragToEventMap.clear();
   }
 
   public void load() {
@@ -67,6 +71,24 @@ public class LocalIndexedDataService implements InitializingBean {
         videoTitleFragToVideoMap.get(word).add(video);
       }
     }
+
+    for(EventD eventD : awsDynamoClient.getEventList()) {
+
+      List<String> wordList = Arrays.asList(eventD.getName().split(" "));
+
+      wordList = deDuplicate(wordList);
+
+      for (String word : wordList) {
+
+        word = word.toLowerCase();
+
+        if(eventTitleFragToEventMap.get(word) == null) {
+          eventTitleFragToEventMap.put(word,new ArrayList<>());
+        }
+
+        eventTitleFragToEventMap.get(word).add(eventD);
+      }
+    }
   }
 
   public List<VideoD> getVideosBySingleWordTitleFrag(String sigleWordTitleFragment) {
@@ -91,7 +113,8 @@ public class LocalIndexedDataService implements InitializingBean {
   public List<VideoD> getVideosByDancerWsdcId(String wsdcId) {
     List<VideoD> results = new ArrayList<>();
 
-    DancerD dancerD = wsdcIdToDancerMap.get(Integer.parseInt(wsdcId));
+    DancerD dancerD = wsdcIdToDancerMap.get(Integer.parseInt(wsdcId)
+    );
 
     if(dancerD == null) {
       return results;
@@ -110,6 +133,17 @@ public class LocalIndexedDataService implements InitializingBean {
     }
 
     return results;
+  }
+
+  public List<EventD> getEventsBySingleWordNameFrag(String singleWordNameFragment) {
+
+    List<EventD> returnList = eventTitleFragToEventMap.get(singleWordNameFragment.toLowerCase());
+
+    if(returnList == null) {
+      return new ArrayList<>();
+    }
+
+    return returnList;
   }
 
   public int size() {

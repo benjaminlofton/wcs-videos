@@ -6,12 +6,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 import ban.exception.InvalidEventException;
 import ban.model.view.Event;
+import ban.service.EventSearchService;
 import ban.service.EventService;
 
 /**
@@ -24,6 +26,9 @@ public class EventController {
   @Autowired
   EventService eventService;
 
+  @Autowired
+  EventSearchService eventSearchService;
+
   @RequestMapping(value="/event/{eventId}", method = RequestMethod.GET)
   public Event getEvent(@PathVariable String eventId) {
 
@@ -31,10 +36,15 @@ public class EventController {
   }
 
   @RequestMapping(value="/event", method = RequestMethod.GET)
-  public List<Event> getEventList() {
+  public List<Event> eventList(@RequestParam(value = "name-frag", required =  false) String nameFragList) {
 
-    return eventService.getEventList();
+    if(nameFragList == null) {
+      return eventService.getEventList();
+    }
+
+    return eventSearchService.search(nameFragList);
   }
+
 
   @RequestMapping(value="/event", method = RequestMethod.POST)
   public Event postEvent(@RequestBody Event event) throws InvalidEventException {

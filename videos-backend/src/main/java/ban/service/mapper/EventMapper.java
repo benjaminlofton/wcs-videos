@@ -2,6 +2,9 @@ package ban.service.mapper;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ban.model.persistence.EventD;
 import ban.model.view.Event;
 
@@ -39,6 +42,16 @@ public class EventMapper {
     event.setName(eventD.getName());
 
     return event;
+  }
+
+  public List<Event> mapToViewModel(List<EventD> eventDs) {
+
+    List<Event> events = new ArrayList<>();
+    for (EventD eventD : eventDs) {
+      events.add(mapToViewModel(eventD));
+    }
+
+    return events;
   }
 
 }

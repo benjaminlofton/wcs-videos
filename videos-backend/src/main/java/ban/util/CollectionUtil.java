@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ban.model.view.Event;
 import ban.model.view.Video;
 
 /**
@@ -38,6 +39,33 @@ public class CollectionUtil {
     }
 
     return new ArrayList(mergedMap.values());
+  }
 
+  public static List<Event> mergeEventLists(List<Event> ... eventLists) {
+
+    Map<String,Event> mergedMap = new HashMap<>();
+    boolean firstPass = true;
+
+    for(List<Event> eventList : eventLists) {
+
+      if(eventList == null) {
+        continue;
+      }
+
+      Map<String, Event> tempMap = new HashMap<>();
+      for(Event event : eventList) {
+        tempMap.put(event.getEventId(), event);
+      }
+
+      if(firstPass) {
+        mergedMap.putAll(tempMap);
+      } else {
+        mergedMap.keySet().retainAll(tempMap.keySet());
+      }
+
+      firstPass = false;
+    }
+
+    return new ArrayList(mergedMap.values());
   }
 }
