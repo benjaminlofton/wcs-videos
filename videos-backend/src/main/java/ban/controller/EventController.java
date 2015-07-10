@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import ban.exception.InvalidEventException;
 import ban.model.view.Event;
 import ban.service.EventService;
 
@@ -36,7 +37,7 @@ public class EventController {
   }
 
   @RequestMapping(value="/event", method = RequestMethod.POST)
-  public Event postEvent(@RequestBody Event event) {
+  public Event postEvent(@RequestBody Event event) throws InvalidEventException {
 
     return eventService.addEvent(event);
   }
