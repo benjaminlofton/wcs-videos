@@ -31,6 +31,9 @@ public class VideoD {
   @DynamoDBAttribute(attributeName="DancerIdList")
   private Set<Integer> dancerIdList;
 
+  @DynamoDBAttribute(attributeName="EventId")
+  private String eventId;
+
   public String getId() {
     return id;
   }
@@ -49,4 +52,12 @@ public class VideoD {
 
   public Set<Integer> getDancerIdList() { return dancerIdList; }
   public void setDancerIdList(Set<Integer> dancerIdList) { this.dancerIdList = dancerIdList; }
+
+  public String getEventId() {
+    return eventId;
+  }
+
+  public void setEventId(String eventId) {
+    this.eventId = eventId;
+  }
 }

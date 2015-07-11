@@ -27,6 +27,7 @@ import ban.model.view.Video;
  * VideoTitle    - List of Videos
  * EventTitle    - List of Events
  * EventList
+ * EventId       - List of Videos
  *
  * Created by bnorrish on 6/28/15.
  */
@@ -41,6 +42,7 @@ public class LocalIndexedDataService implements InitializingBean {
   private Map<String, List<VideoD>> videoTitleFragToVideoMap = new HashMap<>();
   private Map<String, List<EventD>> eventTitleFragToEventMap = new HashMap<>();
   private List<EventD> eventDList = new ArrayList<>();
+  private Map<String,List<VideoD>> eventIdToVideoMap = new HashMap<>();
 
   public void clear() {
     wsdcIdToDancerMap.clear();
@@ -48,6 +50,7 @@ public class LocalIndexedDataService implements InitializingBean {
     videoTitleFragToVideoMap.clear();
     eventTitleFragToEventMap.clear();
     eventDList.clear();
+    eventIdToVideoMap.clear();
   }
 
   public void load() {
@@ -72,6 +75,15 @@ public class LocalIndexedDataService implements InitializingBean {
         }
 
         videoTitleFragToVideoMap.get(word).add(video);
+      }
+
+      if(video.getEventId() != null && !video.getEventId().isEmpty()) {
+
+        if(!eventIdToVideoMap.containsKey(video.getEventId())) {
+          eventIdToVideoMap.put(video.getEventId(), new ArrayList<>());
+        }
+
+        eventIdToVideoMap.get(video.getEventId()).add(video);
       }
     }
 
@@ -164,8 +176,22 @@ public class LocalIndexedDataService implements InitializingBean {
     return returnList;
   }
 
+  public List<VideoD> getVideosByEventId(String eventId) {
+
+    if(!eventIdToVideoMap.containsKey(eventId)) {
+      return new ArrayList<>();
+    }
+
+    return eventIdToVideoMap.get(eventId);
+  }
+
   public int size() {
-    return wsdcIdToDancerMap.size() + videoIdToVideoMap.size() + videoTitleFragToVideoMap.size() + eventDList.size() + eventTitleFragToEventMap.size();
+    return wsdcIdToDancerMap.size() +
+           videoIdToVideoMap.size() +
+           videoTitleFragToVideoMap.size() +
+           eventDList.size() +
+           eventTitleFragToEventMap.size() +
+           eventIdToVideoMap.size();
   }
 
   private List<String> deDuplicate(List<String> initialList) {

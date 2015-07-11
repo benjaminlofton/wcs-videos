@@ -22,9 +22,20 @@ public class VideoSearchService {
   @Autowired
   VideoMapper videoMapper;
 
-  public List<Video> search(String wsdcIdList, String titleFragList) {
+  /**
+   * Get list of Videos by provided search parameters
+   * If any parameter is null, it is ignored.
+   * If all parameters are null, all videos are returned (!!!)
+   * This is an inefficient algorithm, as it does each search on the full set of Videos, then merges.
+   *
+   * @param wsdcIdList - comma separated list of wsdc Ids
+   * @param titleFragList - comma separated list of title words
+   * @param eventIdList - comma separated list of event Ids
+   * @return List of video objects matching all non-null search parameters
+   */
+  public List<Video> search(String wsdcIdList, String titleFragList, String eventIdList) {
 
-    if(wsdcIdList == null && titleFragList == null) {
+    if(wsdcIdList == null && titleFragList == null && eventIdList == null) {
       return videoMapper.mapToViewModel(localIndexedDataService.getAllVideos());
     }
 
@@ -41,6 +52,23 @@ public class VideoSearchService {
           wsdcIdSearchResults.addAll(singleWsdcIdResultList);
         } else {
           wsdcIdSearchResults = CollectionUtil.merge(wsdcIdSearchResults, singleWsdcIdResultList);
+        }
+      }
+    }
+
+    List<Video> eventSerchResults = null;
+    if(eventIdList != null) {
+      eventSerchResults = new ArrayList<>();
+
+      for(String eventId : eventIdList.split(",")) {
+
+        List<Video> singleEventResultsList = videoMapper
+            .mapToViewModel(localIndexedDataService.getVideosByEventId(eventId));
+
+        if(eventSerchResults.isEmpty()) {
+          eventSerchResults.addAll(singleEventResultsList);
+        } else {
+          eventSerchResults = CollectionUtil.merge(eventSerchResults, singleEventResultsList);
         }
       }
     }
@@ -62,7 +90,7 @@ public class VideoSearchService {
       }
     }
 
-    return CollectionUtil.merge(wsdcIdSearchResults, titleFragSearchResults);
+    return CollectionUtil.merge(wsdcIdSearchResults, titleFragSearchResults, eventSerchResults);
   }
 
 

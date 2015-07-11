@@ -60,9 +60,10 @@ public class VideoController {
   public ResponseEntity<List<Video>> searchVideos(
       @RequestParam(value = "wsdc-id", required = false) String wsdcIdList,
       @RequestParam(value = "title-frag", required =  false) String titleFragList,
-      @RequestParam(value = "provider-id", required = false) String providerVideoId) {
+      @RequestParam(value = "provider-id", required = false) String providerVideoId,
+      @RequestParam(value = "event-id", required = false) String eventIdList) {
 
-    if(wsdcIdList == null && titleFragList == null && providerVideoId == null) {
+    if(wsdcIdList == null && titleFragList == null && providerVideoId == null && eventIdList == null) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -80,7 +81,7 @@ public class VideoController {
       return new ResponseEntity<>(Arrays.asList(v),HttpStatus.OK);
     }
 
-    List<Video> videos = videoSearchService.search(wsdcIdList,titleFragList);
+    List<Video> videos = videoSearchService.search(wsdcIdList,titleFragList,eventIdList);
     return new ResponseEntity<>(videos,HttpStatus.OK);
   }
 
