@@ -49,11 +49,4 @@ public class DancerController {
   public List<Dancer> getDancerList() {
     return dancerService.getDancerList();
   }
-
-
-  @RequestMapping(value="/admin/add-by-frag", method = RequestMethod.POST)
-  public List<Dancer> addDancersByFrag(@RequestParam(value = "frag", required = true) String fragment) {
-    return dancerService.addDancersByFragment(fragment);
-  }
-
 }
