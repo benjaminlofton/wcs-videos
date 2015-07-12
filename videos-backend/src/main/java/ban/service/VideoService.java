@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import ban.client.AwsDynamoClient;
+import ban.exception.InvalidRequestException;
 import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
 import ban.model.view.Video;
@@ -75,6 +76,14 @@ public class VideoService {
       throw new IllegalStateException("Cannot add video that already exists; id: " + video.getId() + " providedVideoId: " + video.getProviderVideoId());
     }
 
+    // Verify all dancers exsit before saving anything
+    for(Integer dancerId : video.getDancerIdList()) {
+
+      if(dynamoClient.getDancer(dancerId) == null) {
+        throw new InvalidRequestException();
+      }
+    }
+
     // Save the video
     VideoD pVideo = videoMapper.mapToPersistanceModel(video);
     pVideo = dynamoClient.createVideo(pVideo);
@@ -85,9 +94,7 @@ public class VideoService {
 
       DancerD dancer = dynamoClient.getDancer(wsdcId);
 
-      // Currently, if the Video is marked as containing a dancer we don't yet know about
-      // .. then that dancer is ignored.
-
+      // Dancer should never be null, as we already checked this above
       if(dancer != null) {
 
         if (dancer.getVideoIdList() == null) {
