@@ -72,14 +72,22 @@ public class VideoService {
 
   public Video addVideo(Video video) {
 
+    // Verify that the provider Id does not exist
     if(existsByProviderId(video.getProviderVideoId())) {
-      throw new IllegalStateException("Cannot add video that already exists; id: " + video.getId() + " providedVideoId: " + video.getProviderVideoId());
+      throw new InvalidRequestException();
     }
 
-    // Verify all dancers exsit before saving anything
+    // Verify that all dancers exist
     for(Integer dancerId : video.getDancerIdList()) {
 
       if(dynamoClient.getDancer(dancerId) == null) {
+        throw new InvalidRequestException();
+      }
+    }
+
+    // If the video was posted with an EventId, verify that the EventId is valid
+    if(video.getEventId() != null) {
+      if(dynamoClient.getEventById(video.getEventId()) == null) {
         throw new InvalidRequestException();
       }
     }
