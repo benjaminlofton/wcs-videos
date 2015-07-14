@@ -1,5 +1,6 @@
 package ban.service;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -174,6 +175,21 @@ public class LocalIndexedDataService implements InitializingBean {
     }
 
     return returnList;
+  }
+
+  public List<EventD> getEventsByYear(Integer year) {
+
+    List<EventD> results = new ArrayList<>();
+    for(EventD eventD : eventDList) {
+      if(eventD.getEventDate() != null) {
+        DateTime date = DateTime.parse(eventD.getEventDate());
+        if(year.equals(date.getYear())) {
+          results.add(eventD);
+        }
+      }
+    }
+
+    return results;
   }
 
   public List<VideoD> getVideosByEventId(String eventId) {

@@ -38,13 +38,14 @@ public class EventController {
   @RequestMapping(value="/event", method = RequestMethod.GET)
   public List<Event> eventList(
       @RequestParam(value = "name-frag", required =  false) String nameFragList,
-      @RequestParam(value = "wsdc-pointed", required =  false) Boolean isPointed) {
+      @RequestParam(value = "wsdc-pointed", required =  false) Boolean isPointed,
+      @RequestParam(value = "year", required = false) Integer year) {
 
-    if(nameFragList == null && isPointed == null) {
+    if(nameFragList == null && isPointed == null && year == null) {
       return eventService.getEventList();
     }
 
-    return eventSearchService.search(nameFragList, isPointed);
+    return eventSearchService.search(nameFragList, isPointed, year);
   }
 
 

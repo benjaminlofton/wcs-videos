@@ -22,7 +22,7 @@ public class EventSearchService {
   @Autowired
   LocalIndexedDataService localIndexedDataService;
 
-  public List<Event> search(String nameFragList, Boolean isWsdcPointed) {
+  public List<Event> search(String nameFragList, Boolean isWsdcPointed, Integer year) {
 
 
     List<Event> wsdcPointedSearchResults = null;
@@ -31,6 +31,10 @@ public class EventSearchService {
       wsdcPointedSearchResults = eventMapper.mapToViewModel(localIndexedDataService.getEventsByWsdcPointed(isWsdcPointed));
     }
 
+    List<Event> yearSearchResults = null;
+    if(year != null) {
+      yearSearchResults = eventMapper.mapToViewModel(localIndexedDataService.getEventsByYear(year));
+    }
 
     List<Event> nameFragSearchResults = null;
 
@@ -50,6 +54,6 @@ public class EventSearchService {
       }
     }
 
-    return CollectionUtil.mergeEventLists(nameFragSearchResults,wsdcPointedSearchResults);
+    return CollectionUtil.mergeEventLists(nameFragSearchResults,wsdcPointedSearchResults, yearSearchResults);
   }
 }
