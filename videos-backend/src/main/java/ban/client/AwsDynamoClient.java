@@ -176,10 +176,17 @@ public class AwsDynamoClient {
     for(Map<String,AttributeValue> item : scanResult.getItems()) {
 
       EventD eventD = new EventD();
+
       if(item.get("EventDate") != null) {
         eventD.setEventDate(item.get("EventDate").getS());
       }
+
+      if(item.get("LocationName") != null) {
+        eventD.setLocationName(item.get("LocationName").getS());
+      }
+
       eventD.setEventId(item.get("EventId").getS());
+
       // AWS Dynamo is converting Boolean/boolean to Number on Save().  I have no idea why.
       // Must convert back on read.
       eventD.setWsdcPointed(Integer.parseInt(item.get("IsWsdcPointed").getN()) != 0);

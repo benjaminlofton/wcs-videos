@@ -13,6 +13,8 @@ public class Event {
 
   private String eventDate;
 
+  private String locationName;
+
   public String getEventId() {
     return eventId;
   }
@@ -43,5 +45,13 @@ public class Event {
 
   public void setEventDate(String eventDate) {
     this.eventDate = eventDate;
+  }
+
+  public String getLocationName() {
+    return locationName;
+  }
+
+  public void setLocationName(String locationName) {
+    this.locationName = locationName;
   }
 }
