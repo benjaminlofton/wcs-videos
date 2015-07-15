@@ -1,5 +1,6 @@
 package ban.service;
 
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
 import ban.exception.InvalidEventException;
@@ -23,8 +24,15 @@ public class EventValidationService {
   public void validateEvent(Event event) throws InvalidEventException {
 
     if(event.getName() == null || event.getName().isEmpty()) {
-      throw new InvalidEventException("The 'Event' attribute must be defined");
+      throw new InvalidEventException("The 'Name' attribute must be defined");
     }
+
+    try {
+      DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(event.getEventDate());
+    } catch (RuntimeException ex) {
+      throw new InvalidEventException("The 'EventDate' attribute is invalid");
+    }
+    
   }
 
 }
