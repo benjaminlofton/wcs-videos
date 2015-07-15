@@ -1,11 +1,14 @@
 package ban.service;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ban.exception.InvalidRequestException;
 import ban.model.view.Event;
 import ban.service.mapper.EventMapper;
 import ban.util.CollectionUtil;
@@ -22,11 +25,30 @@ public class EventSearchService {
   @Autowired
   LocalIndexedDataService localIndexedDataService;
 
-  public List<Event> search(String nameFragList, Boolean isWsdcPointed, Integer year) {
+  public List<Event> search(String nameFragList, Boolean isWsdcPointed, Integer year, String afterDateString, String beforeDateString) {
 
+    DateTime afterDate = null;
+    DateTime beforeDate = null;
+    try {
+      afterDate = (afterDateString == null) ? null : DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(afterDateString);
+      beforeDate = (beforeDateString == null) ? null : DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(beforeDateString);
+
+      if(afterDate != null && beforeDate != null) {
+        if(afterDate.isAfter(beforeDate)) {
+          throw new InvalidRequestException();
+        }
+      }
+
+    } catch (java.lang.IllegalArgumentException e) {
+      throw new InvalidRequestException();
+    }
+
+    List<Event> dateSearchResults = null;
+    if(afterDate != null || beforeDate != null) {
+      dateSearchResults = eventMapper.mapToViewModel(localIndexedDataService.getEventsBetween(afterDate,beforeDate));
+    }
 
     List<Event> wsdcPointedSearchResults = null;
-
     if(isWsdcPointed != null) {
       wsdcPointedSearchResults = eventMapper.mapToViewModel(localIndexedDataService.getEventsByWsdcPointed(isWsdcPointed));
     }
@@ -37,7 +59,6 @@ public class EventSearchService {
     }
 
     List<Event> nameFragSearchResults = null;
-
     if (nameFragList != null) {
       nameFragSearchResults = new ArrayList<>();
 
@@ -54,6 +75,6 @@ public class EventSearchService {
       }
     }
 
-    return CollectionUtil.mergeEventLists(nameFragSearchResults,wsdcPointedSearchResults, yearSearchResults);
+    return CollectionUtil.mergeEventLists(nameFragSearchResults,wsdcPointedSearchResults, yearSearchResults, dateSearchResults);
   }
 }

@@ -1,6 +1,7 @@
 package ban.service;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -186,6 +187,33 @@ public class LocalIndexedDataService implements InitializingBean {
         if(year.equals(date.getYear())) {
           results.add(eventD);
         }
+      }
+    }
+
+    return results;
+  }
+
+  public List<EventD> getEventsBetween(DateTime afterDate, DateTime beforeDate) {
+
+    List<EventD> results = new ArrayList<>();
+
+    for (EventD eventD : eventDList) {
+
+      boolean keep = true;
+
+      // Seems bad to do this for every date, for every search
+      DateTime eventDate = DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(eventD.getEventDate());
+
+      if(afterDate != null) {
+        keep = keep && (eventDate.isAfter(afterDate) || eventDate.isEqual(afterDate));
+      }
+
+      if(beforeDate != null) {
+        keep = keep && (eventDate.isBefore(beforeDate) || eventDate.isEqual(beforeDate));
+      }
+
+      if(keep) {
+        results.add(eventD);
       }
     }
 

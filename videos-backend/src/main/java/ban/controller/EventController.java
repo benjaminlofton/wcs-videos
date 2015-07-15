@@ -39,13 +39,12 @@ public class EventController {
   public List<Event> eventList(
       @RequestParam(value = "name-frag", required =  false) String nameFragList,
       @RequestParam(value = "wsdc-pointed", required =  false) Boolean isPointed,
-      @RequestParam(value = "year", required = false) Integer year) {
+      @RequestParam(value = "year", required = false) Integer year,
+      @RequestParam(value = "after-date", required = false) String afterDate,
+      @RequestParam(value = "before-date", required = false) String beforeDate) {
 
-    if(nameFragList == null && isPointed == null && year == null) {
-      return eventService.getEventList();
-    }
 
-    return eventSearchService.search(nameFragList, isPointed, year);
+    return eventSearchService.search(nameFragList, isPointed, year, afterDate, beforeDate);
   }
 
 
