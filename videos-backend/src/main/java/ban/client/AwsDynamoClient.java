@@ -96,6 +96,9 @@ public class AwsDynamoClient {
       videoD.setProviderId(Integer.parseInt(item.get("ProviderId").getN()));
       videoD.setProviderVideoId(item.get("ProviderVideoId").getS());
       videoD.setTitle(item.get("Title").getS());
+      if(item.get("EventId") != null) {
+        videoD.setEventId(item.get("EventId").getS());
+      }
 
       if(item.get("DancerIdList") != null) {
 

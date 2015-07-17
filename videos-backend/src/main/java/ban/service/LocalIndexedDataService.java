@@ -79,7 +79,12 @@ public class LocalIndexedDataService implements InitializingBean {
         videoTitleFragToVideoMap.get(word).add(video);
       }
 
-      if(video.getEventId() != null && !video.getEventId().isEmpty()) {
+      if(video.getId().equals("465c0943-e116-44f3-9623-6b6cf0483b6b")) {
+        int i = 0;
+        System.out.println(i);
+      }
+
+      if((video.getEventId() != null) && (!video.getEventId().isEmpty())) {
 
         if(!eventIdToVideoMap.containsKey(video.getEventId())) {
           eventIdToVideoMap.put(video.getEventId(), new ArrayList<>());
