@@ -12,6 +12,7 @@ public class VideoDBuilder {
   private Integer providerId = null;
   private String providerVideoId = null;
   private String title = null;
+  private String eventId = null;
   private Set<Integer> dancerIdList = new HashSet<>();
 
   public VideoDBuilder withId(String id) {
@@ -36,6 +37,11 @@ public class VideoDBuilder {
 
   public VideoDBuilder withDancerIdList(Set<Integer> dancerIdList) {
     this.dancerIdList = dancerIdList;
+    return this;
+  }
+
+  public VideoDBuilder withEventId(String eventId) {
+    this.eventId = eventId;
     return this;
   }
 
