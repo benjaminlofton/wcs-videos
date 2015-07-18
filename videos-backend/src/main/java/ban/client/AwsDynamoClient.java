@@ -201,6 +201,8 @@ public class AwsDynamoClient {
     return result;
   }
 
+
+
   public EventD addEvent(EventD eventD) {
 
     // Event ID is an AWS Auto-generated hash key

@@ -58,6 +58,7 @@ public class VideoDBuilder {
     video.setProviderVideoId(providerVideoId);
     video.setTitle(title);
     video.setDancerIdList(dancerIdList);
+    video.setEventId(eventId);
 
     return video;
   }
