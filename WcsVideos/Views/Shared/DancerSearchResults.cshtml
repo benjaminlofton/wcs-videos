@@ -1,3 +1,4 @@
+
 @{
     Layout = "";
 }
@@ -10,7 +11,7 @@
     </p>
     
     <ol start="@this.Model.ResultsStart">
-        @foreach (DancerListItemViewModel dancer in this.Model.Dancers)
+        @foreach (DancerListItemViewModel dancer in this.Model.Entries)
         {
             <li>
                 <a href="@dancer.Url">@dancer.Name (@dancer.WsdcId)</a> - @dancer.VideoCount Video(s)

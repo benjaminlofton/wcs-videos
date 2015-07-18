@@ -34,7 +34,7 @@ namespace WcsVideos.Controllers
             DancerSearchResultsViewModel viewModel = new DancerSearchResultsViewModel();
             List<DancerListItemViewModel> results = new List<DancerListItemViewModel>();
             viewModel.Query = query;
-            viewModel.Dancers = results;
+            viewModel.Entries = results;
             
             if (start <= 0)
             {

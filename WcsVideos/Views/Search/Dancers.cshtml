@@ -1,3 +1,4 @@
+@model DancerSearchResultsViewModel
 @{
     ViewBag.Title = "Dancers";
 }
@@ -29,7 +30,7 @@
     <div id="results">
         @if (this.Model.ShowResults)
         {
-            @Html.Partial("DancerSearchResults", (DancerSearchResultsViewModel)this.Model)
+            @Html.Partial("DancerSearchResults", this.Model)
         }
     </div>
 </div>
