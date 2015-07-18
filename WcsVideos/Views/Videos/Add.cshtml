@@ -45,12 +45,28 @@
                 <div class="col-sm-10">
                     <input type="text" class="form-control" name="dancerIdList" id="dancerIdList" value="@this.Model.DancerIdList">
                 </div>
-                 @if (this.Model.DancerIdListValidationError)
+                @if (this.Model.DancerIdListValidationError)
                 {
                     <p class="help-block col-sm-offset-2 col-sm-10">
                         Must contain valid WSDC IDs, semi-colon (;) separated.
                     </p>
                 }
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <a id="findDancerLink" href="#">find dancer</a>
+                </div>
+            </div>
+            <div style="display:none;" id="findDancerPanel">
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <input type="text" class="form-control" name="query" id="query">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10" id="results">
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
@@ -60,3 +76,75 @@
         </form>
     </div>
 </div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            var timer;
+            var delay = 250; // 250 millisecond delay
+            var jqxhr;
+            
+            function requestData()
+            {
+                searchForDancer($("#query").val(), 0);
+            };
+                        
+            $("#query").on(
+                "input",
+                function() {
+                    clearTimeout(timer);
+                    timer = setTimeout(requestData, delay);
+
+                    // abort any previous request which is in progress
+                    if (jqxhr)
+                    {
+                        jqxhr.abort();
+                        jqxhr = null;
+                    }
+                }
+            );
+            
+            $("#findDancerLink").on(
+                "click",
+                function() {
+                    $("#findDancerPanel").toggle();
+                }
+            );
+        });
+        
+        function addDancer(dancer)
+        {
+            var dancerIds = $("#dancerIdList").val();
+            if (dancerIds && dancerIds.length)
+            {
+                if (!dancerIds.charAt(dancerIds.length - 1) != ';')
+                {
+                    dancerIds += ";";
+                }
+                
+                dancerIds += dancer;
+            }
+            else
+            {
+                dancerIds = dancer;
+            }
+            
+            $("#dancerIdList").val(dancerIds);
+        };
+        
+        function searchForDancer(query, start)
+        {
+            jqxhr = $.ajax({
+                method: "GET",
+                url: "/Videos/DancerSearchResults",
+                data: { query: query, start: start }
+            });
+            
+            jqxhr.done(
+                function(data) {
+                    $("#results").html(data);
+                });
+        }
+    </script>
+}
