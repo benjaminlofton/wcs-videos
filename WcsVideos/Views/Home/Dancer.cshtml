@@ -1,21 +1,18 @@
+@model DancerViewModel
 @{
     ViewBag.Title = this.Model.Title;
 }
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <h2>
             Dancer - @this.Model.Title        
         </h2>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <h3>Videos</h3>
-        <ul>
-            @foreach (var video in this.Model.Videos) {
-                <li><a href="@video.Url">@video.Title</a></li>    
-            }
-        </ul>
+        @Html.Partial("VideoListGroup", this.Model.Videos)
     </div>
 </div>

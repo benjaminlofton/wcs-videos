@@ -4,6 +4,8 @@ namespace WcsVideos.Contracts
 {
     public interface IDataAccess
     {
+        List<Event> GetRecentEvents();
+        
         List<Video> GetTrendingVideos();
 
 		Video GetVideoById(string id);

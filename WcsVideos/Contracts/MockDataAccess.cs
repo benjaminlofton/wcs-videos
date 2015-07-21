@@ -219,6 +219,11 @@ namespace WcsVideos.Contracts
 			}
 		};
 		
+        public List<Event> GetRecentEvents()
+        {
+            return new List<Event>();
+        }
+        
         public List<Video> GetTrendingVideos()
 		{
 			return this.videos.Values.ToList();

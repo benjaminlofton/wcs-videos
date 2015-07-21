@@ -13,6 +13,19 @@ namespace WcsVideos.Contracts
     {
         private static readonly Uri WebserviceTarget = new Uri("http://localhost:8085/");
         
+        public List<Event> GetRecentEvents()
+        {
+            List<Event> events;
+            string afterDate = DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)).ToString("yyyy-MM-dd");
+            string beforeDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            events = this.HttpGet<List<Event>>(
+                "event/?after-date=" + afterDate + "&before-date=" + beforeDate).Result
+                .OrderByDescending(e => e.EventDate)
+                .Take(5)
+                .ToList();
+            return events;
+        }
+        
         public List<Video> GetTrendingVideos()
         {
             List<Video> videos = new List<Video>();

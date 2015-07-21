@@ -22,6 +22,11 @@ namespace WcsVideos.Contracts
             this.baseDataAccess = new DataAccess();
 		}
         
+        public List<Event> GetRecentEvents()
+        {
+            return this.baseDataAccess.GetRecentEvents();
+        }
+        
         public List<Video> GetTrendingVideos()
         {
             if (this.trendingVideos == null)

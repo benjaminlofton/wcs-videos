@@ -25,8 +25,17 @@ namespace WcsVideos.Controllers
                 x => new VideoListItemViewModel
                 {
                     Url = this.Url.Link("default", new { controller = "Home", action = "Watch", id = x.Id }),
-                    Title = x.Title
+                    Title = x.Title,
+                    ThumbnailUrl = string.Format("http://img.youtube.com/vi/{0}/default.jpg", x.ProviderVideoId)
                 }).ToList(); 
+            
+            var events = this.dataAccess.GetRecentEvents();
+            model.Events = events.Select(
+                x => new EventListItemViewModel
+                {
+                    Url = "#",
+                    Name = x.Name,
+                }).ToList();
             
             return this.View(model);
         }
@@ -97,7 +106,12 @@ namespace WcsVideos.Controllers
                 {
                     VideoListItemViewModel listItemModel = new VideoListItemViewModel();
                     listItemModel.Title = video.Title;
-                    listItemModel.Url = this.Url.Link("default", new { controller = "Home", action = "Watch", id = video.Id });
+                    listItemModel.Url = this.Url.Link(
+                        "default",
+                        new { controller = "Home", action = "Watch", id = video.Id });
+                    listItemModel.ThumbnailUrl = string.Format(
+                        "http://img.youtube.com/vi/{0}/default.jpg",
+                        video.ProviderVideoId);
                     model.Videos.Add(listItemModel);
                 }  
             }

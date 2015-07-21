@@ -45,7 +45,9 @@ namespace WcsVideos.Controllers
             {
                 viewModel.ShowResults = true;
                 
-                List<Dancer> fullResults = this.dataAccess.SearchForDancer(query);
+                List<Dancer> fullResults = this.dataAccess.SearchForDancer(query)
+                    .Where(d => d.VideoIdList != null && d.VideoIdList.Length > 0)
+                    .ToList();
                 viewModel.ResultsTotal = fullResults.Count;
                 
                 foreach(Dancer dancer in fullResults.Skip(start - 1).Take(SearchController.ResultsPerPage))
