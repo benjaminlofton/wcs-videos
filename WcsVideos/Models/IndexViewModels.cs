@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace WcsVideos.Models
@@ -19,6 +18,8 @@ namespace WcsVideos.Models
         public string Url { get; set; }
         
         public int VideoCount { get; set; }
+        
+        public bool ShowVideoCount { get; set; }
     }
     
 	public class IndexViewModel

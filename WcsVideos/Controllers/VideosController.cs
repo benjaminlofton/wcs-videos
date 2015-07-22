@@ -31,6 +31,8 @@ namespace WcsVideos.Controllers
             model.TitleValidationError = !bool.Parse(this.Context.Request.Cookies.Get("TitleValid") ?? "True");
             model.DancerIdList = this.Context.Request.Cookies.Get("DancerIdList");
             model.DancerIdListValidationError = !bool.Parse(this.Context.Request.Cookies.Get("DancerIdListValid") ?? "True");
+            model.EventId = this.Context.Request.Cookies.Get("EventId");
+            model.EventIdValidationError = !bool.Parse(this.Context.Request.Cookies.Get("EventIdValid") ?? "True");
             
             CookieOptions cookieOptions = new CookieOptions();
             this.Context.Response.Cookies.Delete("ProviderId", cookieOptions);
@@ -41,6 +43,23 @@ namespace WcsVideos.Controllers
             this.Context.Response.Cookies.Delete("TitleValid", cookieOptions);
             this.Context.Response.Cookies.Delete("DancerIdList", cookieOptions);
             this.Context.Response.Cookies.Delete("DancerIdListValid", cookieOptions);
+            this.Context.Response.Cookies.Delete("EventId", cookieOptions);
+            this.Context.Response.Cookies.Delete("EventIdValid", cookieOptions);
+
+            Event contractEvent = null;
+            if (!string.IsNullOrEmpty(model.EventId))
+            {
+                contractEvent = this.dataAccess.GetEvent(model.EventId);
+            }
+            
+            if (contractEvent == null)
+            {
+                model.EventName = "(None)";
+            }
+            else
+            {
+                model.EventName = contractEvent.Name + " " + contractEvent.EventDate.Year;
+            } 
 
             return this.View(model);
         }
@@ -49,12 +68,14 @@ namespace WcsVideos.Controllers
             string providerId,
             string providerVideoId,
             string title,
-            string dancerIdList)
+            string dancerIdList,
+            string eventId)
         {
             bool providerIdValid = true;
             bool providerVideoIdValid = true;
             bool titleValid = true;
             bool dancerIdListValid = true;
+            bool eventIdValid = true;
             if (string.IsNullOrEmpty(providerId) ||
                 !string.Equals(providerId, "youtube", StringComparison.Ordinal))
             {
@@ -74,7 +95,7 @@ namespace WcsVideos.Controllers
             string[] dancerIds = null;
             if (string.IsNullOrEmpty(dancerIdList))
             {
-                dancerIdListValid = false;
+                dancerIds = new string[0];
             }
             else
             {
@@ -88,13 +109,27 @@ namespace WcsVideos.Controllers
                 }
             }
             
-            if (providerIdValid && providerVideoIdValid && titleValid && dancerIdListValid)
+            if (string.IsNullOrEmpty(eventId))
+            {
+                eventId = null;
+            }
+            else
+            {
+                Event contractEvent = this.dataAccess.GetEvent(eventId);
+                if (contractEvent == null)
+                {
+                    eventIdValid = false;
+                }
+            }
+            
+            if (providerIdValid && providerVideoIdValid && titleValid && dancerIdListValid && eventIdValid)
             {
                 Video video = new Video();
                 video.ProviderId = "1";
                 video.ProviderVideoId = providerVideoId;
                 video.Title = title;
                 video.DancerIdList = dancerIds;
+                video.EventId = eventId;
                 string videoId = this.dataAccess.AddVideo(video);
                 
                 return this.RedirectToAction(
@@ -113,6 +148,8 @@ namespace WcsVideos.Controllers
                 this.Context.Response.Cookies.Append("TitleValid", titleValid.ToString(), cookieOptions);
                 this.Context.Response.Cookies.Append("DancerIdList", dancerIdList, cookieOptions);
                 this.Context.Response.Cookies.Append("DancerIdListValid", dancerIdListValid.ToString(), cookieOptions);
+                this.Context.Response.Cookies.Append("EventId", eventId, cookieOptions);
+                this.Context.Response.Cookies.Append("EventIdValid", eventIdValid.ToString(), cookieOptions);
                 
                 return this.RedirectToAction(
                     "Add");
@@ -185,6 +222,62 @@ namespace WcsVideos.Controllers
                     viewModel.ShowPreviousLink = true;
                     viewModel.PreviousLinkUrl = string.Format(
                         "javascript:searchForDancer('{0}', {1});",
+                        query,
+                        viewModel.ResultsStart - VideosController.ResultsPerPage);
+                }
+            }
+            
+            return View(viewModel);
+        }
+        
+        public IActionResult EventSearchResults(string query, int start)
+        {
+            EventSearchResultsViewModel viewModel = new EventSearchResultsViewModel();
+            List<EventListItemViewModel> results = new List<EventListItemViewModel>();
+            viewModel.Query = query;
+            viewModel.Entries = results;
+            
+            if (start <= 0)
+            {
+                start = 1;
+            }
+            
+            if (!string.IsNullOrEmpty(query) && query.Trim().Length > 2)
+            {
+                viewModel.ShowResults = true;
+                
+                List<Event> fullResults = this.dataAccess.SearchForEvent(query);
+                viewModel.ResultsTotal = fullResults.Count;
+                
+                foreach(Event contractEvent in fullResults.Skip(start - 1).Take(VideosController.ResultsPerPage))
+                {
+                    EventListItemViewModel listItem = new EventListItemViewModel();
+                    listItem.Name = contractEvent.Name + " " + contractEvent.EventDate.Year;
+                    listItem.Url = string.Format(
+                        "javascript:setEvent('{0}', '{1}');",
+                        contractEvent.EventId,
+                        listItem.Name);
+                    results.Add(listItem);
+                }
+                
+                viewModel.ResultsStart = start;
+                viewModel.ResultsEnd = start + results.Count - 1;
+                viewModel.ResultsTotal = fullResults.Count;
+                
+                if (viewModel.ResultsEnd < fullResults.Count)
+                {
+                    viewModel.ShowNextLink = true;
+                    viewModel.NextLinkUrl = string.Format(
+                        "javascript:searchForEvent('{0}', {1});",
+                        query,
+                        viewModel.ResultsEnd + 1);
+                }
+                
+                if (start > 1)
+                {
+                    viewModel.ShowPreviousLink = true;
+                    viewModel.PreviousLinkUrl = string.Format(
+                        "javascript:searchForEvent('{0}', {1});",
                         query,
                         viewModel.ResultsStart - VideosController.ResultsPerPage);
                 }

@@ -218,7 +218,22 @@ namespace WcsVideos.Contracts
 				}
 			}
 		};
+        
+        public Event GetEvent(string eventId)
+        {
+            return null;
+        }
 		
+        public List<Video> GetEventVideos(string eventId)
+        {
+            return new List<Video>();
+        }
+        
+        public List<Event> SearchForEvent(string query)
+        {
+            return new List<Event>();
+        }
+        
         public List<Event> GetRecentEvents()
         {
             return new List<Event>();

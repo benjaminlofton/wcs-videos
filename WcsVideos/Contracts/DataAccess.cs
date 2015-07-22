@@ -5,13 +5,39 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using System.Diagnostics;
 
 namespace WcsVideos.Contracts
 {
     public class DataAccess : IDataAccess
     {
         private static readonly Uri WebserviceTarget = new Uri("http://localhost:8085/");
+        
+        public Event GetEvent(string eventId)
+        {
+            return this.HttpGet<Event>("event/" + eventId).Result;
+        }
+        
+        public List<Video> GetEventVideos(string eventId)
+        {
+            List<Video> videos = this.HttpGet<List<Video>>("v/?event-id=" + eventId).Result;
+            if (videos == null)
+            {
+                videos = new List<Video>(0);
+            }
+            
+            return videos;
+        }
+        
+        public List<Event> SearchForEvent(string query)
+        {
+            List<Event> events = this.HttpGet<List<Event>>("event/?name-frag=" + Uri.EscapeUriString(query)).Result;
+            if (events == null)
+            {
+                events = new List<Event>();
+            }
+            
+            return events;
+        }
         
         public List<Event> GetRecentEvents()
         {
@@ -21,7 +47,7 @@ namespace WcsVideos.Contracts
             events = this.HttpGet<List<Event>>(
                 "event/?after-date=" + afterDate + "&before-date=" + beforeDate).Result
                 .OrderByDescending(e => e.EventDate)
-                .Take(5)
+                .Take(10)
                 .ToList();
             return events;
         }
@@ -43,13 +69,11 @@ namespace WcsVideos.Contracts
         
 		public Video GetVideoById(string id)
         {
-            Console.WriteLine("Requesting video for id=" + id);
             return this.HttpGet<Video>("v/" + id).Result;
         }
         
         public Dancer GetDancerById(string id)
         {
-            Console.WriteLine("Requesting dancer for id=" + id);
             return this.HttpGet<Dancer>("d/" + id).Result;
         }
 
@@ -60,7 +84,6 @@ namespace WcsVideos.Contracts
         
         public List<Dancer> GetAllDancers()
         {
-            Console.WriteLine("Requesting all dancers");
             return this.HttpGet<List<Dancer>>("d/").Result;
         }
         
@@ -79,6 +102,7 @@ namespace WcsVideos.Contracts
 
         private async Task<T> HttpGet<T>(string relativeUrl)
         {
+            Console.WriteLine("GET from " + relativeUrl);
             using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = DataAccess.WebserviceTarget;
@@ -93,6 +117,8 @@ namespace WcsVideos.Contracts
         
         private async Task<T> HttpPost<T>(string relativeUrl, string content)
         {
+            Console.WriteLine("POST to " + relativeUrl);
+            Console.WriteLine(content);
             using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = DataAccess.WebserviceTarget;

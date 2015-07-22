@@ -1,9 +1,6 @@
 using System;
-using System.Net.Http;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace WcsVideos.Contracts
 {
@@ -11,20 +8,50 @@ namespace WcsVideos.Contracts
     {
     	private ConcurrentDictionary<string, Dancer> dancers;
         private ConcurrentDictionary<string, Video> videos;
+        private ConcurrentDictionary<string, List<Video>> eventVideos;
         private List<Dancer> allDancers;
         private List<Video> trendingVideos;
+        private List<Event> recentEvents;
         private IDataAccess baseDataAccess;
         
 		public CachingDataAccess()
 		{
 			this.dancers = new ConcurrentDictionary<string, Dancer>();
             this.videos = new ConcurrentDictionary<string, Video>();
+            this.eventVideos = new ConcurrentDictionary<string, List<Video>>();
             this.baseDataAccess = new DataAccess();
 		}
         
+        public Event GetEvent(string eventId)
+        {
+            return this.baseDataAccess.GetEvent(eventId);
+        }
+        
+        public List<Video> GetEventVideos(string eventId)
+        {
+            List<Video> videos;
+            if (!this.eventVideos.TryGetValue(eventId, out videos))
+            {
+                videos = this.baseDataAccess.GetEventVideos(eventId);
+                this.eventVideos[eventId] = videos;
+            }
+            
+            return videos;
+        }
+        
+        public List<Event> SearchForEvent(string query)
+        {
+            return this.baseDataAccess.SearchForEvent(query);
+        }
+        
         public List<Event> GetRecentEvents()
         {
-            return this.baseDataAccess.GetRecentEvents();
+            if (this.recentEvents == null)
+            {
+                this.recentEvents = this.baseDataAccess.GetRecentEvents();
+            }
+            
+            return this.recentEvents;
         }
         
         public List<Video> GetTrendingVideos()
@@ -32,6 +59,11 @@ namespace WcsVideos.Contracts
             if (this.trendingVideos == null)
             {
                 this.trendingVideos = this.baseDataAccess.GetTrendingVideos();
+                
+                foreach (Video video in this.trendingVideos)
+                {
+                    this.videos[video.Id] = video;
+                }
             }
             
             return this.trendingVideos;;

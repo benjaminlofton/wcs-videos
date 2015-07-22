@@ -11,5 +11,7 @@ namespace WcsVideos.Contracts
         public string Title { get; set; }
         
         public string[] DancerIdList { get; set; }
+        
+        public string EventId { get; set; }
     }
 }

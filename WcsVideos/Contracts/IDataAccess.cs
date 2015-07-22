@@ -7,6 +7,12 @@ namespace WcsVideos.Contracts
         List<Event> GetRecentEvents();
         
         List<Video> GetTrendingVideos();
+        
+        Event GetEvent(string eventId);
+        
+        List<Video> GetEventVideos(string eventId);
+        
+        List<Event> SearchForEvent(string query);
 
 		Video GetVideoById(string id);
 

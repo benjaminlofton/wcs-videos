@@ -1,4 +1,4 @@
-
+@model EventSearchResultsViewModel
 @{
     Layout = "";
 }
@@ -10,10 +10,10 @@
     </p>
     
     <ol start="@this.Model.ResultsStart" class="list-group">
-        @foreach (DancerListItemViewModel dancer in this.Model.Entries)
+        @foreach (EventListItemViewModel eventEntry in this.Model.Entries)
         {
             <li class="list-group-item">
-                <a href="@dancer.Url">@dancer.Name (@dancer.WsdcId)</a> - @dancer.VideoCount Video(s)
+                <a href="@eventEntry.Url">@eventEntry.Name</a>
             </li>
         }
     </ol>

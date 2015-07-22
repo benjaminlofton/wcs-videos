@@ -15,5 +15,11 @@ namespace WcsVideos.Models
         public string DancerIdList { get; set; }
         
         public bool DancerIdListValidationError { get; set; }
+        
+        public string EventId { get; set; }
+        
+        public string EventName { get; set; }
+        
+        public bool EventIdValidationError { get; set; }
 	}
 }

@@ -4,7 +4,11 @@
 <ul class="list-group">
     @foreach (var eventItem in this.Model) {
         <li class="list-group-item">
-            <span class="badge">@eventItem.VideoCount videos</span> <a href="@eventItem.Url">@eventItem.Name</a>
+            @if (eventItem.ShowVideoCount)
+            {
+                <span class="badge">@eventItem.VideoCount videos</span>
+            }
+            <a href="@eventItem.Url">@eventItem.Name</a>
         </li>    
     }
 </ul>
