@@ -19,7 +19,7 @@ namespace WcsVideos.Contracts
         
         public List<Video> GetEventVideos(string eventId)
         {
-            List<Video> videos = this.HttpGet<List<Video>>("v/?event-id=" + eventId).Result;
+            List<Video> videos = this.HttpGet<List<Video>>("v?event-id=" + eventId).Result;
             if (videos == null)
             {
                 videos = new List<Video>(0);
@@ -42,12 +42,11 @@ namespace WcsVideos.Contracts
         public List<Event> GetRecentEvents()
         {
             List<Event> events;
-            string afterDate = DateTime.UtcNow.Subtract(TimeSpan.FromDays(30)).ToString("yyyy-MM-dd");
+            string afterDate = DateTime.UtcNow.Subtract(TimeSpan.FromDays(60)).ToString("yyyy-MM-dd");
             string beforeDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
             events = this.HttpGet<List<Event>>(
                 "event/?after-date=" + afterDate + "&before-date=" + beforeDate).Result
                 .OrderByDescending(e => e.EventDate)
-                .Take(10)
                 .ToList();
             return events;
         }

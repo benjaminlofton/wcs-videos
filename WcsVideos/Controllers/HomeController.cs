@@ -31,16 +31,24 @@ namespace WcsVideos.Controllers
             
             var events = this.dataAccess.GetRecentEvents();
             List<EventListItemViewModel> modelEvents = new List<EventListItemViewModel>(events.Count);
+            int eventCount = 0;
             
             foreach (Event contractEvent in events)
             {
                 int videoCount = this.dataAccess.GetEventVideos(contractEvent.EventId).Count;
-                EventListItemViewModel modelEvent = new EventListItemViewModel();
-                modelEvent.Url = "#";
-                modelEvent.Name = contractEvent.Name;
-                modelEvent.VideoCount = videoCount;
-                modelEvent.ShowVideoCount = true;
-                modelEvents.Add(modelEvent);
+                if (videoCount > 0)
+                {
+                    EventListItemViewModel modelEvent = new EventListItemViewModel();
+                    modelEvent.Url = "#";
+                    modelEvent.Name = contractEvent.Name;
+                    modelEvent.VideoCount = videoCount;
+                    modelEvent.ShowVideoCount = true;
+                    modelEvents.Add(modelEvent);
+                    if (++eventCount >= 10)
+                    {
+                        break;
+                    }
+                }
             }
             
             model.Events = modelEvents;
