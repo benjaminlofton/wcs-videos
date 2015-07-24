@@ -19,6 +19,58 @@ namespace WcsVideos.Controllers
             this.dataAccess = dataAccess;
         }
         
+        public IActionResult Watch(string id)
+        {
+            Video video = this.dataAccess.GetVideoById(id);
+            
+            if (video == null)
+            {
+                return this.HttpNotFound();    
+            }
+
+            WatchViewModel model = new WatchViewModel();
+            model.ExternalUrl = string.Format("https://www.youtube.com/watch?v={0}", video.ProviderVideoId);
+            model.EmbedUrl = string.Format("http://www.youtube.com/embed/{0}", video.ProviderVideoId);
+            model.ProviderName = "YouTube";
+            model.Title = video.Title;
+            model.ProviderVideoId = video.ProviderVideoId;
+            model.Dancers = new List<DancerLinkViewModel>();
+            
+            foreach (string dancerId in video.DancerIdList)
+            {
+                Dancer dancer = this.dataAccess.GetDancerById(dancerId);
+                if (dancer != null)
+                {
+                    DancerLinkViewModel dancerModel = new DancerLinkViewModel();
+                    dancerModel.DisplayName = dancer.Name;
+                    dancerModel.Url = this.Url.Link(
+                        "default",
+                         new { controller = "Home", action = "Dancer", id = dancer.WsdcId });
+                    model.Dancers.Add(dancerModel);
+                }    
+            }
+            
+            Event contractEvent = null;
+            if (!string.IsNullOrEmpty(video.EventId))
+            {
+                contractEvent = this.dataAccess.GetEvent(video.EventId);
+            }
+            
+            if (contractEvent == null)
+            {
+                model.EventName = "(None)";
+            }
+            else
+            {
+                model.EventName = contractEvent.Name + " " + contractEvent.EventDate.Year;
+                model.EventUrl = this.Url.Link(
+                    "default",
+                    new { controller = "Events", action = "Event", id = contractEvent.EventId });
+            } 
+            
+            return View(model);
+        }
+        
         public IActionResult Add()
         {
             VideosAddViewModel model = new VideosAddViewModel();
@@ -160,10 +212,26 @@ namespace WcsVideos.Controllers
             VideosAddSuccessViewModel model = new VideosAddSuccessViewModel();
             
             Video video = this.dataAccess.GetVideoById(id);
+            string eventName = null;
+            if (!string.IsNullOrEmpty(video.EventId))
+            {
+                Event contractEvent = this.dataAccess.GetEvent(video.EventId);
+                if (contractEvent != null)
+                {
+                    eventName = contractEvent.Name + " " + contractEvent.EventDate.Year;
+                }
+            }
+            
+            if (string.IsNullOrEmpty(eventName))
+            {
+                eventName = "(None)";
+            }
+            
             model.ProviderId = video.ProviderId;
             model.ProviderVideoId = video.ProviderVideoId;
             model.Title = video.Title;
             model.DancerIdList = string.Join(";", video.DancerIdList);
+            model.EventName = eventName;
             model.VideoUrl = this.Url.Link(
                 "default",
                 new { controller = "Home", action = "Watch", id = id });

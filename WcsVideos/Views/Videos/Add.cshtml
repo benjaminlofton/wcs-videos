@@ -1,8 +1,10 @@
 <div class="row">
     <div class="col-md-12">
-        <h2>
-            Add Video
-        </h2>
+        <div class="page-header">
+            <h2>
+                Add Video
+            </h2>
+        </div>
     </div>
 </div>
 <div class="row">
@@ -87,8 +89,8 @@
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <a id="findEventLink" href="#">find event</a>
-                    -
-                    <a id="clearEventLink" href="#">clear</a>
+                    or
+                    <a id="clearEventLink" href="#">remove selected event</a>
                 </div>
             </div>
             <div class="col-sm-offset-2 col-sm-10">
@@ -224,6 +226,7 @@
         {
             $("#eventId").val(eventId);
             $("#eventName").text(eventName);
+            $("#findEventPanel").hide();
         };
         
         function searchForEvent(query, start)
