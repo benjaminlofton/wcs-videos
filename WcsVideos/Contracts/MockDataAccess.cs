@@ -325,5 +325,13 @@ namespace WcsVideos.Contracts
             
             return videoId;
         }
+        
+        public List<Video> SearchForVideo(
+            IEnumerable<string> titleFragments,
+            IEnumerable<string> dancerIds,
+            IEnumerable<string> eventIds)
+        {
+            return new List<Video>();
+        }
     }
 }

@@ -98,6 +98,28 @@ namespace WcsVideos.Contracts
             Video result = this.HttpPost<Video>("v/", serialized).Result;
             return result.Id;
         }
+        
+        public List<Video> SearchForVideo(
+            IEnumerable<string> titleFragments,
+            IEnumerable<string> dancerIds,
+            IEnumerable<string> eventIds)
+        {
+            List<string> queryFragments = new List<string>(4);
+            if (titleFragments != null && titleFragments.Any())
+            {
+                queryFragments.Add("title-frag=" + string.Join(",", titleFragments));
+            }
+            
+            if (queryFragments.Count > 0)
+            {
+                string url = string.Format("v?" + string.Join("&", queryFragments));
+                return this.HttpGet<List<Video>>(url).Result;
+            }
+            else
+            {
+                return new List<Video>();
+            }
+        }
 
         private async Task<T> HttpGet<T>(string relativeUrl)
         {

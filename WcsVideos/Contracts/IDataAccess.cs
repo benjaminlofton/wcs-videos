@@ -23,5 +23,10 @@ namespace WcsVideos.Contracts
         List<Dancer> GetAllDancers();
         
         string AddVideo(Video video);
+        
+        List<Video> SearchForVideo(
+            IEnumerable<string> titleFragments,
+            IEnumerable<string> dancerIds,
+            IEnumerable<string> eventIds);
     }
 }

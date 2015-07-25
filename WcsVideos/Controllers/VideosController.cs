@@ -10,7 +10,7 @@ namespace WcsVideos.Controllers
 {
     public class VideosController : Controller
     {
-        private const int ResultsPerPage = 20;
+        private const int ResultsPerPage = 5;
         
         private IDataAccess dataAccess;
         
@@ -74,33 +74,61 @@ namespace WcsVideos.Controllers
         public IActionResult Add()
         {
             VideosAddViewModel model = new VideosAddViewModel();
-            model.ProviderId = this.Context.Request.Cookies.Get("ProviderId");
-            model.ProviderVideoIdValidationError = !bool.Parse(this.Context.Request.Cookies.Get("ProviderIdValid") ?? "True");
-            model.ProviderVideoId = this.Context.Request.Cookies.Get("ProviderVideoId");
-            model.ProviderVideoIdValidationError = !bool.Parse(this.Context.Request.Cookies.Get("ProviderVideoIdValid") ?? "True");
-            model.Title = this.Context.Request.Cookies.Get("Title");
-            model.TitleValidationError = !bool.Parse(this.Context.Request.Cookies.Get("TitleValid") ?? "True");
-            model.DancerIdList = this.Context.Request.Cookies.Get("DancerIdList");
-            model.DancerIdListValidationError = !bool.Parse(this.Context.Request.Cookies.Get("DancerIdListValid") ?? "True");
-            model.EventId = this.Context.Request.Cookies.Get("EventId");
-            model.EventIdValidationError = !bool.Parse(this.Context.Request.Cookies.Get("EventIdValid") ?? "True");
+            
+            // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
+            // which will redirect to this page with all of the necessary cookies populated.
+            IReadableStringCollection requestCookies = this.Context.Request.Cookies;
+            model.ProviderId = requestCookies.Get("ProviderId");
+            model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderIdValid") ?? "True");
+            model.ProviderVideoId = requestCookies.Get("ProviderVideoId");
+            model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderVideoIdValid") ?? "True");
+            model.Title = requestCookies.Get("Title");
+            model.TitleValidationError = !bool.Parse(requestCookies.Get("TitleValid") ?? "True");
+            model.DancerIdList = requestCookies.Get("DancerIdList");
+            model.DancerIdListValidationError = !bool.Parse(requestCookies.Get("DancerIdListValid") ?? "True");
+            model.EventId = requestCookies.Get("EventId");
+            model.EventIdValidationError = !bool.Parse(requestCookies.Get("EventIdValid") ?? "True");
             
             CookieOptions cookieOptions = new CookieOptions();
-            this.Context.Response.Cookies.Delete("ProviderId", cookieOptions);
-            this.Context.Response.Cookies.Delete("ProviderIdValid", cookieOptions);
-            this.Context.Response.Cookies.Delete("ProviderVideoId", cookieOptions);
-            this.Context.Response.Cookies.Delete("ProviderVideoIdValid", cookieOptions);
-            this.Context.Response.Cookies.Delete("Title", cookieOptions);
-            this.Context.Response.Cookies.Delete("TitleValid", cookieOptions);
-            this.Context.Response.Cookies.Delete("DancerIdList", cookieOptions);
-            this.Context.Response.Cookies.Delete("DancerIdListValid", cookieOptions);
-            this.Context.Response.Cookies.Delete("EventId", cookieOptions);
-            this.Context.Response.Cookies.Delete("EventIdValid", cookieOptions);
+            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            responseCookies.Delete("ProviderId", cookieOptions);
+            responseCookies.Delete("ProviderIdValid", cookieOptions);
+            responseCookies.Delete("ProviderVideoId", cookieOptions);
+            responseCookies.Delete("ProviderVideoIdValid", cookieOptions);
+            responseCookies.Delete("Title", cookieOptions);
+            responseCookies.Delete("TitleValid", cookieOptions);
+            responseCookies.Delete("DancerIdList", cookieOptions);
+            responseCookies.Delete("DancerIdListValid", cookieOptions);
+            responseCookies.Delete("EventId", cookieOptions);
+            responseCookies.Delete("EventIdValid", cookieOptions);
 
             Event contractEvent = null;
             if (!string.IsNullOrEmpty(model.EventId))
             {
                 contractEvent = this.dataAccess.GetEvent(model.EventId);
+            }
+            
+            if (string.IsNullOrEmpty(model.DancerIdList))
+            {
+                model.DancerNameList = "(None)";
+            }
+            else
+            {
+                string[] dancerIds = model.DancerIdList.Split(
+                    new char[] { ':' },
+                    20,
+                    StringSplitOptions.RemoveEmptyEntries);
+                List<string> dancerNameList = new List<string>();
+                foreach (string dancerId in dancerIds)
+                {
+                    Dancer dancer = this.dataAccess.GetDancerById(dancerId);
+                    if (dancer != null)
+                    {
+                        dancerNameList.Add(dancer.Name + " (" + dancerId + ")");
+                    }
+                }
+                
+                model.DancerNameList = string.Join("; ", dancerNameList);
             }
             
             if (contractEvent == null)
@@ -183,27 +211,29 @@ namespace WcsVideos.Controllers
                 video.EventId = eventId;
                 string videoId = this.dataAccess.AddVideo(video);
                 
-                return this.RedirectToAction(
-                    "AddSuccess",
-                    new { id = videoId });
+                return this.RedirectToAction("AddSuccess", new { id = videoId });
             }
             else
             {
                 CookieOptions cookieOptions = new CookieOptions();
                 cookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append("ProviderId", providerId, cookieOptions);
-                this.Context.Response.Cookies.Append("ProviderIdValid", providerIdValid.ToString(), cookieOptions);
-                this.Context.Response.Cookies.Append("ProviderVideoId", providerVideoId, cookieOptions);
-                this.Context.Response.Cookies.Append("ProviderVideoIdValid", providerVideoIdValid.ToString(), cookieOptions);
-                this.Context.Response.Cookies.Append("Title", title, cookieOptions);
-                this.Context.Response.Cookies.Append("TitleValid", titleValid.ToString(), cookieOptions);
-                this.Context.Response.Cookies.Append("DancerIdList", dancerIdList, cookieOptions);
-                this.Context.Response.Cookies.Append("DancerIdListValid", dancerIdListValid.ToString(), cookieOptions);
-                this.Context.Response.Cookies.Append("EventId", eventId, cookieOptions);
-                this.Context.Response.Cookies.Append("EventIdValid", eventIdValid.ToString(), cookieOptions);
                 
-                return this.RedirectToAction(
-                    "Add");
+                // Populate cookies with form data so that we can repopulate the form after the redirect.
+                // Traditionally this would be done using session variables, but we are using cookies here so
+                // that we don't need to worry about session management.
+                IResponseCookies responseCookies = this.Context.Response.Cookies;
+                responseCookies.Append("ProviderId", providerId, cookieOptions);
+                responseCookies.Append("ProviderIdValid", providerIdValid.ToString(), cookieOptions);
+                responseCookies.Append("ProviderVideoId", providerVideoId, cookieOptions);
+                responseCookies.Append("ProviderVideoIdValid", providerVideoIdValid.ToString(), cookieOptions);
+                responseCookies.Append("Title", title, cookieOptions);
+                responseCookies.Append("TitleValid", titleValid.ToString(), cookieOptions);
+                responseCookies.Append("DancerIdList", dancerIdList, cookieOptions);
+                responseCookies.Append("DancerIdListValid", dancerIdListValid.ToString(), cookieOptions);
+                responseCookies.Append("EventId", eventId, cookieOptions);
+                responseCookies.Append("EventIdValid", eventIdValid.ToString(), cookieOptions);
+                
+                return this.RedirectToAction("Add");
             }
         }
         
@@ -230,11 +260,21 @@ namespace WcsVideos.Controllers
             model.ProviderId = video.ProviderId;
             model.ProviderVideoId = video.ProviderVideoId;
             model.Title = video.Title;
-            model.DancerIdList = string.Join(";", video.DancerIdList);
+            List<string> dancerNameList = new List<string>();
+            foreach (string dancerId in video.DancerIdList)
+            {
+                Dancer dancer = this.dataAccess.GetDancerById(dancerId);
+                if (dancer != null)
+                {
+                    dancerNameList.Add(dancer.Name + " (" + dancerId + ")");
+                }
+            }
+            
+            model.DancerNameList = string.Join("; ", dancerNameList);
             model.EventName = eventName;
             model.VideoUrl = this.Url.Link(
                 "default",
-                new { controller = "Home", action = "Watch", id = id });
+                new { controller = "Videos", action = "Watch", id = id });
             model.AddVideoUrl = this.Url.Link(
                 "default",
                 new { controller = "Videos", action = "Add" });
@@ -245,53 +285,32 @@ namespace WcsVideos.Controllers
         public IActionResult DancerSearchResults(string query, int start)
         {
             DancerSearchResultsViewModel viewModel = new DancerSearchResultsViewModel();
-            List<DancerListItemViewModel> results = new List<DancerListItemViewModel>();
             viewModel.Query = query;
-            viewModel.Entries = results;
-            
-            if (start <= 0)
-            {
-                start = 1;
-            }
             
             if (!string.IsNullOrEmpty(query))
             {
-                viewModel.ShowResults = true;
-                
                 List<Dancer> fullResults = this.dataAccess.SearchForDancer(query);
-                viewModel.ResultsTotal = fullResults.Count;
-                
-                foreach(Dancer dancer in fullResults.Skip(start - 1).Take(VideosController.ResultsPerPage))
-                {
-                    DancerListItemViewModel listItem = new DancerListItemViewModel();
-                    listItem.Name = dancer.Name;
-                    listItem.VideoCount = dancer.VideoIdList == null ? 0 : dancer.VideoIdList.Length;
-                    listItem.WsdcId = dancer.WsdcId;
-                    listItem.Url = string.Format("javascript:addDancer('{0}');", dancer.WsdcId);
-                    results.Add(listItem);
-                }
-                
-                viewModel.ResultsStart = start;
-                viewModel.ResultsEnd = start + results.Count - 1;
-                viewModel.ResultsTotal = fullResults.Count;
-                
-                if (viewModel.ResultsEnd < fullResults.Count)
-                {
-                    viewModel.ShowNextLink = true;
-                    viewModel.NextLinkUrl = string.Format(
+                ViewModelHelper.PopulateSearchResults(
+                    viewModel,
+                    fullResults,
+                    start,
+                    VideosController.ResultsPerPage, 
+                    (dancer) =>
+                        {
+                            DancerListItemViewModel listItem = new DancerListItemViewModel();
+                            listItem.Name = dancer.Name;
+                            listItem.VideoCount = dancer.VideoIdList == null ? 0 : dancer.VideoIdList.Length;
+                            listItem.WsdcId = dancer.WsdcId;
+                            listItem.Url = string.Format(
+                                "javascript:addDancer('{0}', '{1}');",
+                                dancer.WsdcId,
+                                dancer.Name + " (" + dancer.WsdcId + ")");
+                            return listItem;
+                        },
+                    (s) => string.Format(
                         "javascript:searchForDancer('{0}', {1});",
                         query,
-                        viewModel.ResultsEnd + 1);
-                }
-                
-                if (start > 1)
-                {
-                    viewModel.ShowPreviousLink = true;
-                    viewModel.PreviousLinkUrl = string.Format(
-                        "javascript:searchForDancer('{0}', {1});",
-                        query,
-                        viewModel.ResultsStart - VideosController.ResultsPerPage);
-                }
+                        s));
             }
             
             return View(viewModel);
@@ -300,54 +319,30 @@ namespace WcsVideos.Controllers
         public IActionResult EventSearchResults(string query, int start)
         {
             EventSearchResultsViewModel viewModel = new EventSearchResultsViewModel();
-            List<EventListItemViewModel> results = new List<EventListItemViewModel>();
             viewModel.Query = query;
-            viewModel.Entries = results;
             
-            if (start <= 0)
+            if (!string.IsNullOrEmpty(query))
             {
-                start = 1;
-            }
-            
-            if (!string.IsNullOrEmpty(query) && query.Trim().Length > 2)
-            {
-                viewModel.ShowResults = true;
-                
                 List<Event> fullResults = this.dataAccess.SearchForEvent(query);
-                viewModel.ResultsTotal = fullResults.Count;
-                
-                foreach(Event contractEvent in fullResults.Skip(start - 1).Take(VideosController.ResultsPerPage))
-                {
-                    EventListItemViewModel listItem = new EventListItemViewModel();
-                    listItem.Name = contractEvent.Name + " " + contractEvent.EventDate.Year;
-                    listItem.Url = string.Format(
-                        "javascript:setEvent('{0}', '{1}');",
-                        contractEvent.EventId,
-                        listItem.Name);
-                    results.Add(listItem);
-                }
-                
-                viewModel.ResultsStart = start;
-                viewModel.ResultsEnd = start + results.Count - 1;
-                viewModel.ResultsTotal = fullResults.Count;
-                
-                if (viewModel.ResultsEnd < fullResults.Count)
-                {
-                    viewModel.ShowNextLink = true;
-                    viewModel.NextLinkUrl = string.Format(
+                ViewModelHelper.PopulateSearchResults(
+                    viewModel,
+                    fullResults,
+                    start,
+                    VideosController.ResultsPerPage, 
+                    (contractEvent) =>
+                        {
+                            EventListItemViewModel listItem = new EventListItemViewModel();
+                            listItem.Name = contractEvent.Name + " " + contractEvent.EventDate.Year;
+                            listItem.Url = string.Format(
+                                "javascript:setEvent('{0}', '{1}');",
+                                contractEvent.EventId,
+                                listItem.Name);
+                            return listItem;
+                        },
+                    (s) => string.Format(
                         "javascript:searchForEvent('{0}', {1});",
                         query,
-                        viewModel.ResultsEnd + 1);
-                }
-                
-                if (start > 1)
-                {
-                    viewModel.ShowPreviousLink = true;
-                    viewModel.PreviousLinkUrl = string.Format(
-                        "javascript:searchForEvent('{0}', {1});",
-                        query,
-                        viewModel.ResultsStart - VideosController.ResultsPerPage);
-                }
+                        s));
             }
             
             return View(viewModel);

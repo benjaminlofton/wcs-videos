@@ -45,7 +45,8 @@
             <div class="form-group @(this.Model.DancerIdListValidationError ? "has-error" : "")">
                 <label for="dancerIdList" class="col-sm-2 control-label">Dancers</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="dancerIdList" id="dancerIdList" value="@this.Model.DancerIdList">
+                    <p class="form-control-static" id="dancerNameList">@this.Model.DancerNameList</p>
+                    <input type="hidden" name="dancerIdList" id="dancerIdList" value="@this.Model.DancerIdList">
                 </div>
                 @if (this.Model.DancerIdListValidationError)
                 {
@@ -57,6 +58,8 @@
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <a id="findDancerLink" href="#">find dancer</a>
+                    or
+                    <a id="clearDancerLink" href="#">clear dancer list</a>
                 </div>
             </div>
             <div class="col-sm-offset-2 col-sm-10">
@@ -153,6 +156,14 @@
                 }
             );
 
+            $("#clearDancerLink").on(
+                "click",
+                function() {
+                    $("#dancerNameList").text("(None)");
+                    $("#dancerIdList").val("");
+                }
+            );
+
             function requestEventData()
             {
                 searchForEvent($("#eventQuery").val(), 0);
@@ -188,24 +199,30 @@
             );
         });
         
-        function addDancer(dancer)
+        function addDancer(dancerId, dancerName)
         {
             var dancerIds = $("#dancerIdList").val();
+            var dancerNames = $("#dancerNameList").text();
+            
             if (dancerIds && dancerIds.length)
             {
                 if (!dancerIds.charAt(dancerIds.length - 1) != ';')
                 {
                     dancerIds += ";";
+                    dancerNames += "; ";
                 }
                 
-                dancerIds += dancer;
+                dancerIds += dancerId;
+                dancerNames += dancerName;
             }
             else
             {
-                dancerIds = dancer;
+                dancerIds = dancerId;
+                dancerNames = dancerName;
             }
             
             $("#dancerIdList").val(dancerIds);
+            $("#dancerNameList").text(dancerNames);
         };
         
         function searchForDancer(query, start)

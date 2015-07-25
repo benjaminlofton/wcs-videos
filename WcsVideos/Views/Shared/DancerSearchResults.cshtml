@@ -3,12 +3,14 @@
     Layout = "";
 }
 
-    <p>
-        Showing search results @this.Model.ResultsStart
-        to @this.Model.ResultsEnd of @this.Model.ResultsTotal
-        for &quot;@this.Model.Query&quot;.
-    </p>
-    
+<p>
+    Showing search results @this.Model.ResultsStart
+    to @this.Model.ResultsEnd of @this.Model.ResultsTotal
+    for &quot;@this.Model.Query&quot;.
+</p>
+
+@if (this.Model.Entries != null)
+{
     <ol start="@this.Model.ResultsStart" class="list-group">
         @foreach (DancerListItemViewModel dancer in this.Model.Entries)
         {
@@ -17,19 +19,44 @@
             </li>
         }
     </ol>
-    
-    @if (this.Model.ShowPreviousLink || this.Model.ShowNextLink)
-    {
-        <p>
-            @if (this.Model.ShowPreviousLink)
-            {
-                <a href="@this.Model.PreviousLinkUrl">Previous Page</a>
-            }
-            
-            @if (this.Model.ShowNextLink)
-            {
-                <a href="@this.Model.NextLinkUrl">Next Page</a>
-            }
-        </p>
-    }
+}
+
+<nav>
+    <ul class="pager">
+        @if (this.Model.ShowPreviousLink)
+        {
+            <li class="previous">
+                <a href="@this.Model.PreviousLinkUrl">
+                    <span aria-hidden="true">&laquo;</span> Previous Page
+                </a>    
+            </li>
+        }
+        else
+        {
+            <li class="previous disabled">
+                <a href="#">
+                    <span aria-hidden="true">&laquo;</span> Previous Page
+                </a>    
+            </li>
+        }
+        
+        @if (this.Model.ShowNextLink)
+        {
+            <li class="next">
+                <a href="@this.Model.NextLinkUrl">
+                    Next Page <span aria-hidden="true">&raquo;</span>
+                </a>    
+            </li>
+        }
+        else
+        {
+            <li class="next disabled">
+                <a href="#">
+                    Next Page <span aria-hidden="true">&raquo;</span>
+                </a> 
+            </li>
+        }
+    </ul>
+</nav>
+
 

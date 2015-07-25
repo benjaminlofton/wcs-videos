@@ -1,0 +1,111 @@
+@model VideoSearchViewModel
+@{
+    ViewBag.Title = "Dancers";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header">
+            <h2>
+                Video Search
+            </h2>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p>Search for a video:</p>
+        <form class="form-horizontal" role="form" method="get" action="" id="searchform">
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
+                </div>
+                <div class="col-sm-6">
+                    <button type="submit" class="btn btn-default">Search</button>
+                </div>
+            </div>
+            <div class="form-group" style="display:none;">
+                <div class="col-sm-12">
+                    <div class="checkbox disabled">
+                        <label>
+                            <input type="checkbox" id="advancedSearch" name="advancedSearch" value="1" disabled>
+                            Advanced Search
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="display:none;">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Advanced Search Fields
+                        </div>
+                        <div class="panel-body">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (this.Model.ShowResults)
+        {
+            <p>
+                Showing search results @this.Model.ResultsStart
+                to @this.Model.ResultsEnd of @this.Model.ResultsTotal
+                for &quot;@this.Model.Query&quot;.
+            </p>
+            
+            <ol start="@this.Model.ResultsStart" class="list-group">
+                @foreach (var video in this.Model.Entries) {
+                    <li class="list-group-item">
+                        <img src="@video.ThumbnailUrl">
+                        <a href="@video.Url">@video.Title</a>
+                    </li>    
+                }
+            </ol>
+            
+            <nav>
+                <ul class="pager">
+                    @if (this.Model.ShowPreviousLink)
+                    {
+                        <li class="previous">
+                            <a href="@this.Model.PreviousLinkUrl">
+                                <span aria-hidden="true">&laquo;</span> Previous Page
+                            </a>    
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="previous disabled">
+                            <a href="#">
+                                <span aria-hidden="true">&laquo;</span> Previous Page
+                            </a>    
+                        </li>
+                    }
+                    
+                    @if (this.Model.ShowNextLink)
+                    {
+                        <li class="next">
+                            <a href="@this.Model.NextLinkUrl">
+                                Next Page <span aria-hidden="true">&raquo;</span>
+                            </a>    
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="next disabled">
+                            <a href="#">
+                                Next Page <span aria-hidden="true">&raquo;</span>
+                            </a> 
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </div>
+</div>

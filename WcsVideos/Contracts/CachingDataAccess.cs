@@ -149,5 +149,13 @@ namespace WcsVideos.Contracts
         {
             return this.baseDataAccess.AddVideo(video);
         }
+        
+        public List<Video> SearchForVideo(
+            IEnumerable<string> titleFragments,
+            IEnumerable<string> dancerIds,
+            IEnumerable<string> eventIds)
+        {
+            return this.baseDataAccess.SearchForVideo(titleFragments, dancerIds, eventIds);
+        }
 	}
 }
