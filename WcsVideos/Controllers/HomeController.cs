@@ -46,7 +46,7 @@ namespace WcsVideos.Controllers
                     modelEvent.VideoCount = videoCount;
                     modelEvent.ShowVideoCount = true;
                     modelEvents.Add(modelEvent);
-                    if (++eventCount >= 10)
+                    if (++eventCount >= 20)
                     {
                         break;
                     }

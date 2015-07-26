@@ -42,7 +42,7 @@ namespace WcsVideos.Contracts
         public List<Event> GetRecentEvents()
         {
             List<Event> events;
-            string afterDate = DateTime.UtcNow.Subtract(TimeSpan.FromDays(60)).ToString("yyyy-MM-dd");
+            string afterDate = DateTime.UtcNow.Subtract(TimeSpan.FromDays(180)).ToString("yyyy-MM-dd");
             string beforeDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
             events = this.HttpGet<List<Event>>(
                 "event/?after-date=" + afterDate + "&before-date=" + beforeDate).Result
@@ -108,6 +108,16 @@ namespace WcsVideos.Contracts
             if (titleFragments != null && titleFragments.Any())
             {
                 queryFragments.Add("title-frag=" + string.Join(",", titleFragments));
+            }
+            
+            if (dancerIds != null && dancerIds.Any())
+            {
+                queryFragments.Add("wsdc-id=" + string.Join(",", dancerIds));
+            }
+            
+            if (eventIds != null && eventIds.Any())
+            {
+                queryFragments.Add("event-id=" + string.Join(",", eventIds));
             }
             
             if (queryFragments.Count > 0)

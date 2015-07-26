@@ -153,6 +153,11 @@
                 "click",
                 function() {
                     $("#findDancerPanel").toggle();
+                                        
+                    if ($("#findDancerPanel").is(":visible"))
+                    {
+                        $("#dancerQuery").focus();
+                    }
                 }
             );
 
@@ -188,6 +193,11 @@
                 "click",
                 function() {
                     $("#findEventPanel").toggle();
+                                        
+                    if ($("#findEventPanel").is(":visible"))
+                    {
+                        $("#eventQuery").focus();
+                    }
                 }
             );
             

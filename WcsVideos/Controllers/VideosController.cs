@@ -115,7 +115,7 @@ namespace WcsVideos.Controllers
             else
             {
                 string[] dancerIds = model.DancerIdList.Split(
-                    new char[] { ':' },
+                    new char[] { ';' },
                     20,
                     StringSplitOptions.RemoveEmptyEntries);
                 List<string> dancerNameList = new List<string>();

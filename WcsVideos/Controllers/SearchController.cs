@@ -29,32 +29,73 @@ namespace WcsVideos.Controllers
             return this.Dancers(query, 1);
         }
         
-        public IActionResult Videos(string query, string events, string dancers, int start)
+        public IActionResult Videos(string query, bool advancedSearch, string eventId, string dancerIdList, int start)
         {
-            VideoSearchViewModel viewModel = new VideoSearchViewModel();
-            viewModel.Title = "Video Search";
-            viewModel.Query = query;
+            VideoSearchViewModel model = new VideoSearchViewModel();
+            model.Title = "Video Search";
+            model.Query = query;
+            model.EventId = eventId;
+            model.DancerIdList = dancerIdList;
+            model.AdvancedSearch = advancedSearch;
             
-            if (!string.IsNullOrEmpty(query) || !string.IsNullOrEmpty(events) || !string.IsNullOrEmpty(dancers))
+            Event contractEvent = null;
+            if (!string.IsNullOrEmpty(model.EventId))
+            {
+                contractEvent = this.dataAccess.GetEvent(model.EventId);
+            }
+            
+            if (string.IsNullOrEmpty(model.DancerIdList))
+            {
+                model.DancerNameList = "(None)";
+            }
+            else
+            {
+                string[] dancerIds = model.DancerIdList.Split(
+                    new char[] { ';' },
+                    20,
+                    StringSplitOptions.RemoveEmptyEntries);
+                List<string> dancerNameList = new List<string>();
+                foreach (string dancerId in dancerIds)
+                {
+                    Dancer dancer = this.dataAccess.GetDancerById(dancerId);
+                    if (dancer != null)
+                    {
+                        dancerNameList.Add(dancer.Name + " (" + dancerId + ")");
+                    }
+                }
+                
+                model.DancerNameList = string.Join("; ", dancerNameList);
+            }
+            
+            if (contractEvent == null)
+            {
+                model.EventName = "(None)";
+            }
+            else
+            {
+                model.EventName = contractEvent.Name + " " + contractEvent.EventDate.Year;
+            } 
+            
+            if (!string.IsNullOrEmpty(query) || !string.IsNullOrEmpty(eventId) || !string.IsNullOrEmpty(dancerIdList))
             {
                 string[] titleFragments = (query ?? string.Empty).Split(
                     new char[] { ' ' },
                     10,
                     StringSplitOptions.RemoveEmptyEntries);
                 
-                string[] eventIds = (events ?? string.Empty).Split(
+                string[] eventIds = (eventId ?? string.Empty).Split(
                     new char[] { ';' },
                     10,
                     StringSplitOptions.RemoveEmptyEntries);
                 
-                string[] dancerIds = (dancers ?? string.Empty).Split(
+                string[] dancerIds = (dancerIdList ?? string.Empty).Split(
                     new char[] { ';' },
                     10,
                     StringSplitOptions.RemoveEmptyEntries);
                 
                 List<Video> fullResults = this.dataAccess.SearchForVideo(titleFragments, dancerIds, eventIds);
                 ViewModelHelper.PopulateSearchResults(
-                    viewModel,
+                    model,
                     fullResults,
                     start,
                     SearchController.ResultsPerPage,
@@ -70,7 +111,7 @@ namespace WcsVideos.Controllers
                         }));
             }
             
-            return this.View(viewModel);
+            return this.View(model);
         }
         
         public IActionResult Dancers(string query, int start)
