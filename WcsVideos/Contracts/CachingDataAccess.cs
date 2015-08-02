@@ -17,13 +17,13 @@ namespace WcsVideos.Contracts
         private IDataAccess baseDataAccess;
         private ManualResetEvent allDancersLoaded;
         
-		public CachingDataAccess()
+		public CachingDataAccess(string endpoint)
 		{
 			this.dancers = new ConcurrentDictionary<string, Dancer>();
             this.videos = new ConcurrentDictionary<string, Video>();
             this.events = new ConcurrentDictionary<string, Event>();
             this.eventVideos = new ConcurrentDictionary<string, List<Video>>();
-            this.baseDataAccess = new DataAccess();
+            this.baseDataAccess = new DataAccess(endpoint);
             this.allDancersLoaded = new ManualResetEvent(false);
             Thread loadDancersThread = new Thread(() =>
                 {

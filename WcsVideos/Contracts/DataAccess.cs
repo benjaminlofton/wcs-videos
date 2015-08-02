@@ -9,8 +9,13 @@ using Newtonsoft.Json;
 namespace WcsVideos.Contracts
 {
     public class DataAccess : IDataAccess
-    {
-        private static readonly Uri WebserviceTarget = new Uri("http://localhost:8085/");
+    {        
+        private Uri WebserviceTarget { get; set; }
+        
+        public DataAccess(string endpoint)
+        {
+            this.WebserviceTarget = new Uri(endpoint);
+        }
         
         public Event GetEvent(string eventId)
         {
@@ -96,6 +101,7 @@ namespace WcsVideos.Contracts
                 });
                 
             Video result = this.HttpPost<Video>("v/", serialized).Result;
+            video.Id = result.Id;
             return result.Id;
         }
         
@@ -136,7 +142,7 @@ namespace WcsVideos.Contracts
             Console.WriteLine("GET from " + relativeUrl);
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = DataAccess.WebserviceTarget;
+                client.BaseAddress = this.WebserviceTarget;
                 HttpResponseMessage response = await client.GetAsync(relativeUrl);
                 string serialized = await response.Content.ReadAsStringAsync();
                 T result = JsonConvert.DeserializeObject<T>(
@@ -152,7 +158,7 @@ namespace WcsVideos.Contracts
             Console.WriteLine(content);
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = DataAccess.WebserviceTarget;
+                client.BaseAddress = this.WebserviceTarget;
                 HttpResponseMessage response = await client.PostAsync(
                     relativeUrl,
                     new StringContent(content, Encoding.UTF8, "application/json"));

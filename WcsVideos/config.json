@@ -1,5 +1,6 @@
 {
     "AppSettings": {
-        "SiteTitle": "WCS Videos"
+        "SiteTitle": "WCS Videos",
+        "DataAccessEndpoint": "http://localhost:8085/"
     }
 }
