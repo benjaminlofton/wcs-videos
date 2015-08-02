@@ -336,12 +336,12 @@ namespace WcsVideos.Controllers
                             listItem.Url = string.Format(
                                 "javascript:setEvent('{0}', '{1}');",
                                 contractEvent.EventId,
-                                listItem.Name);
+                                listItem.Name.Replace("'", "\\'"));
                             return listItem;
                         },
                     (s) => string.Format(
                         "javascript:searchForEvent('{0}', {1});",
-                        query,
+                        query.Replace("'", "\\'"),
                         s));
             }
             
