@@ -57,9 +57,13 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <a id="findDancerLink" href="#">find dancer</a>
-                    or
-                    <a id="clearDancerLink" href="#">clear dancer list</a>
+                    <a role="button" class="btn btn-default" id="findDancerLink" href="#">
+                        <span class="glyphicon glyphicon-plus-sign"> </span> add dancer
+                    </a>
+                    &nbsp; or &nbsp;
+                    <a role="button" class="btn btn-default" id="clearDancerLink" href="#">
+                        <span class="glyphicon glyphicon-remove-sign"> </span> clear dancers
+                    </a>
                 </div>
             </div>
             <div class="col-sm-offset-2 col-sm-10">
@@ -91,9 +95,13 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <a id="findEventLink" href="#">find event</a>
-                    or
-                    <a id="clearEventLink" href="#">remove selected event</a>
+                    <a role="button" class="btn btn-default" id="findEventLink" href="#">
+                        <span class="glyphicon glyphicon-plus-sign"> </span> select event
+                    </a>
+                    &nbsp; or &nbsp;
+                    <a role="button" class="btn btn-default" id="clearEventLink" href="#">
+                        <span class="glyphicon glyphicon-remove-sign"> </span> remove event
+                    </a>
                 </div>
             </div>
             <div class="col-sm-offset-2 col-sm-10">
@@ -153,7 +161,7 @@
                 "click",
                 function() {
                     $("#findDancerPanel").toggle();
-                                        
+                    
                     if ($("#findDancerPanel").is(":visible"))
                     {
                         $("#dancerQuery").focus();
@@ -207,6 +215,20 @@
                     setEvent("", "(None)");
                 }
             );
+            
+            $("#advancedSearch").on(
+                "change",
+                function() {
+                    if ($("#advancedSearch").prop("checked"))
+                    {
+                        $("#advancedSearchPanel").show();
+                    }
+                    else
+                    {
+                        $("#advancedSearchPanel").hide();
+                    }
+                }
+            );
         });
         
         function addDancer(dancerId, dancerName)
@@ -233,6 +255,9 @@
             
             $("#dancerIdList").val(dancerIds);
             $("#dancerNameList").text(dancerNames);
+            $("#findDancerPanel").hide();
+            $("#dancerQuery").val("");
+            $("#dancerSearchResults").html("");
         };
         
         function searchForDancer(query, start)
@@ -254,6 +279,8 @@
             $("#eventId").val(eventId);
             $("#eventName").text(eventName);
             $("#findEventPanel").hide();
+            $("#eventQuery").val("");
+            $("#eventSearchResults").html("");
         };
         
         function searchForEvent(query, start)

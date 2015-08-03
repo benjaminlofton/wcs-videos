@@ -18,10 +18,12 @@
         <form class="form-horizontal" role="form" method="get" action="" id="searchform">
             <div class="form-group">
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
-                </div>
-                <div class="col-sm-6">
-                    <button type="submit" class="btn btn-default">Search</button>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default">Search</button>
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -56,9 +58,13 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <a id="findDancerLink" href="#">find dancer</a>
-                                    or
-                                    <a id="clearDancerLink" href="#">clear dancer list</a>
+                                    <a role="button" class="btn btn-default" id="findDancerLink" href="#">
+                                        <span class="glyphicon glyphicon-plus-sign"> </span> add dancer
+                                    </a>
+                                    &nbsp; or &nbsp;
+                                    <a role="button" class="btn btn-default" id="clearDancerLink" href="#">
+                                        <span class="glyphicon glyphicon-remove-sign"> </span> clear dancers
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-sm-offset-2 col-sm-10">
@@ -84,9 +90,13 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <a id="findEventLink" href="#">find event</a>
-                                    or
-                                    <a id="clearEventLink" href="#">remove selected event</a>
+                                    <a role="button" class="btn btn-default" id="findEventLink" href="#">
+                                        <span class="glyphicon glyphicon-plus-sign"> </span> select event
+                                    </a>
+                                    &nbsp; or &nbsp;
+                                    <a role="button" class="btn btn-default" id="clearEventLink" href="#">
+                                        <span class="glyphicon glyphicon-remove-sign"> </span> remove event
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-sm-offset-2 col-sm-10">
@@ -121,14 +131,7 @@
                 for &quot;@this.Model.Query&quot;.
             </p>
             
-            <ol start="@this.Model.ResultsStart" class="list-group">
-                @foreach (var video in this.Model.Entries) {
-                    <li class="list-group-item">
-                        <img src="@video.ThumbnailUrl">
-                        <a href="@video.Url">@video.Title</a>
-                    </li>    
-                }
-            </ol>
+            @Html.Partial("VideoListGroup", this.Model.Entries)
             
             <nav>
                 <ul class="pager">
@@ -299,6 +302,9 @@
             
             $("#dancerIdList").val(dancerIds);
             $("#dancerNameList").text(dancerNames);
+            $("#findDancerPanel").hide();
+            $("#dancerQuery").val("");
+            $("#dancerSearchResults").html("");
         };
         
         function searchForDancer(query, start)
@@ -320,6 +326,8 @@
             $("#eventId").val(eventId);
             $("#eventName").text(eventName);
             $("#findEventPanel").hide();
+            $("#eventQuery").val("");
+            $("#eventSearchResults").html("");
         };
         
         function searchForEvent(query, start)

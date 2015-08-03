@@ -35,7 +35,12 @@ namespace WcsVideos.Contracts
         
         public List<Event> SearchForEvent(string query)
         {
-            List<Event> events = this.HttpGet<List<Event>>("event/?name-frag=" + Uri.EscapeUriString(query)).Result;
+            string[] words = query.Split(
+                new char[] { ' ' },
+                StringSplitOptions.RemoveEmptyEntries);
+                
+            List<Event> events = this.HttpGet<List<Event>>(
+                "event/?name-frag=" + Uri.EscapeUriString(string.Join(",", words))).Result;
             if (events == null)
             {
                 events = new List<Event>();

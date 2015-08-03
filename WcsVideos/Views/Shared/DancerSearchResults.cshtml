@@ -15,7 +15,8 @@
         @foreach (DancerListItemViewModel dancer in this.Model.Entries)
         {
             <li class="list-group-item">
-                <a href="@dancer.Url">@dancer.Name (@dancer.WsdcId)</a> - @dancer.VideoCount Video(s)
+                <span class="badge">@dancer.VideoCount videos</span>
+                <a href="@dancer.Url">@dancer.Name (@dancer.WsdcId)</a>
             </li>
         }
     </ol>
