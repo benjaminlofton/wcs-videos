@@ -45,4 +45,12 @@ public class Video {
   public void setEventId(String eventId) {
     this.eventId = eventId;
   }
+
+  private String CreatedDateTime;
+  public String getCreatedDateTime() {
+    return CreatedDateTime;
+  }
+  public void setCreatedDateTime(String createdDateTime) {
+    CreatedDateTime = createdDateTime;
+  }
 }

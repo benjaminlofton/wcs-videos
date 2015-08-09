@@ -1,6 +1,7 @@
 package ban.controller;
 
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,8 +16,8 @@ import java.util.List;
 @ComponentScan
 public class ListController {
 
-  @RequestMapping(value="/v/",method = RequestMethod.GET)
-  public List<String> getListByName( @RequestParam(value = "name", required = false) String listName) {
+  @RequestMapping(value="/list/{listName}",method = RequestMethod.GET)
+  public List<String> getListByName( @PathVariable String listName) {
 
     return null;
   }

@@ -14,6 +14,7 @@ public class VideoDBuilder {
   private String title = null;
   private String eventId = null;
   private Set<Integer> dancerIdList = new HashSet<>();
+  private String createdDateTime = null;
 
   public VideoDBuilder withId(String id) {
     this.id = id;
@@ -50,6 +51,11 @@ public class VideoDBuilder {
     return this;
   }
 
+  public VideoDBuilder withCreatedDateTime(String createdDateTime) {
+    this.createdDateTime = createdDateTime;
+    return this;
+  }
+
   public VideoD build() {
 
     VideoD video = new VideoD();
@@ -59,6 +65,7 @@ public class VideoDBuilder {
     video.setTitle(title);
     video.setDancerIdList(dancerIdList);
     video.setEventId(eventId);
+    video.setCreatedDateTime(createdDateTime);
 
     return video;
   }

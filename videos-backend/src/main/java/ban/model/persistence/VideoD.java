@@ -34,6 +34,9 @@ public class VideoD {
   @DynamoDBAttribute(attributeName="EventId")
   private String eventId;
 
+  @DynamoDBAttribute(attributeName="CreatedDateTime")
+  private String createdDateTime;
+
   public String getId() {
     return id;
   }
@@ -56,8 +59,14 @@ public class VideoD {
   public String getEventId() {
     return eventId;
   }
-
   public void setEventId(String eventId) {
     this.eventId = eventId;
+  }
+
+  public String getCreatedDateTime() {
+    return createdDateTime;
+  }
+  public void setCreatedDateTime(String createdDateTime) {
+    this.createdDateTime = createdDateTime;
   }
 }

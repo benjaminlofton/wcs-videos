@@ -30,6 +30,7 @@ public class VideoMapper {
     video.setTitle(pVideo.getTitle());
     video.setDancerIdList(pVideo.getDancerIdList());
     video.setEventId(pVideo.getEventId());
+    video.setCreatedDateTime(pVideo.getCreatedDateTime());
 
     return video;
   }
@@ -58,6 +59,7 @@ public class VideoMapper {
         .withTitle(video.getTitle())
         .withEventId(video.getEventId())
         .withDancerIdList(video.getDancerIdList())
+        .withCreatedDateTime(video.getCreatedDateTime())
         .build();
   }
 }

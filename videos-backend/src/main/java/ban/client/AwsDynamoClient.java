@@ -69,6 +69,11 @@ public class AwsDynamoClient {
     // Id will be Dynamo auto-generated UUID
     video.setId(null);
 
+    // AWS Will throw exception when saving empty Number Set (!!!)
+    if(video.getDancerIdList().isEmpty()) {
+      video.setDancerIdList(null);
+    }
+
     dynamoMapper.save(video);
     return video;
   }
@@ -96,6 +101,11 @@ public class AwsDynamoClient {
       videoD.setProviderId(Integer.parseInt(item.get("ProviderId").getN()));
       videoD.setProviderVideoId(item.get("ProviderVideoId").getS());
       videoD.setTitle(item.get("Title").getS());
+
+      if(item.get("CreatedDateTime") != null) {
+        videoD.setCreatedDateTime(item.get("CreatedDateTime").getS());
+      }
+
       if(item.get("EventId") != null) {
         videoD.setEventId(item.get("EventId").getS());
       }
