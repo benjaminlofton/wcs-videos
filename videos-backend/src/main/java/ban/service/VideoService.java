@@ -61,16 +61,33 @@ public class VideoService {
     return videoMapper.mapToViewModel(pVideo);
   }
 
-  public List<Video> getAllVideos() {
+  /**
+   * If if id field of the Video object is set, attempt to udpate the existing video
+   * If not, add a new video, including updates to the Dancer colleciton
+   * @param video - The Video object to add or update
+   * @return Returns the new state of the Video, if successful
+   */
+  public Video addOrUpdateVideo(Video video) {
 
-    List<Video> videos =  new ArrayList<>();
-    for(VideoD videoD : dynamoClient.getAllVideos()) {
-      videos.add(videoMapper.mapToViewModel(videoD));
+    String id = video.getId();
+    if(id != null && !id.isEmpty()) {
+
+      if(!exists(id)) {
+        throw new InvalidRequestException();
+      }
+
+      return updateVideo(video);
+
+    } else {
+      return addVideo(video);
     }
-    return videos;
   }
 
-  public Video addVideo(Video video) {
+  private Video updateVideo(Video newState) {
+    throw new RuntimeException("NYI");
+  }
+
+  private Video addVideo(Video video) {
 
     // Verify that the provider Id does not exist
     if(existsByProviderId(video.getProviderVideoId())) {

@@ -39,7 +39,7 @@ public class VideoController {
   @RequestMapping(value="/v", method = RequestMethod.POST)
   public Video putVideo(@RequestBody Video video)
   {
-    return videoService.addVideo(video);
+    return videoService.addOrUpdateVideo(video);
   }
 
   @RequestMapping(value="/v/{videoId}",method = RequestMethod.GET)
