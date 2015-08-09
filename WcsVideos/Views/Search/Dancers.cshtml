@@ -1,12 +1,15 @@
+@model DancerSearchResultsViewModel
 @{
-    ViewBag.Title = "Dancers";
+    ViewBag.Title = this.Model.Title;
 }
 
 <div class="row">
     <div class="col-md-12">
-        <h2>
-            Dancers
-        </h2>
+        <div class="page-header">
+            <h2>
+                Dancer Search
+            </h2>
+        </div>
     </div>
 </div>
 <div class="row">
@@ -15,10 +18,12 @@
         <form class="form-horizontal" role="form" method="get" action="" id="searchform">
             <div class="form-group">
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
-                </div>
-                <div class="col-sm-6">
-                    <button type="submit" class="btn btn-default">Search</button>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default">Search</button>
+                        </span>
+                    </div>
                 </div>
             </div>
         </form>
@@ -26,10 +31,10 @@
 </div>
 
 <div class="row">
-    <div id="results">
+    <div class="col-md-12" id="results">
         @if (this.Model.ShowResults)
         {
-            @Html.Partial("DancerSearchResults", (DancerSearchResultsViewModel)this.Model)
+            @Html.Partial("DancerSearchResults", this.Model)
         }
     </div>
 </div>

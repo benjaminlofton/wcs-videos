@@ -1,4 +1,4 @@
-
+@model EventSearchResultsViewModel
 @{
     Layout = "";
 }
@@ -12,16 +12,15 @@
 @if (this.Model.Entries != null)
 {
     <ol start="@this.Model.ResultsStart" class="list-group">
-        @foreach (DancerListItemViewModel dancer in this.Model.Entries)
+        @foreach (EventListItemViewModel eventEntry in this.Model.Entries)
         {
             <li class="list-group-item">
-                <span class="badge">@dancer.VideoCount videos</span>
-                <a href="@dancer.Url">@dancer.Name (@dancer.WsdcId)</a>
+                <a href="@eventEntry.Url">@eventEntry.Name</a>
             </li>
         }
     </ol>
 }
-
+    
 <nav>
     <ul class="pager">
         @if (this.Model.ShowPreviousLink)
@@ -59,5 +58,4 @@
         }
     </ul>
 </nav>
-
 

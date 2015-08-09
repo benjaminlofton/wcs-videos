@@ -1,0 +1,19 @@
+@using System.Linq;
+@model IEnumerable<VideoListItemViewModel>
+
+<ul class="list-group">
+    @foreach (var video in this.Model) {
+        <li class="list-group-item">
+            <div class="media">
+                <div class="media-left">
+                    <a href="@video.Url">
+                        <img src="@video.ThumbnailUrl">
+                    </a>
+                </div>
+                <div class="media-body media-middle">
+                    <a href="@video.Url">@video.Title</a>
+                </div>
+            </div>
+        </li>    
+    }
+</ul>

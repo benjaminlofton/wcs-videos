@@ -15,6 +15,10 @@ namespace WcsVideos.Models
 		public string ProviderName { get; set; }
 		
 		public List<DancerLinkViewModel> Dancers { get; set; }
+        
+        public string EventName { get; set; }
+        
+        public string EventUrl { get; set; }
 	}
 	
 	public class DancerLinkViewModel

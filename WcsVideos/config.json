@@ -1,10 +1,6 @@
 {
     "AppSettings": {
-        "SiteTitle": "WCS Videos"
-    },
-    "Data": {
-        "DefaultConnection": {
-            "ConnectionString": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-WcsVideos-ba55c941-0288-4afd-8f22-95f7e75d1062;Trusted_Connection=True;MultipleActiveResultSets=true"
-        }
+        "SiteTitle": "WCS Videos",
+        "DataAccessEndpoint": "http://localhost:8085/"
     }
 }

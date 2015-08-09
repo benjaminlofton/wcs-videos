@@ -24,9 +24,36 @@ namespace WcsVideos.Controllers
             model.Videos = videos.Select(
                 x => new VideoListItemViewModel
                 {
-                    Url = this.Url.Link("default", new { controller = "Home", action = "Watch", id = x.Id }),
-                    Title = x.Title
+                    Url = this.Url.Link("default", new { controller = "Videos", action = "Watch", id = x.Id }),
+                    Title = x.Title,
+                    ThumbnailUrl = string.Format("http://img.youtube.com/vi/{0}/default.jpg", x.ProviderVideoId)
                 }).ToList(); 
+            
+            var events = this.dataAccess.GetRecentEvents();
+            List<EventListItemViewModel> modelEvents = new List<EventListItemViewModel>(events.Count);
+            int eventCount = 0;
+            
+            foreach (Event contractEvent in events)
+            {
+                int videoCount = this.dataAccess.GetEventVideos(contractEvent.EventId).Count;
+                if (videoCount > 0)
+                {
+                    EventListItemViewModel modelEvent = new EventListItemViewModel();
+                    modelEvent.Url = this.Url.Link(
+                        "default",
+                        new { controller = "Events", action = "Event", id = contractEvent.EventId});
+                    modelEvent.Name = contractEvent.Name;
+                    modelEvent.VideoCount = videoCount;
+                    modelEvent.ShowVideoCount = true;
+                    modelEvents.Add(modelEvent);
+                    if (++eventCount >= 20)
+                    {
+                        break;
+                    }
+                }
+            }
+            
+            model.Events = modelEvents;
             
             return this.View(model);
         }
@@ -43,38 +70,6 @@ namespace WcsVideos.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
-        }
-
-        public IActionResult Watch(string id)
-        {
-            Video video = this.dataAccess.GetVideoById(id);
-            
-            if (video == null)
-            {
-                return this.HttpNotFound();    
-            }
-
-            WatchViewModel model = new WatchViewModel();
-            model.ExternalUrl = string.Format("https://www.youtube.com/watch?v={0}", video.ProviderVideoId);
-            model.EmbedUrl = string.Format("http://www.youtube.com/embed/{0}", video.ProviderVideoId);
-            model.ProviderName = "YouTube";
-            model.Title = video.Title;
-            model.ProviderVideoId = video.ProviderVideoId;
-            model.Dancers = new List<DancerLinkViewModel>();
-            
-            foreach (string dancerId in video.DancerIdList)
-            {
-                Dancer dancer = this.dataAccess.GetDancerById(dancerId);
-                if (dancer != null)
-                {
-                    DancerLinkViewModel dancerModel = new DancerLinkViewModel();
-                    dancerModel.DisplayName = dancer.Name;
-                    dancerModel.Url = this.Url.Link("default", new { controller = "Home", action = "Dancer", id = dancer.WsdcId });
-                    model.Dancers.Add(dancerModel);
-                }    
-            }
-            
-            return View(model);
         }
         
         public IActionResult Dancer(string id)
@@ -97,7 +92,12 @@ namespace WcsVideos.Controllers
                 {
                     VideoListItemViewModel listItemModel = new VideoListItemViewModel();
                     listItemModel.Title = video.Title;
-                    listItemModel.Url = this.Url.Link("default", new { controller = "Home", action = "Watch", id = video.Id });
+                    listItemModel.Url = this.Url.Link(
+                        "default",
+                        new { controller = "Videos", action = "Watch", id = video.Id });
+                    listItemModel.ThumbnailUrl = string.Format(
+                        "http://img.youtube.com/vi/{0}/default.jpg",
+                        video.ProviderVideoId);
                     model.Videos.Add(listItemModel);
                 }  
             }

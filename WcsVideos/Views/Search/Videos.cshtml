@@ -1,0 +1,348 @@
+@model VideoSearchViewModel
+@{
+    ViewBag.Title = "Dancers";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header">
+            <h2>
+                Video Search
+            </h2>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p>Search for a video:</p>
+        <form class="form-horizontal" role="form" method="get" action="" id="searchform">
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default">Search</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBox(
+                                "advancedSearch",
+                                this.Model.AdvancedSearch,
+                                new Dictionary<string, object>
+                                {
+                                    { "id", "advancedSearch"}
+                                })
+                            Advanced Search
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" id="advancedSearchPanel" style="@(this.Model.AdvancedSearch ? "" : "display:none;")">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Advanced Search Fields
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="dancerIdList" class="col-sm-2 control-label">Dancers</label>
+                                <div class="col-sm-10">
+                                    <p class="form-control-static" id="dancerNameList">@this.Model.DancerNameList</p>
+                                    <input type="hidden" name="dancerIdList" id="dancerIdList" value="@this.Model.DancerIdList">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <a role="button" class="btn btn-default" id="findDancerLink" href="#">
+                                        <span class="glyphicon glyphicon-plus-sign"> </span> add dancer
+                                    </a>
+                                    &nbsp; or &nbsp;
+                                    <a role="button" class="btn btn-default" id="clearDancerLink" href="#">
+                                        <span class="glyphicon glyphicon-remove-sign"> </span> clear dancers
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div style="display:none;" class="panel panel-default" id="findDancerPanel">
+                                    <div class="panel-heading">
+                                        Dancer Search
+                                    </div>
+                                    <div class="panel-body">
+                                        <p>
+                                            <input type="text" class="form-control" id="dancerQuery">
+                                        </p>
+                                        <div id="dancerSearchResults">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="dancerIdList" class="col-sm-2 control-label">Event</label>
+                                <div class="col-sm-10">
+                                    <p class="form-control-static" id="eventName">@this.Model.EventName</p>
+                                    <input type="hidden" name="eventId" id="eventId" value="@this.Model.EventId">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <a role="button" class="btn btn-default" id="findEventLink" href="#">
+                                        <span class="glyphicon glyphicon-plus-sign"> </span> select event
+                                    </a>
+                                    &nbsp; or &nbsp;
+                                    <a role="button" class="btn btn-default" id="clearEventLink" href="#">
+                                        <span class="glyphicon glyphicon-remove-sign"> </span> remove event
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div style="display:none;" class="panel panel-default" id="findEventPanel">
+                                    <div class="panel-heading">
+                                        Event Search
+                                    </div>
+                                    <div class="panel-body">
+                                        <p>
+                                            <input type="text" class="form-control" id="eventQuery">
+                                        </p>
+                                        <div id="eventSearchResults">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (this.Model.ShowResults)
+        {
+            <p>
+                Showing search results @this.Model.ResultsStart
+                to @this.Model.ResultsEnd of @this.Model.ResultsTotal
+                for &quot;@this.Model.Query&quot;.
+            </p>
+            
+            @Html.Partial("VideoListGroup", this.Model.Entries)
+            
+            <nav>
+                <ul class="pager">
+                    @if (this.Model.ShowPreviousLink)
+                    {
+                        <li class="previous">
+                            <a href="@this.Model.PreviousLinkUrl">
+                                <span aria-hidden="true">&laquo;</span> Previous Page
+                            </a>    
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="previous disabled">
+                            <a href="#">
+                                <span aria-hidden="true">&laquo;</span> Previous Page
+                            </a>    
+                        </li>
+                    }
+                    
+                    @if (this.Model.ShowNextLink)
+                    {
+                        <li class="next">
+                            <a href="@this.Model.NextLinkUrl">
+                                Next Page <span aria-hidden="true">&raquo;</span>
+                            </a>    
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="next disabled">
+                            <a href="#">
+                                Next Page <span aria-hidden="true">&raquo;</span>
+                            </a> 
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        var dancerTimer;
+        var delay = 250; // 250 millisecond delay
+        var dancerJqxhr;
+        var eventTimer;
+        var eventJqxhr;
+        
+        $(function() {            
+            function requestDancerData()
+            {
+                searchForDancer($("#dancerQuery").val(), 0);
+            };
+                        
+            $("#dancerQuery").on(
+                "input",
+                function() {
+                    clearTimeout(dancerTimer);
+                    dancerTimer = setTimeout(requestDancerData, delay);
+
+                    // abort any previous request which is in progress
+                    if (dancerJqxhr)
+                    {
+                        dancerJqxhr.abort();
+                        dancerJqxhr = null;
+                    }
+                }
+            );
+            
+            $("#findDancerLink").on(
+                "click",
+                function() {
+                    $("#findDancerPanel").toggle();
+                    
+                    if ($("#findDancerPanel").is(":visible"))
+                    {
+                        $("#dancerQuery").focus();
+                    }
+                }
+            );
+
+            $("#clearDancerLink").on(
+                "click",
+                function() {
+                    $("#dancerNameList").text("(None)");
+                    $("#dancerIdList").val("");
+                }
+            );
+
+            function requestEventData()
+            {
+                searchForEvent($("#eventQuery").val(), 0);
+            };
+                        
+            $("#eventQuery").on(
+                "input",
+                function() {
+                    clearTimeout(eventTimer);
+                    eventTimer = setTimeout(requestEventData, delay);
+
+                    // abort any previous request which is in progress
+                    if (eventJqxhr)
+                    {
+                        eventJqxhr.abort();
+                        eventJqxhr = null;
+                    }
+                }
+            );
+            
+            $("#findEventLink").on(
+                "click",
+                function() {
+                    $("#findEventPanel").toggle();
+                                        
+                    if ($("#findEventPanel").is(":visible"))
+                    {
+                        $("#eventQuery").focus();
+                    }
+                }
+            );
+            
+            $("#clearEventLink").on(
+                "click",
+                function() {
+                    setEvent("", "(None)");
+                }
+            );
+            
+            $("#advancedSearch").on(
+                "change",
+                function() {
+                    if ($("#advancedSearch").prop("checked"))
+                    {
+                        $("#advancedSearchPanel").show();
+                    }
+                    else
+                    {
+                        $("#advancedSearchPanel").hide();
+                    }
+                }
+            );
+        });
+        
+        function addDancer(dancerId, dancerName)
+        {
+            var dancerIds = $("#dancerIdList").val();
+            var dancerNames = $("#dancerNameList").text();
+            
+            if (dancerIds && dancerIds.length)
+            {
+                if (!dancerIds.charAt(dancerIds.length - 1) != ';')
+                {
+                    dancerIds += ";";
+                    dancerNames += "; ";
+                }
+                
+                dancerIds += dancerId;
+                dancerNames += dancerName;
+            }
+            else
+            {
+                dancerIds = dancerId;
+                dancerNames = dancerName;
+            }
+            
+            $("#dancerIdList").val(dancerIds);
+            $("#dancerNameList").text(dancerNames);
+            $("#findDancerPanel").hide();
+            $("#dancerQuery").val("");
+            $("#dancerSearchResults").html("");
+        };
+        
+        function searchForDancer(query, start)
+        {
+            dancerJqxhr = $.ajax({
+                method: "GET",
+                url: "/Videos/DancerSearchResults",
+                data: { query: query, start: start }
+            });
+            
+            dancerJqxhr.done(
+                function(data) {
+                    $("#dancerSearchResults").html(data);
+                });
+        }
+        
+        function setEvent(eventId, eventName)
+        {
+            $("#eventId").val(eventId);
+            $("#eventName").text(eventName);
+            $("#findEventPanel").hide();
+            $("#eventQuery").val("");
+            $("#eventSearchResults").html("");
+        };
+        
+        function searchForEvent(query, start)
+        {
+            eventJqxhr = $.ajax({
+                method: "GET",
+                url: "/Videos/EventSearchResults",
+                data: { query: query, start: start }
+            });
+            
+            eventJqxhr.done(
+                function(data) {
+                    $("#eventSearchResults").html(data);
+                });
+        }
+    </script>
+}
+

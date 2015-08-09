@@ -1,0 +1,77 @@
+@using System.Linq;
+@model WatchViewModel
+@{
+    ViewBag.Title = this.Model.Title;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                    @this.Model.Title
+                </h2>
+            </div>
+            <div class="panel-body">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe title="YouTube video player" class="embed-responsive-item" src="@this.Model.EmbedUrl" frameborder=0 allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="panel-footer">
+                Watch video at <a href=@this.Model.ExternalUrl>@this.Model.ProviderName</a>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Video Information
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td colspan="2">
+                                @this.Model.Title
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="@Math.Max(1, this.Model.Dancers.Count)">
+                                Dancers
+                            </td>
+                            <td>
+                                @if (this.Model.Dancers.Count >= 1)
+                                {
+                                    var dancer = this.Model.Dancers[0];
+                                    <a href="@dancer.Url">@dancer.DisplayName</a>
+                                }
+                            </td>
+                        </tr>
+                        @foreach (var dancer in this.Model.Dancers.Skip(1)) {
+                        <tr>
+                            <td>
+                                <a href="@dancer.Url">@dancer.DisplayName</a>
+                            </td>
+                        </tr>                        
+                        }
+                        <tr>
+                            <td>
+                                Event
+                            </td>
+                            <td>
+                                @if (string.IsNullOrEmpty(this.Model.EventUrl))
+                                {
+                                    @this.Model.EventName
+                                }
+                                else
+                                {
+                                    <a href="@this.Model.EventUrl">@this.Model.EventName</a>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

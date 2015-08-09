@@ -1,7 +1,10 @@
 using System;
-using System.Net.Http;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -9,24 +12,120 @@ namespace WcsVideos.Contracts
 {
     public class CachingDataAccess : IDataAccess
     {
+        private static readonly List<Video> EmptyVideoList = new List<Video>();
+        private Uri WebserviceTarget { get; set; }
     	private ConcurrentDictionary<string, Dancer> dancers;
         private ConcurrentDictionary<string, Video> videos;
+        private ConcurrentDictionary<string, List<string>> eventVideos;
+        private ConcurrentDictionary<string, Event> events;
         private List<Dancer> allDancers;
         private List<Video> trendingVideos;
+        private List<Event> recentEvents;
         private IDataAccess baseDataAccess;
+        private ManualResetEvent allDancersLoaded;
         
-		public CachingDataAccess()
+		public CachingDataAccess(string endpoint)
 		{
 			this.dancers = new ConcurrentDictionary<string, Dancer>();
             this.videos = new ConcurrentDictionary<string, Video>();
-            this.baseDataAccess = new DataAccess();
+            this.events = new ConcurrentDictionary<string, Event>();
+            this.eventVideos = new ConcurrentDictionary<string, List<string>>();
+            this.baseDataAccess = new DataAccess(endpoint);
+            this.allDancersLoaded = new ManualResetEvent(false);
+            this.WebserviceTarget = new Uri(endpoint);
+            Thread loadDancersThread = new Thread(() =>
+                {
+                    try
+                    {
+                        this.allDancers = this.baseDataAccess.GetAllDancers();
+                    }
+                    catch
+                    {
+                    }
+                    
+                    this.allDancersLoaded.Set();
+                    
+                    foreach (Dancer dancer in this.allDancers)
+                    {
+                        this.dancers[dancer.WsdcId] = dancer;
+                    }
+                });
+            loadDancersThread.Start();
 		}
+        
+        public Event GetEvent(string eventId)
+        {
+            Event contractEvent;
+            if (!this.events.TryGetValue(eventId, out contractEvent))
+            {
+                contractEvent = this.baseDataAccess.GetEvent(eventId);
+                this.events[eventId] = contractEvent;
+            }
+            
+            return contractEvent;
+        }
+        
+        public List<Video> GetEventVideos(string eventId)
+        {
+            List<string> videoIds;
+            List<Video> videos;
+            if (!this.eventVideos.TryGetValue(eventId, out videoIds))
+            {
+                videos = this.baseDataAccess.GetEventVideos(eventId);
+                this.eventVideos[eventId] = videos.Select(v => v.Id).ToList();
+                
+                foreach (Video video in videos)
+                {
+                    this.videos[video.Id] = video;
+                }
+            }
+            else
+            {
+                videos = new List<Video>();
+                
+                foreach (string videoId in videoIds)
+                {
+                    Video video = this.GetVideoById(videoId);
+                    if (video != null)
+                    {
+                        videos.Add(video);
+                    }
+                }
+            }
+            
+            return videos;
+        }
+        
+        public List<Event> SearchForEvent(string query)
+        {
+            return this.baseDataAccess.SearchForEvent(query);
+        }
+        
+        public List<Event> GetRecentEvents()
+        {
+            if (this.recentEvents == null)
+            {
+                this.recentEvents = this.baseDataAccess.GetRecentEvents();
+                
+                foreach (Event contractEvent in this.recentEvents)
+                {
+                    this.events[contractEvent.EventId] = contractEvent;
+                }
+            }
+            
+            return this.recentEvents;
+        }
         
         public List<Video> GetTrendingVideos()
         {
             if (this.trendingVideos == null)
             {
                 this.trendingVideos = this.baseDataAccess.GetTrendingVideos();
+                
+                foreach (Video video in this.trendingVideos)
+                {
+                    this.videos[video.Id] = video;
+                }
             }
             
             return this.trendingVideos;;
@@ -100,17 +199,79 @@ namespace WcsVideos.Contracts
         
         public List<Dancer> GetAllDancers()
         {
-            if (this.allDancers == null)
-            {
-                this.allDancers = this.baseDataAccess.GetAllDancers();
+            if (this.allDancersLoaded.WaitOne(TimeSpan.FromSeconds(30)))
+            {            
+                return this.allDancers;
             }
-            
-            return this.allDancers;
+            else
+            {
+                return new List<Dancer>();
+            }
         }
         
         public string AddVideo(Video video)
         {
-            return this.baseDataAccess.AddVideo(video);
+            string videoId = this.baseDataAccess.AddVideo(video);
+            this.videos[videoId] = video;
+            
+            if (video.DancerIdList != null)
+            {
+                foreach (string dancerId in video.DancerIdList)
+                {
+                    // remove exisitng dancer
+                    Dancer dancer;
+                    this.dancers.TryRemove(dancerId, out dancer);
+                    
+                    // get updated dancer
+                    dancer = this.GetDancerById(dancerId);
+                    
+                    // replace the updated dancer in the dictionary and allDancers array
+                    if (dancer != null)
+                    {
+                        this.dancers[dancer.WsdcId] = dancer;
+                        int index = this.allDancers.FindIndex(d => string.Equals(d.WsdcId, dancer.WsdcId));
+                        if (index > -1)
+                        {
+                            this.allDancers[index] = dancer;
+                        }
+                    }
+                }
+            }
+            
+            if (video.EventId != null)
+            {
+                // remove the event video mapping
+                List<string> eventVideos;
+                this.eventVideos.TryRemove(video.EventId, out eventVideos);
+                
+                // let the mapping be reloaded automatically when it is requested next
+            }
+            
+            this.HttpPost("admin/cache-reset").Wait();
+            
+            return videoId;
+        }
+        
+        public List<Video> SearchForVideo(
+            IEnumerable<string> titleFragments,
+            IEnumerable<string> dancerIds,
+            IEnumerable<string> eventIds)
+        {
+            return this.baseDataAccess.SearchForVideo(titleFragments, dancerIds, eventIds);
+        }
+        
+        private async Task HttpPost(string relativeUrl)
+        {
+            Console.WriteLine("POST to " + relativeUrl);
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = this.WebserviceTarget;
+                HttpResponseMessage response = await client.PostAsync(
+                    relativeUrl,
+                    new StringContent(string.Empty, Encoding.UTF8, "application/json"));
+                string serialized = await response.Content.ReadAsStringAsync();
+                response.EnsureSuccessStatusCode();
+            }
         }
 	}
 }

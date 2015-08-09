@@ -8,16 +8,12 @@
 
         <environment names="Development">
             <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
-            <link rel="stylesheet" href="~/lib/bootstrap-touch-carousel/css/bootstrap-touch-carousel.css" />
             <link rel="stylesheet" href="~/css/site.css" />
         </environment>
         <environment names="Staging,Production">
-            <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/css/bootstrap.min.css"
+            <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/css/bootstrap.min.css"
                   asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
                   asp-fallback-test-class="hidden" asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
-            <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap-touch-carousel/0.8.0/css/bootstrap-touch-carousel.css"
-                  asp-fallback-href="~/lib/bootstrap-touch-carousel/css/bootstrap-touch-carousel.css"
-                  asp-fallback-test-class="carousel-caption" asp-fallback-test-property="display" asp-fallback-test-value="none" />
             <link rel="stylesheet" href="~/css/site.css" />
         </environment>
     </head>
@@ -35,12 +31,16 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                        <!--
-                        <li><a asp-controller="Search" asp-action="Events">Events</a></li>
-                        -->
+                        <li><a asp-controller="Search" asp-action="Videos">Search</a></li>
                         <li><a asp-controller="Search" asp-action="Dancers">Dancers</a></li>
-                        <li><a asp-controller="Videos" asp-action="Add">Add Video</a></li>
                     </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a asp-controller="Videos" asp-action="Add">Add Video</a></li>
+                            </ul>
+                        </ul>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
                     asp-fallback-src="~/lib/jquery/jquery.min.js"
                     asp-fallback-test="window.jQuery">
             </script>
-            <script src="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/bootstrap.min.js"
+            <script src="//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js"
                     asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
                     asp-fallback-test="window.jQuery">
             </script>

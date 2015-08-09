@@ -8,7 +8,9 @@ namespace WcsVideos.Models
         
         public string Title { get; set; }
         
-        public string DancerIdList { get; set; }
+        public string DancerNameList { get; set; }
+        
+        public string EventName { get; set; }
         
         public string VideoUrl { get; set; }
         

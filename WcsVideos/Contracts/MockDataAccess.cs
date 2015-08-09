@@ -218,7 +218,27 @@ namespace WcsVideos.Contracts
 				}
 			}
 		};
+        
+        public Event GetEvent(string eventId)
+        {
+            return null;
+        }
 		
+        public List<Video> GetEventVideos(string eventId)
+        {
+            return new List<Video>();
+        }
+        
+        public List<Event> SearchForEvent(string query)
+        {
+            return new List<Event>();
+        }
+        
+        public List<Event> GetRecentEvents()
+        {
+            return new List<Event>();
+        }
+        
         public List<Video> GetTrendingVideos()
 		{
 			return this.videos.Values.ToList();
@@ -304,6 +324,14 @@ namespace WcsVideos.Contracts
             }
             
             return videoId;
+        }
+        
+        public List<Video> SearchForVideo(
+            IEnumerable<string> titleFragments,
+            IEnumerable<string> dancerIds,
+            IEnumerable<string> eventIds)
+        {
+            return new List<Video>();
         }
     }
 }

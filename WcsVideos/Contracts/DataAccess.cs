@@ -5,13 +5,61 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using System.Diagnostics;
 
 namespace WcsVideos.Contracts
 {
     public class DataAccess : IDataAccess
-    {
-        private static readonly Uri WebserviceTarget = new Uri("http://localhost:8085/");
+    {        
+        private Uri WebserviceTarget { get; set; }
+        
+        public DataAccess(string endpoint)
+        {
+            this.WebserviceTarget = new Uri(endpoint);
+        }
+        
+        public Event GetEvent(string eventId)
+        {
+            return this.HttpGet<Event>("event/" + eventId).Result;
+        }
+        
+        public List<Video> GetEventVideos(string eventId)
+        {
+            List<Video> videos = this.HttpGet<List<Video>>("v?event-id=" + eventId).Result;
+            if (videos == null)
+            {
+                videos = new List<Video>(0);
+            }
+            
+            return videos;
+        }
+        
+        public List<Event> SearchForEvent(string query)
+        {
+            string[] words = query.Split(
+                new char[] { ' ' },
+                StringSplitOptions.RemoveEmptyEntries);
+                
+            List<Event> events = this.HttpGet<List<Event>>(
+                "event/?name-frag=" + Uri.EscapeUriString(string.Join(",", words))).Result;
+            if (events == null)
+            {
+                events = new List<Event>();
+            }
+            
+            return events;
+        }
+        
+        public List<Event> GetRecentEvents()
+        {
+            List<Event> events;
+            string afterDate = DateTime.UtcNow.Subtract(TimeSpan.FromDays(180)).ToString("yyyy-MM-dd");
+            string beforeDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            events = this.HttpGet<List<Event>>(
+                "event/?after-date=" + afterDate + "&before-date=" + beforeDate).Result
+                .OrderByDescending(e => e.EventDate)
+                .ToList();
+            return events;
+        }
         
         public List<Video> GetTrendingVideos()
         {
@@ -30,13 +78,11 @@ namespace WcsVideos.Contracts
         
 		public Video GetVideoById(string id)
         {
-            Console.WriteLine("Requesting video for id=" + id);
             return this.HttpGet<Video>("v/" + id).Result;
         }
         
         public Dancer GetDancerById(string id)
         {
-            Console.WriteLine("Requesting dancer for id=" + id);
             return this.HttpGet<Dancer>("d/" + id).Result;
         }
 
@@ -47,7 +93,6 @@ namespace WcsVideos.Contracts
         
         public List<Dancer> GetAllDancers()
         {
-            Console.WriteLine("Requesting all dancers");
             return this.HttpGet<List<Dancer>>("d/").Result;
         }
         
@@ -61,14 +106,48 @@ namespace WcsVideos.Contracts
                 });
                 
             Video result = this.HttpPost<Video>("v/", serialized).Result;
+            video.Id = result.Id;
             return result.Id;
+        }
+        
+        public List<Video> SearchForVideo(
+            IEnumerable<string> titleFragments,
+            IEnumerable<string> dancerIds,
+            IEnumerable<string> eventIds)
+        {
+            List<string> queryFragments = new List<string>(4);
+            if (titleFragments != null && titleFragments.Any())
+            {
+                queryFragments.Add("title-frag=" + string.Join(",", titleFragments));
+            }
+            
+            if (dancerIds != null && dancerIds.Any())
+            {
+                queryFragments.Add("wsdc-id=" + string.Join(",", dancerIds));
+            }
+            
+            if (eventIds != null && eventIds.Any())
+            {
+                queryFragments.Add("event-id=" + string.Join(",", eventIds));
+            }
+            
+            if (queryFragments.Count > 0)
+            {
+                string url = string.Format("v?" + string.Join("&", queryFragments));
+                return this.HttpGet<List<Video>>(url).Result;
+            }
+            else
+            {
+                return new List<Video>();
+            }
         }
 
         private async Task<T> HttpGet<T>(string relativeUrl)
         {
+            Console.WriteLine("GET from " + relativeUrl);
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = DataAccess.WebserviceTarget;
+                client.BaseAddress = this.WebserviceTarget;
                 HttpResponseMessage response = await client.GetAsync(relativeUrl);
                 string serialized = await response.Content.ReadAsStringAsync();
                 T result = JsonConvert.DeserializeObject<T>(
@@ -80,9 +159,11 @@ namespace WcsVideos.Contracts
         
         private async Task<T> HttpPost<T>(string relativeUrl, string content)
         {
+            Console.WriteLine("POST to " + relativeUrl);
+            Console.WriteLine(content);
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = DataAccess.WebserviceTarget;
+                client.BaseAddress = this.WebserviceTarget;
                 HttpResponseMessage response = await client.PostAsync(
                     relativeUrl,
                     new StringContent(content, Encoding.UTF8, "application/json"));

@@ -1,8 +1,10 @@
 <div class="row">
     <div class="col-md-12">
-        <h2>
-            Add Video
-        </h2>
+        <div class="page-header">
+            <h2>
+                Add Video
+            </h2>
+        </div>
     </div>
 </div>
 <div class="row">
@@ -43,14 +45,78 @@
             <div class="form-group @(this.Model.DancerIdListValidationError ? "has-error" : "")">
                 <label for="dancerIdList" class="col-sm-2 control-label">Dancers</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="dancerIdList" id="dancerIdList" value="@this.Model.DancerIdList">
+                    <p class="form-control-static" id="dancerNameList">@this.Model.DancerNameList</p>
+                    <input type="hidden" name="dancerIdList" id="dancerIdList" value="@this.Model.DancerIdList">
                 </div>
-                 @if (this.Model.DancerIdListValidationError)
+                @if (this.Model.DancerIdListValidationError)
                 {
                     <p class="help-block col-sm-offset-2 col-sm-10">
                         Must contain valid WSDC IDs, semi-colon (;) separated.
                     </p>
                 }
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <a role="button" class="btn btn-default" id="findDancerLink" href="#">
+                        <span class="glyphicon glyphicon-plus-sign"> </span> add dancer
+                    </a>
+                    &nbsp; or &nbsp;
+                    <a role="button" class="btn btn-default" id="clearDancerLink" href="#">
+                        <span class="glyphicon glyphicon-remove-sign"> </span> clear dancers
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-offset-2 col-sm-10">
+                <div style="display:none;" class="panel panel-default" id="findDancerPanel">
+                    <div class="panel-heading">
+                        Dancer Search
+                    </div>
+                    <div class="panel-body">
+                        <p>
+                            <input type="text" class="form-control" name="dancerQuery" id="dancerQuery">
+                        </p>
+                        <div id="dancerSearchResults">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group @(this.Model.EventIdValidationError ? "has-error" : "")">
+                <label for="dancerIdList" class="col-sm-2 control-label">Event</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static" id="eventName">@this.Model.EventName</p>
+                    <input type="hidden" name="eventId" id="eventId" value="@this.Model.EventId">
+                </div>
+                @if (this.Model.EventIdValidationError)
+                {
+                    <p class="help-block col-sm-offset-2 col-sm-10">
+                        Must contain valid WSDC IDs, semi-colon (;) separated.
+                    </p>
+                }
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <a role="button" class="btn btn-default" id="findEventLink" href="#">
+                        <span class="glyphicon glyphicon-plus-sign"> </span> select event
+                    </a>
+                    &nbsp; or &nbsp;
+                    <a role="button" class="btn btn-default" id="clearEventLink" href="#">
+                        <span class="glyphicon glyphicon-remove-sign"> </span> remove event
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-offset-2 col-sm-10">
+                <div style="display:none;" class="panel panel-default" id="findEventPanel">
+                    <div class="panel-heading">
+                        Event Search
+                    </div>
+                    <div class="panel-body">
+                        <p>
+                            <input type="text" class="form-control" name="eventQuery" id="eventQuery">
+                        </p>
+                        <div id="eventSearchResults">
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
@@ -60,3 +126,175 @@
         </form>
     </div>
 </div>
+
+@section scripts
+{
+    <script>
+        var dancerTimer;
+        var delay = 250; // 250 millisecond delay
+        var dancerJqxhr;
+        var eventTimer;
+        var eventJqxhr;
+        
+        $(function() {            
+            function requestDancerData()
+            {
+                searchForDancer($("#dancerQuery").val(), 0);
+            };
+                        
+            $("#dancerQuery").on(
+                "input",
+                function() {
+                    clearTimeout(dancerTimer);
+                    dancerTimer = setTimeout(requestDancerData, delay);
+
+                    // abort any previous request which is in progress
+                    if (dancerJqxhr)
+                    {
+                        dancerJqxhr.abort();
+                        dancerJqxhr = null;
+                    }
+                }
+            );
+            
+            $("#findDancerLink").on(
+                "click",
+                function() {
+                    $("#findDancerPanel").toggle();
+                    
+                    if ($("#findDancerPanel").is(":visible"))
+                    {
+                        $("#dancerQuery").focus();
+                    }
+                }
+            );
+
+            $("#clearDancerLink").on(
+                "click",
+                function() {
+                    $("#dancerNameList").text("(None)");
+                    $("#dancerIdList").val("");
+                }
+            );
+
+            function requestEventData()
+            {
+                searchForEvent($("#eventQuery").val(), 0);
+            };
+                        
+            $("#eventQuery").on(
+                "input",
+                function() {
+                    clearTimeout(eventTimer);
+                    eventTimer = setTimeout(requestEventData, delay);
+
+                    // abort any previous request which is in progress
+                    if (eventJqxhr)
+                    {
+                        eventJqxhr.abort();
+                        eventJqxhr = null;
+                    }
+                }
+            );
+            
+            $("#findEventLink").on(
+                "click",
+                function() {
+                    $("#findEventPanel").toggle();
+                                        
+                    if ($("#findEventPanel").is(":visible"))
+                    {
+                        $("#eventQuery").focus();
+                    }
+                }
+            );
+            
+            $("#clearEventLink").on(
+                "click",
+                function() {
+                    setEvent("", "(None)");
+                }
+            );
+            
+            $("#advancedSearch").on(
+                "change",
+                function() {
+                    if ($("#advancedSearch").prop("checked"))
+                    {
+                        $("#advancedSearchPanel").show();
+                    }
+                    else
+                    {
+                        $("#advancedSearchPanel").hide();
+                    }
+                }
+            );
+        });
+        
+        function addDancer(dancerId, dancerName)
+        {
+            var dancerIds = $("#dancerIdList").val();
+            var dancerNames = $("#dancerNameList").text();
+            
+            if (dancerIds && dancerIds.length)
+            {
+                if (!dancerIds.charAt(dancerIds.length - 1) != ';')
+                {
+                    dancerIds += ";";
+                    dancerNames += "; ";
+                }
+                
+                dancerIds += dancerId;
+                dancerNames += dancerName;
+            }
+            else
+            {
+                dancerIds = dancerId;
+                dancerNames = dancerName;
+            }
+            
+            $("#dancerIdList").val(dancerIds);
+            $("#dancerNameList").text(dancerNames);
+            $("#findDancerPanel").hide();
+            $("#dancerQuery").val("");
+            $("#dancerSearchResults").html("");
+        };
+        
+        function searchForDancer(query, start)
+        {
+            dancerJqxhr = $.ajax({
+                method: "GET",
+                url: "/Videos/DancerSearchResults",
+                data: { query: query, start: start }
+            });
+            
+            dancerJqxhr.done(
+                function(data) {
+                    $("#dancerSearchResults").html(data);
+                });
+        }
+        
+        function setEvent(eventId, eventName)
+        {
+            $("#eventId").val(eventId);
+            $("#eventName").text(eventName);
+            $("#findEventPanel").hide();
+            $("#eventQuery").val("");
+            $("#eventSearchResults").html("");
+        };
+        
+        function searchForEvent(query, start)
+        {
+            eventJqxhr = $.ajax({
+                method: "GET",
+                url: "/Videos/EventSearchResults",
+                data: { query: query, start: start }
+            });
+            
+            eventJqxhr.done(
+                function(data) {
+                    $("#eventSearchResults").html(data);
+                });
+        }
+    </script>
+}

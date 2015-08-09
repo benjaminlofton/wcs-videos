@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using Microsoft.AspNet.Mvc;
 using WcsVideos.Models;
 using WcsVideos.Contracts;
@@ -29,68 +29,125 @@ namespace WcsVideos.Controllers
             return this.Dancers(query, 1);
         }
         
+        public IActionResult Videos(string query, bool advancedSearch, string eventId, string dancerIdList, int start)
+        {
+            VideoSearchViewModel model = new VideoSearchViewModel();
+            model.Title = "Video Search";
+            model.Query = query;
+            model.EventId = eventId;
+            model.DancerIdList = dancerIdList;
+            model.AdvancedSearch = advancedSearch;
+            
+            Event contractEvent = null;
+            if (!string.IsNullOrEmpty(model.EventId))
+            {
+                contractEvent = this.dataAccess.GetEvent(model.EventId);
+            }
+            
+            if (string.IsNullOrEmpty(model.DancerIdList))
+            {
+                model.DancerNameList = "(None)";
+            }
+            else
+            {
+                string[] dancerIds = model.DancerIdList.Split(
+                    new char[] { ';' },
+                    20,
+                    StringSplitOptions.RemoveEmptyEntries);
+                List<string> dancerNameList = new List<string>();
+                foreach (string dancerId in dancerIds)
+                {
+                    Dancer dancer = this.dataAccess.GetDancerById(dancerId);
+                    if (dancer != null)
+                    {
+                        dancerNameList.Add(dancer.Name + " (" + dancerId + ")");
+                    }
+                }
+                
+                model.DancerNameList = string.Join("; ", dancerNameList);
+            }
+            
+            if (contractEvent == null)
+            {
+                model.EventName = "(None)";
+            }
+            else
+            {
+                model.EventName = contractEvent.Name + " " + contractEvent.EventDate.Year;
+            } 
+            
+            if (!string.IsNullOrEmpty(query) || !string.IsNullOrEmpty(eventId) || !string.IsNullOrEmpty(dancerIdList))
+            {
+                string[] titleFragments = (query ?? string.Empty).Split(
+                    new char[] { ' ' },
+                    10,
+                    StringSplitOptions.RemoveEmptyEntries);
+                
+                string[] eventIds = (eventId ?? string.Empty).Split(
+                    new char[] { ';' },
+                    10,
+                    StringSplitOptions.RemoveEmptyEntries);
+                
+                string[] dancerIds = (dancerIdList ?? string.Empty).Split(
+                    new char[] { ';' },
+                    10,
+                    StringSplitOptions.RemoveEmptyEntries);
+                
+                List<Video> fullResults = this.dataAccess.SearchForVideo(titleFragments, dancerIds, eventIds);
+                ViewModelHelper.PopulateSearchResults(
+                    model,
+                    fullResults,
+                    start,
+                    SearchController.ResultsPerPage,
+                    (video) => ViewModelHelper.PopulateVideoListItem(video, this.Url),
+                    (s) => this.Url.Link(
+                        "default",
+                        new
+                        {
+                            controller = "Search",
+                            action = "Videos",
+                            query = query,
+                            start = s
+                        }));
+            }
+            
+            return this.View(model);
+        }
+        
         public IActionResult Dancers(string query, int start)
         {
             DancerSearchResultsViewModel viewModel = new DancerSearchResultsViewModel();
-            List<DancerListItemViewModel> results = new List<DancerListItemViewModel>();
             viewModel.Query = query;
-            viewModel.Dancers = results;
-            
-            if (start <= 0)
-            {
-                start = 1;
-            }
+            viewModel.Title = "Dancer Search";
             
             if (!string.IsNullOrEmpty(query))
             {
-                viewModel.ShowResults = true;
-                
                 List<Dancer> fullResults = this.dataAccess.SearchForDancer(query);
-                viewModel.ResultsTotal = fullResults.Count;
-                
-                foreach(Dancer dancer in fullResults.Skip(start - 1).Take(SearchController.ResultsPerPage))
-                {
-                    DancerListItemViewModel listItem = new DancerListItemViewModel();
-                    listItem.Name = dancer.Name;
-                    listItem.VideoCount = dancer.VideoIdList == null ? 0 : dancer.VideoIdList.Length;
-                    listItem.WsdcId = dancer.WsdcId;
-                    listItem.Url = this.Url.Link(
-                        "default",
-                        new { controller = "Home", action = "Dancer", id = dancer.WsdcId });
-                    results.Add(listItem);
-                }
-                
-                viewModel.ResultsStart = start;
-                viewModel.ResultsEnd = start + results.Count - 1;
-                viewModel.ResultsTotal = fullResults.Count;
-                
-                if (viewModel.ResultsEnd < fullResults.Count)
-                {
-                    viewModel.ShowNextLink = true;
-                    viewModel.NextLinkUrl = this.Url.Link(
+                ViewModelHelper.PopulateSearchResults(
+                    viewModel,
+                    fullResults,
+                    start,
+                    SearchController.ResultsPerPage, 
+                    (dancer) =>
+                        {
+                            DancerListItemViewModel listItem = new DancerListItemViewModel();
+                            listItem.Name = dancer.Name;
+                            listItem.VideoCount = dancer.VideoIdList == null ? 0 : dancer.VideoIdList.Length;
+                            listItem.WsdcId = dancer.WsdcId;
+                            listItem.Url = this.Url.Link(
+                                "default",
+                                new { controller = "Home", action = "Dancer", id = dancer.WsdcId });
+                            return listItem;
+                        },
+                    (s) => this.Url.Link(
                         "default",
                         new
                         {
                             controller = "Search",
                             action = "Dancers",
                             query = query,
-                            start = viewModel.ResultsEnd
-                        });
-                }
-                
-                if (start > 1)
-                {
-                    viewModel.ShowPreviousLink = true;
-                    viewModel.PreviousLinkUrl = this.Url.Link(
-                        "default",
-                        new
-                        {
-                            controller = "Search",
-                            action = "Dancers",
-                            query = query,
-                            start = start - 20
-                        });
-                }
+                            start = s
+                        }));
             }
             
             return View(viewModel);
