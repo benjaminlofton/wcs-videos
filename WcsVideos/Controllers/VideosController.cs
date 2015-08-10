@@ -71,7 +71,7 @@ namespace WcsVideos.Controllers
             return View(model);
         }
         
-        public IActionResult Add()
+        public IActionResult Add(string title, string providerVideoId)
         {
             VideosAddViewModel model = new VideosAddViewModel();
             
@@ -101,6 +101,16 @@ namespace WcsVideos.Controllers
             responseCookies.Delete("DancerIdListValid", cookieOptions);
             responseCookies.Delete("EventId", cookieOptions);
             responseCookies.Delete("EventIdValid", cookieOptions);
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                model.Title = title;
+            }
+            
+            if (!string.IsNullOrEmpty(providerVideoId))
+            {
+                model.ProviderVideoId = providerVideoId;
+            }
 
             Event contractEvent = null;
             if (!string.IsNullOrEmpty(model.EventId))

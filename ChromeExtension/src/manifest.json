@@ -1,0 +1,29 @@
+{
+    "manifest_version": 2,
+    "name": "WCS Videos",
+    "description": "This extension pulls data from youtube videos for the WCS Videos website",
+    "version": "1.0",
+    "icons": {
+        "16": "icon-16.png",
+        "48": "icon-48.png",
+        "128": "icon-128.png"
+    },
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "page_action": {
+        "default_icon": {
+            "19": "icon-19.png",
+            "38": "icon-38.png"
+        },
+        "default_title": "WCS Videos",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "declarativeContent",
+        "activeTab",
+        "https://www.youtube.com/",
+        "http://www.youtube.com/"
+    ]
+}
