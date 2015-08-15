@@ -13,10 +13,12 @@ namespace WcsVideos.Controllers
         private const int ResultsPerPage = 20;
         
         private IDataAccess dataAccess;
+        private IUserSessionHandler userSessionHandler;
         
-        public SearchController(IDataAccess dataAccess)
+        public SearchController(IDataAccess dataAccess, IUserSessionHandler userSessionHandler)
         {
             this.dataAccess = dataAccess;
+            this.userSessionHandler = userSessionHandler;
         }      
         
         public IActionResult Events()
@@ -32,6 +34,10 @@ namespace WcsVideos.Controllers
         public IActionResult Videos(string query, bool advancedSearch, string eventId, string dancerIdList, int start)
         {
             VideoSearchViewModel model = new VideoSearchViewModel();
+            ViewModelHelper.PopulateUserInfo(
+                model,
+                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+                
             model.Title = "Video Search";
             model.Query = query;
             model.EventId = eventId;
@@ -117,6 +123,10 @@ namespace WcsVideos.Controllers
         public IActionResult Dancers(string query, int start)
         {
             DancerSearchResultsViewModel viewModel = new DancerSearchResultsViewModel();
+            ViewModelHelper.PopulateUserInfo(
+                viewModel,
+                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+                
             viewModel.Query = query;
             viewModel.Title = "Dancer Search";
             

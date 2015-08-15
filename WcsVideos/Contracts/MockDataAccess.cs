@@ -333,5 +333,10 @@ namespace WcsVideos.Contracts
         {
             return new List<Video>();
         }
+        
+        public bool ProviderVideoIdExists(string providerId, string providerVideoId)
+        {
+            return true;
+        }
     }
 }

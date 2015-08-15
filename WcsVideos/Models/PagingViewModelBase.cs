@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace WcsVideos.Models
 {
-    public class PagingViewModelBase<T>
+    public class PagingViewModelBase<T> : BasePageViewModel
     {        
         public bool ShowResults { get; set; }
         

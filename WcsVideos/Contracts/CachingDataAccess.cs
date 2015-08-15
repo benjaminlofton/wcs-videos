@@ -38,17 +38,18 @@ namespace WcsVideos.Contracts
                     try
                     {
                         this.allDancers = this.baseDataAccess.GetAllDancers();
+                        this.allDancersLoaded.Set();
+                        
+                        foreach (Dancer dancer in this.allDancers)
+                        {
+                            this.dancers[dancer.WsdcId] = dancer;
+                        }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Console.WriteLine("Error loading dancers: " + ex);
                     }
-                    
-                    this.allDancersLoaded.Set();
-                    
-                    foreach (Dancer dancer in this.allDancers)
-                    {
-                        this.dancers[dancer.WsdcId] = dancer;
-                    }
+                                       
                 });
             loadDancersThread.Start();
 		}
@@ -258,6 +259,11 @@ namespace WcsVideos.Contracts
             IEnumerable<string> eventIds)
         {
             return this.baseDataAccess.SearchForVideo(titleFragments, dancerIds, eventIds);
+        }
+        
+        public bool ProviderVideoIdExists(string providerId, string providerVideoId)
+        {
+            return this.baseDataAccess.ProviderVideoIdExists(providerId, providerVideoId);
         }
         
         private async Task HttpPost(string relativeUrl)

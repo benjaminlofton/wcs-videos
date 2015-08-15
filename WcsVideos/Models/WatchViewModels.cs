@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace WcsVideos.Models
 {
-	public class WatchViewModel
+	public class WatchViewModel : BasePageViewModel
 	{
 		public string Title { get; set; }
 

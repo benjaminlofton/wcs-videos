@@ -28,5 +28,7 @@ namespace WcsVideos.Contracts
             IEnumerable<string> titleFragments,
             IEnumerable<string> dancerIds,
             IEnumerable<string> eventIds);
+            
+        bool ProviderVideoIdExists(string providerId, string providerVideoId);
     }
 }

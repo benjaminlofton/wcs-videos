@@ -9,14 +9,16 @@ namespace WcsVideos.Controllers
     public class EventsController : Controller
     {
         private IDataAccess dataAccess;
+        private IUserSessionHandler userSessionHandler;
         
-        public EventsController(IDataAccess dataAccess)
+        public EventsController(IDataAccess dataAccess, IUserSessionHandler userSessionHandler)
         {
             this.dataAccess = dataAccess;
+            this.userSessionHandler = userSessionHandler;
         }
         
         public IActionResult Event(string id)
-        {
+        {           
             if (string.IsNullOrEmpty(id))
             {
                 return this.Error();
@@ -29,6 +31,9 @@ namespace WcsVideos.Controllers
             }
             
             EventViewModel model = new EventViewModel();
+            ViewModelHelper.PopulateUserInfo(
+                model,
+                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
             
             model.Title = contractEvent.Name;
             

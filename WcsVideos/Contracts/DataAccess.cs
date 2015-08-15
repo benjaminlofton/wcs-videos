@@ -64,12 +64,15 @@ namespace WcsVideos.Contracts
         public List<Video> GetTrendingVideos()
         {
             List<Video> videos = new List<Video>();
-            Dancer dancer = GetDancerById("9068");
+            Dancer dancer = this.GetDancerById("9068");
             if (dancer != null)
             {
-                foreach (string videoId in dancer.VideoIdList)
+                if (dancer.VideoIdList != null)
                 {
-                    videos.Add(this.GetVideoById(videoId));
+                    foreach (string videoId in dancer.VideoIdList)
+                    {
+                        videos.Add(this.GetVideoById(videoId));
+                    }
                 }
             }
             
@@ -140,6 +143,12 @@ namespace WcsVideos.Contracts
             {
                 return new List<Video>();
             }
+        }
+
+        public bool ProviderVideoIdExists(string providerId, string providerVideoId)
+        {
+            List<Video> videos = this.HttpGet<List<Video>>("v?provider-id=" + providerVideoId).Result;
+            return videos.Count > 0;
         }
 
         private async Task<T> HttpGet<T>(string relativeUrl)

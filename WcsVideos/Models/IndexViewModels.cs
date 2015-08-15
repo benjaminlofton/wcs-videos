@@ -22,7 +22,7 @@ namespace WcsVideos.Models
         public bool ShowVideoCount { get; set; }
     }
     
-	public class IndexViewModel
+	public class IndexViewModel : BasePageViewModel
 	{
 		public List<VideoListItemViewModel> Videos { get; set; }
         

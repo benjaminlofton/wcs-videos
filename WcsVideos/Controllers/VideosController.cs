@@ -13,10 +13,12 @@ namespace WcsVideos.Controllers
         private const int ResultsPerPage = 5;
         
         private IDataAccess dataAccess;
+        private IUserSessionHandler userSessionHandler;
         
-        public VideosController(IDataAccess dataAccess)
+        public VideosController(IDataAccess dataAccess, IUserSessionHandler userSessionHandler)
         {
             this.dataAccess = dataAccess;
+            this.userSessionHandler = userSessionHandler;
         }
         
         public IActionResult Watch(string id)
@@ -29,6 +31,10 @@ namespace WcsVideos.Controllers
             }
 
             WatchViewModel model = new WatchViewModel();
+            ViewModelHelper.PopulateUserInfo(
+                model,
+                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+                
             model.ExternalUrl = string.Format("https://www.youtube.com/watch?v={0}", video.ProviderVideoId);
             model.EmbedUrl = string.Format("http://www.youtube.com/embed/{0}", video.ProviderVideoId);
             model.ProviderName = "YouTube";
@@ -73,8 +79,24 @@ namespace WcsVideos.Controllers
         
         public IActionResult Add(string title, string providerVideoId)
         {
-            VideosAddViewModel model = new VideosAddViewModel();
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies,
+                this.Context.Response.Cookies);
             
+            if (!loggedIn)
+            {
+                CookieOptions loginCookieOptions = new CookieOptions();
+                loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
+                this.Context.Response.Cookies.Append(
+                    "LoginRedirect",
+                    this.Request.Path.ToUriComponent() + this.Request.QueryString,
+                    loginCookieOptions);
+                return this.RedirectToRoute("default", new { controller = "User", action = "Login" });
+            }
+            
+            VideosAddViewModel model = new VideosAddViewModel();
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
+                        
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
             IReadableStringCollection requestCookies = this.Context.Request.Cookies;
@@ -160,6 +182,15 @@ namespace WcsVideos.Controllers
             string dancerIdList,
             string eventId)
         {
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies,
+                this.Context.Response.Cookies);
+            
+            if (!loggedIn)
+            {
+                return this.Error();
+            }
+            
             bool providerIdValid = true;
             bool providerVideoIdValid = true;
             bool titleValid = true;
@@ -172,6 +203,10 @@ namespace WcsVideos.Controllers
             }
             
             if (string.IsNullOrEmpty(providerVideoId))
+            {
+                providerVideoIdValid = false;
+            }
+            else if (this.dataAccess.ProviderVideoIdExists(providerId, providerVideoId))
             {
                 providerVideoIdValid = false;
             }
@@ -358,9 +393,15 @@ namespace WcsVideos.Controllers
             return View(viewModel);
         }
         
+        public IActionResult CheckVideo(string providerId, string providerVideoId)
+        {
+            bool exists = this.dataAccess.ProviderVideoIdExists(providerId, providerVideoId);
+            return this.Json(new { exists = exists });
+        }
+        
         public IActionResult Error()
         {
-            return View("~/Views/Shared/Error.cshtml");
+            return View("~/Views/Shared/Error.cshtml", new BasePageViewModel());
         }
     }
 }

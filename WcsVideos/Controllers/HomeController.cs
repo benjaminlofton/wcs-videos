@@ -11,15 +11,21 @@ namespace WcsVideos.Controllers
     public class HomeController : Controller
     {
         private IDataAccess dataAccess;
+        private IUserSessionHandler userSessionHandler;
         
-        public HomeController(IDataAccess dataAccess)
+        public HomeController(IDataAccess dataAccess, IUserSessionHandler userSessionHandler)
         {
             this.dataAccess = dataAccess;
+            this.userSessionHandler = userSessionHandler;
         }
         
         public IActionResult Index()
         {
             IndexViewModel model = new IndexViewModel();
+            ViewModelHelper.PopulateUserInfo(
+                model,
+                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+                
             var videos = this.dataAccess.GetTrendingVideos();
             model.Videos = videos.Select(
                 x => new VideoListItemViewModel
@@ -82,6 +88,10 @@ namespace WcsVideos.Controllers
             }
             
             DancerViewModel model = new DancerViewModel();
+            ViewModelHelper.PopulateUserInfo(
+                model,
+                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+
             model.Title = dancer.Name;
             model.Videos = new List<VideoListItemViewModel>();
             

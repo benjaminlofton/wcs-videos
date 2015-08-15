@@ -64,5 +64,18 @@ namespace WcsVideos.Models
             
             return listItem;
         }
+        
+        public static void PopulateUserInfo(BasePageViewModel model, bool isLoggedIn)
+        {
+            if (isLoggedIn)
+            {
+                model.ShowAdminActions = true;
+                model.ShowLogoutLink = true;
+            }
+            else
+            {
+                model.ShowLoginLink = true;
+            }
+        }
     }
 }
