@@ -12,16 +12,22 @@
                 white-space: pre;
                 text-overflow: ellipsis;
                 overflow: hidden;
-                max-width: 400px;
+            }
+            
+            .error {
+                color: #a00;
+            }
+            
+            .success {
+                color: #0a0;
             }
         </style>
         <script src="popup.js"></script>
     </head>
     <body>
-        <div style="width:200px;">
+        <div style="width:400px;">
             <div>Add WCS Video</div>
-            <div id="videoName"></div>
-            <div id="videoId"></div>
+            <div id="status"></div>
         </div>
     </body>
 </html>

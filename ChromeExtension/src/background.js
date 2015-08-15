@@ -7,7 +7,10 @@ chrome.runtime.onInstalled.addListener(function() {
                 // That fires when a page's URL contains youtube
                 conditions: [
                     new chrome.declarativeContent.PageStateMatcher({
-                        pageUrl: { urlContains: 'https://www.youtube.com/watch?v=' },
+                        pageUrl: {
+                            hostEquals: "www.youtube.com"//,
+                            //pathContains: 'watch'
+                        }
                     })
                 ],
                 // And shows the extension's page action.
