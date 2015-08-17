@@ -140,7 +140,7 @@ public class LocalIndexedDataService implements InitializingBean {
     DancerD dancerD = wsdcIdToDancerMap.get(Integer.parseInt(wsdcId)
     );
 
-    if(dancerD == null) {
+    if(dancerD == null || dancerD.getVideoIdList() == null) {
       return results;
     }
 
