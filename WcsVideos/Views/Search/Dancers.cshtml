@@ -19,7 +19,7 @@
             <div class="form-group">
                 <div class="col-sm-6">
                     <div class="input-group">
-                        <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
+                        <input type="text" class="form-control" name="query" id="dancerQuery" value="@this.Model.Query">
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-default">Search</button>
                         </span>
@@ -31,7 +31,7 @@
 </div>
 
 <div class="row">
-    <div class="col-md-12" id="results">
+    <div class="col-md-12" id="dancerSearchResults">
         @if (this.Model.ShowResults)
         {
             @Html.Partial("DancerSearchResults", this.Model)
@@ -43,51 +43,54 @@
 {
     <script>
         $(function() {
-            var timer;
             var delay = 250; // 250 millisecond delay
-            var jqxhr;
+            var dancerTimer;
+            var dancerJqxhr;
             
-            function requestData()
+            function requestDancerData()
             {
-                jqxhr = $.ajax({
-                    method: "GET",
-                    url: "/Search/DancerSearchResults",
-                    data: { query: $("#query").val() }
-                });
-                
-                jqxhr.done(
-                    function(data) {
-                        $("#results").html(data);
-                    });
+                searchForDancer($("#dancerQuery").val(), 0);
             };
-                        
-            $("#query").on(
+            
+            $("#dancerQuery").on(
                 "input",
                 function() {
-                    clearTimeout(timer);
-                    timer = setTimeout(requestData, delay);
-
+                    clearTimeout(dancerTimer);
+                    dancerTimer = setTimeout(requestDancerData, delay);
+        
                     // abort any previous request which is in progress
-                    if (jqxhr)
+                    if (dancerJqxhr)
                     {
-                        jqxhr.abort();
-                        jqxhr = null;
+                        dancerJqxhr.abort();
+                        dancerJqxhr = null;
                     }
+                }
+            );
+                        
+            $("#dancerSearchResults").on(
+                "click",
+                ".pagingLink",
+                function(evt) {
+                    var link = $(evt.target);
+                    var query = link.attr("data-query");
+                    var start = link.attr("data-start");
+                    searchForDancer(query, start);
                 }
             );
             
-            $("#searchform").submit(
-                function() {
-                    // prevent future requests and abort any previous request
-                    clearTimeout(timer);
-                    
-                    if (jqxhr)
-                    {
-                        jqxhr.abort();
-                        jqxhr = null;
-                    }
-                }
-            );
+            function searchForDancer(query, start)
+            {
+                dancerJqxhr = $.ajax({
+                    method: "GET",
+                    url: "/Search/DancerSearchResults",
+                    data: { query: query, start: start }
+                });
+                
+                dancerJqxhr.done(
+                    function(data) {
+                        $("#dancerSearchResults").html(data);
+                    });
+            }
         });
     </script>
 }

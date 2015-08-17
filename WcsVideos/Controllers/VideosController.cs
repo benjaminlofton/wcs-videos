@@ -346,16 +346,10 @@ namespace WcsVideos.Controllers
                             listItem.Name = dancer.Name;
                             listItem.VideoCount = dancer.VideoIdList == null ? 0 : dancer.VideoIdList.Length;
                             listItem.WsdcId = dancer.WsdcId;
-                            listItem.Url = string.Format(
-                                "javascript:addDancer('{0}', '{1}');",
-                                dancer.WsdcId,
-                                dancer.Name + " (" + dancer.WsdcId + ")");
+                            listItem.Url = "javascript:void(0)";
                             return listItem;
                         },
-                    (s) => string.Format(
-                        "javascript:searchForDancer('{0}', {1});",
-                        query,
-                        s));
+                    (s) => "javascript:javascript:void(0)");
             }
             
             return View(viewModel);
@@ -378,16 +372,11 @@ namespace WcsVideos.Controllers
                         {
                             EventListItemViewModel listItem = new EventListItemViewModel();
                             listItem.Name = contractEvent.Name + " " + contractEvent.EventDate.Year;
-                            listItem.Url = string.Format(
-                                "javascript:setEvent('{0}', '{1}');",
-                                contractEvent.EventId,
-                                listItem.Name.Replace("'", "\\'"));
+                            listItem.Id = contractEvent.EventId;
+                            listItem.Url = "javascript:void(0)";
                             return listItem;
                         },
-                    (s) => string.Format(
-                        "javascript:searchForEvent('{0}', {1});",
-                        query.Replace("'", "\\'"),
-                        s));
+                    (s) => "javascript:void(0)");
             }
             
             return View(viewModel);

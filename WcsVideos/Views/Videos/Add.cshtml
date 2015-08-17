@@ -129,19 +129,9 @@
 
 @section scripts
 {
-    <script>
-        var dancerTimer;
-        var delay = 250; // 250 millisecond delay
-        var dancerJqxhr;
-        var eventTimer;
-        var eventJqxhr;
-        var videoJqxhr;
-        
-        $(function() {            
-            function requestDancerData()
-            {
-                searchForDancer($("#dancerQuery").val(), 0);
-            };
+    <script>       
+        $(function() {
+            var videoJqxhr;
             
             $("#providerVideoId").on(
                 "change",
@@ -172,161 +162,8 @@
                         });
                 }
             );
-            
-                        
-            $("#dancerQuery").on(
-                "input",
-                function() {
-                    clearTimeout(dancerTimer);
-                    dancerTimer = setTimeout(requestDancerData, delay);
-
-                    // abort any previous request which is in progress
-                    if (dancerJqxhr)
-                    {
-                        dancerJqxhr.abort();
-                        dancerJqxhr = null;
-                    }
-                }
-            );
-            
-            $("#findDancerLink").on(
-                "click",
-                function() {
-                    $("#findDancerPanel").toggle();
-                    
-                    if ($("#findDancerPanel").is(":visible"))
-                    {
-                        $("#dancerQuery").focus();
-                    }
-                }
-            );
-
-            $("#clearDancerLink").on(
-                "click",
-                function() {
-                    $("#dancerNameList").text("(None)");
-                    $("#dancerIdList").val("");
-                }
-            );
-
-            function requestEventData()
-            {
-                searchForEvent($("#eventQuery").val(), 0);
-            };
-                        
-            $("#eventQuery").on(
-                "input",
-                function() {
-                    clearTimeout(eventTimer);
-                    eventTimer = setTimeout(requestEventData, delay);
-
-                    // abort any previous request which is in progress
-                    if (eventJqxhr)
-                    {
-                        eventJqxhr.abort();
-                        eventJqxhr = null;
-                    }
-                }
-            );
-            
-            $("#findEventLink").on(
-                "click",
-                function() {
-                    $("#findEventPanel").toggle();
-                                        
-                    if ($("#findEventPanel").is(":visible"))
-                    {
-                        $("#eventQuery").focus();
-                    }
-                }
-            );
-            
-            $("#clearEventLink").on(
-                "click",
-                function() {
-                    setEvent("", "(None)");
-                }
-            );
-            
-            $("#advancedSearch").on(
-                "change",
-                function() {
-                    if ($("#advancedSearch").prop("checked"))
-                    {
-                        $("#advancedSearchPanel").show();
-                    }
-                    else
-                    {
-                        $("#advancedSearchPanel").hide();
-                    }
-                }
-            );
         });
-        
-        function addDancer(dancerId, dancerName)
-        {
-            var dancerIds = $("#dancerIdList").val();
-            var dancerNames = $("#dancerNameList").text();
-            
-            if (dancerIds && dancerIds.length)
-            {
-                if (!dancerIds.charAt(dancerIds.length - 1) != ';')
-                {
-                    dancerIds += ";";
-                    dancerNames += "; ";
-                }
-                
-                dancerIds += dancerId;
-                dancerNames += dancerName;
-            }
-            else
-            {
-                dancerIds = dancerId;
-                dancerNames = dancerName;
-            }
-            
-            $("#dancerIdList").val(dancerIds);
-            $("#dancerNameList").text(dancerNames);
-            $("#findDancerPanel").hide();
-            $("#dancerQuery").val("");
-            $("#dancerSearchResults").html("");
-        };
-        
-        function searchForDancer(query, start)
-        {
-            dancerJqxhr = $.ajax({
-                method: "GET",
-                url: "/Videos/DancerSearchResults",
-                data: { query: query, start: start }
-            });
-            
-            dancerJqxhr.done(
-                function(data) {
-                    $("#dancerSearchResults").html(data);
-                });
-        }
-        
-        function setEvent(eventId, eventName)
-        {
-            $("#eventId").val(eventId);
-            $("#eventName").text(eventName);
-            $("#findEventPanel").hide();
-            $("#eventQuery").val("");
-            $("#eventSearchResults").html("");
-        };
-        
-        function searchForEvent(query, start)
-        {
-            eventJqxhr = $.ajax({
-                method: "GET",
-                url: "/Videos/EventSearchResults",
-                data: { query: query, start: start }
-            });
-            
-            eventJqxhr.done(
-                function(data) {
-                    $("#eventSearchResults").html(data);
-                });
-        }
     </script>
+    <script src="/js/inlinedancersearch.js"></script>
+    <script src="/js/inlineeventsearch.js"></script>
 }

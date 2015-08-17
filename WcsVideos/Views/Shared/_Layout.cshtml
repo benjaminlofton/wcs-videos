@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>if (!string.IsNullOrEmpty(@ViewBag.Title)) { @ViewBag.Title - } @AppSettings.Options.SiteTitle</title>
+        <title>@if (!string.IsNullOrEmpty(@ViewBag.Title)) { <text>@ViewBag.Title -</text> } @AppSettings.Options.SiteTitle</title>
 
         <environment names="Development">
             <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />

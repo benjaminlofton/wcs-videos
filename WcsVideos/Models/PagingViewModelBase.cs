@@ -18,7 +18,11 @@ namespace WcsVideos.Models
         
         public bool ShowPreviousLink { get; set; }
         
+        public int NextLinkStart { get; set; }
+        
         public string PreviousLinkUrl { get; set; }
+        
+        public int PreviousLinkStart { get; set; }
         
 		public IEnumerable<T> Entries { get; set; }
     }

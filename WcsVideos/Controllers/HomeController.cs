@@ -95,21 +95,24 @@ namespace WcsVideos.Controllers
             model.Title = dancer.Name;
             model.Videos = new List<VideoListItemViewModel>();
             
-            foreach (string videoId in dancer.VideoIdList)
+            if (dancer.VideoIdList != null)
             {
-                Video video = this.dataAccess.GetVideoById(videoId);
-                if (video != null)
+                foreach (string videoId in dancer.VideoIdList)
                 {
-                    VideoListItemViewModel listItemModel = new VideoListItemViewModel();
-                    listItemModel.Title = video.Title;
-                    listItemModel.Url = this.Url.Link(
-                        "default",
-                        new { controller = "Videos", action = "Watch", id = video.Id });
-                    listItemModel.ThumbnailUrl = string.Format(
-                        "http://img.youtube.com/vi/{0}/default.jpg",
-                        video.ProviderVideoId);
-                    model.Videos.Add(listItemModel);
-                }  
+                    Video video = this.dataAccess.GetVideoById(videoId);
+                    if (video != null)
+                    {
+                        VideoListItemViewModel listItemModel = new VideoListItemViewModel();
+                        listItemModel.Title = video.Title;
+                        listItemModel.Url = this.Url.Link(
+                            "default",
+                            new { controller = "Videos", action = "Watch", id = video.Id });
+                        listItemModel.ThumbnailUrl = string.Format(
+                            "http://img.youtube.com/vi/{0}/default.jpg",
+                            video.ProviderVideoId);
+                        model.Videos.Add(listItemModel);
+                    }  
+                }
             }
             
             return View(model);

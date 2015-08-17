@@ -16,7 +16,7 @@
         {
             <li class="list-group-item">
                 <span class="badge">@dancer.VideoCount videos</span>
-                <a href="@dancer.Url">@dancer.Name (@dancer.WsdcId)</a>
+                <a data-wsdc-id="@dancer.WsdcId" data-name="@dancer.Name" href="@dancer.Url" class="dancerResult">@dancer.Name (@dancer.WsdcId)</a>
             </li>
         }
     </ol>
@@ -27,7 +27,7 @@
         @if (this.Model.ShowPreviousLink)
         {
             <li class="previous">
-                <a href="@this.Model.PreviousLinkUrl">
+                <a href="@this.Model.PreviousLinkUrl" data-query="@this.Model.Query" data-start="@this.Model.PreviousLinkStart" class="pagingLink">
                     <span aria-hidden="true">&laquo;</span> Previous Page
                 </a>    
             </li>
@@ -44,7 +44,7 @@
         @if (this.Model.ShowNextLink)
         {
             <li class="next">
-                <a href="@this.Model.NextLinkUrl">
+                <a href="@this.Model.NextLinkUrl" data-query="@this.Model.Query" data-start="@this.Model.NextLinkStart" class="pagingLink">
                     Next Page <span aria-hidden="true">&raquo;</span>
                 </a>    
             </li>

@@ -17,6 +17,8 @@ namespace WcsVideos.Models
         
         public string Url { get; set; }
         
+        public string Id { get; set; }
+        
         public int VideoCount { get; set; }
         
         public bool ShowVideoCount { get; set; }

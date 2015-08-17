@@ -15,7 +15,7 @@
         @foreach (EventListItemViewModel eventEntry in this.Model.Entries)
         {
             <li class="list-group-item">
-                <a href="@eventEntry.Url">@eventEntry.Name</a>
+                <a href="@eventEntry.Url" class="eventResult" data-event-id="@eventEntry.Id" data-name="@eventEntry.Name">@eventEntry.Name</a>
             </li>
         }
     </ol>
@@ -26,7 +26,7 @@
         @if (this.Model.ShowPreviousLink)
         {
             <li class="previous">
-                <a href="@this.Model.PreviousLinkUrl">
+                <a href="@this.Model.PreviousLinkUrl" data-query="@this.Model.Query" data-start="@this.Model.PreviousLinkStart" class="pagingLink">
                     <span aria-hidden="true">&laquo;</span> Previous Page
                 </a>    
             </li>
@@ -43,7 +43,7 @@
         @if (this.Model.ShowNextLink)
         {
             <li class="next">
-                <a href="@this.Model.NextLinkUrl">
+                <a href="@this.Model.NextLinkUrl" data-query="@this.Model.Query" data-start="@this.Model.NextLinkStart" class="pagingLink">
                     Next Page <span aria-hidden="true">&raquo;</span>
                 </a>    
             </li>

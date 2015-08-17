@@ -41,12 +41,14 @@ namespace WcsVideos.Models
             if (viewModel.ResultsEnd < fullResults.Count)
             {
                 viewModel.ShowNextLink = true;
+                viewModel.NextLinkStart = viewModel.ResultsEnd + 1;
                 viewModel.NextLinkUrl = createPageLinkUrl(viewModel.ResultsEnd + 1);
             }
             
             if (start > 1)
             {
                 viewModel.ShowPreviousLink = true;
+                viewModel.PreviousLinkStart = start - resultsPerPage;
                 viewModel.PreviousLinkUrl = createPageLinkUrl(start - resultsPerPage);
             }
         }
