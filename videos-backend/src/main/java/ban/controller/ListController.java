@@ -1,5 +1,6 @@
 package ban.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import ban.model.view.ResourceList;
+import ban.service.list.ListService;
+
 /**
  * Created by bnorrish on 7/17/15.
  */
@@ -16,10 +20,13 @@ import java.util.List;
 @ComponentScan
 public class ListController {
 
-  @RequestMapping(value="/list/{listName}",method = RequestMethod.GET)
-  public List<String> getListByName( @PathVariable String listName) {
+  @Autowired
+  ListService listService;
 
-    return null;
+  @RequestMapping(value="/list/{listName}",method = RequestMethod.GET)
+  public ResourceList getListByName( @PathVariable String listName) {
+
+    return listService.getListByName(listName);
   }
 
 
