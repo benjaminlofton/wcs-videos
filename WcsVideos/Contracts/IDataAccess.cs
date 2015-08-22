@@ -30,5 +30,7 @@ namespace WcsVideos.Contracts
             IEnumerable<string> eventIds);
             
         bool ProviderVideoIdExists(string providerId, string providerVideoId);
+        
+        ResourceList GetResourceList(string name);
     }
 }

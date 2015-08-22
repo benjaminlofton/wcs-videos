@@ -338,5 +338,15 @@ namespace WcsVideos.Contracts
         {
             return true;
         }
+        
+        public ResourceList GetResourceList(string name)
+        {
+            return new ResourceList
+            {
+                Name = "name",
+                ResourceType = "Videos",
+                Ids = new string[0],  
+            };
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace WcsVideos.Contracts
         private ConcurrentDictionary<string, Video> videos;
         private ConcurrentDictionary<string, List<string>> eventVideos;
         private ConcurrentDictionary<string, Event> events;
+        private ConcurrentDictionary<string, ResourceList> resourceLists;
         private List<Dancer> allDancers;
         private List<Video> trendingVideos;
         private List<Event> recentEvents;
@@ -30,6 +31,7 @@ namespace WcsVideos.Contracts
             this.videos = new ConcurrentDictionary<string, Video>();
             this.events = new ConcurrentDictionary<string, Event>();
             this.eventVideos = new ConcurrentDictionary<string, List<string>>();
+            this.resourceLists = new ConcurrentDictionary<string, ResourceList>();
             this.baseDataAccess = new DataAccess(endpoint);
             this.allDancersLoaded = new ManualResetEvent(false);
             this.WebserviceTarget = new Uri(endpoint);
@@ -236,6 +238,9 @@ namespace WcsVideos.Contracts
                             this.allDancers[index] = dancer;
                         }
                     }
+                    
+                    ResourceList removed;
+                    this.resourceLists.TryRemove("latest-videos", out removed);
                 }
             }
             
@@ -278,6 +283,21 @@ namespace WcsVideos.Contracts
                 string serialized = await response.Content.ReadAsStringAsync();
                 response.EnsureSuccessStatusCode();
             }
+        }
+        
+        public ResourceList GetResourceList(string name)
+        {
+            ResourceList list;
+            if (!this.resourceLists.TryGetValue(name, out list))
+            {
+                list = this.baseDataAccess.GetResourceList(name);
+                if (list != null)
+                {
+                    this.resourceLists[name] = list;
+                }
+            }
+            
+            return list;
         }
 	}
 }

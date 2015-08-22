@@ -52,7 +52,7 @@ namespace WcsVideos.Contracts
         public List<Event> GetRecentEvents()
         {
             List<Event> events;
-            string afterDate = DateTime.UtcNow.Subtract(TimeSpan.FromDays(180)).ToString("yyyy-MM-dd");
+            string afterDate = DateTime.UtcNow.Subtract(TimeSpan.FromDays(120)).ToString("yyyy-MM-dd");
             string beforeDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
             events = this.HttpGet<List<Event>>(
                 "event/?after-date=" + afterDate + "&before-date=" + beforeDate).Result
@@ -81,12 +81,12 @@ namespace WcsVideos.Contracts
         
 		public Video GetVideoById(string id)
         {
-            return this.HttpGet<Video>("v/" + id).Result;
+            return this.HttpGet<Video>("v/" + Uri.EscapeUriString(id)).Result;
         }
         
         public Dancer GetDancerById(string id)
         {
-            return this.HttpGet<Dancer>("d/" + id).Result;
+            return this.HttpGet<Dancer>("d/" + Uri.EscapeUriString(id)).Result;
         }
 
         public List<Dancer> SearchForDancer(string query)
@@ -121,17 +121,17 @@ namespace WcsVideos.Contracts
             List<string> queryFragments = new List<string>(4);
             if (titleFragments != null && titleFragments.Any())
             {
-                queryFragments.Add("title-frag=" + string.Join(",", titleFragments));
+                queryFragments.Add("title-frag=" + Uri.EscapeUriString(string.Join(",", titleFragments)));
             }
             
             if (dancerIds != null && dancerIds.Any())
             {
-                queryFragments.Add("wsdc-id=" + string.Join(",", dancerIds));
+                queryFragments.Add("wsdc-id=" + Uri.EscapeUriString(string.Join(",", dancerIds)));
             }
             
             if (eventIds != null && eventIds.Any())
             {
-                queryFragments.Add("event-id=" + string.Join(",", eventIds));
+                queryFragments.Add("event-id=" + Uri.EscapeUriString(string.Join(",", eventIds)));
             }
             
             if (queryFragments.Count > 0)
@@ -147,8 +147,14 @@ namespace WcsVideos.Contracts
 
         public bool ProviderVideoIdExists(string providerId, string providerVideoId)
         {
-            List<Video> videos = this.HttpGet<List<Video>>("v?provider-id=" + providerVideoId).Result;
+            List<Video> videos = this.HttpGet<List<Video>>(
+                "v?provider-id=" + Uri.EscapeUriString(providerVideoId)).Result;
             return videos.Count > 0;
+        }
+
+        public ResourceList GetResourceList(string name)
+        {
+            return this.HttpGet<ResourceList>("list/" + Uri.EscapeUriString(name)).Result;
         }
 
         private async Task<T> HttpGet<T>(string relativeUrl)

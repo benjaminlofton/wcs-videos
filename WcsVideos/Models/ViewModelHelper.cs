@@ -67,6 +67,18 @@ namespace WcsVideos.Models
             return listItem;
         }
         
+        public static DancerListItemViewModel PopulateDancerListItem(Dancer dancer, IUrlHelper urlHelper)
+        {
+            DancerListItemViewModel listItem = new DancerListItemViewModel();
+            listItem.Name = dancer.Name;
+            listItem.VideoCount = dancer.VideoIdList == null ? 0 : dancer.VideoIdList.Length;
+            listItem.WsdcId = dancer.WsdcId;
+            listItem.Url = urlHelper.Link(
+                "default",
+                new { controller = "Home", action = "Dancer", id = dancer.WsdcId });
+            return listItem;
+        }
+        
         public static void PopulateUserInfo(BasePageViewModel model, bool isLoggedIn)
         {
             if (isLoggedIn)

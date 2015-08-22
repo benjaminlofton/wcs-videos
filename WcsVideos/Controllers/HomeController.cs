@@ -25,16 +25,7 @@ namespace WcsVideos.Controllers
             ViewModelHelper.PopulateUserInfo(
                 model,
                 this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
-                
-            var videos = this.dataAccess.GetTrendingVideos();
-            model.Videos = videos.Select(
-                x => new VideoListItemViewModel
-                {
-                    Url = this.Url.Link("default", new { controller = "Videos", action = "Watch", id = x.Id }),
-                    Title = x.Title,
-                    ThumbnailUrl = string.Format("http://img.youtube.com/vi/{0}/default.jpg", x.ProviderVideoId)
-                }).ToList(); 
-            
+
             var events = this.dataAccess.GetRecentEvents();
             List<EventListItemViewModel> modelEvents = new List<EventListItemViewModel>(events.Count);
             int eventCount = 0;
@@ -60,6 +51,29 @@ namespace WcsVideos.Controllers
             }
             
             model.Events = modelEvents;
+
+            // Retrieve the recent videos after retrieveing the event list since most of these will likely be
+            // cached from the the call to get the recent events
+            model.Videos = new List<VideoListItemViewModel>();
+            ResourceList recentVideoList = this.dataAccess.GetResourceList("latest-videos");
+            int count = 0;
+            if (recentVideoList != null && recentVideoList.Ids != null)
+            {
+                foreach (string videoId in recentVideoList.Ids)
+                {
+                    Video video = this.dataAccess.GetVideoById(videoId);
+                    if (video != null)
+                    {
+                        VideoListItemViewModel listItem = ViewModelHelper.PopulateVideoListItem(video, this.Url);
+                        model.Videos.Add(listItem);
+                        
+                        if (++count > 5)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
             
             return this.View(model);
         }
@@ -102,14 +116,7 @@ namespace WcsVideos.Controllers
                     Video video = this.dataAccess.GetVideoById(videoId);
                     if (video != null)
                     {
-                        VideoListItemViewModel listItemModel = new VideoListItemViewModel();
-                        listItemModel.Title = video.Title;
-                        listItemModel.Url = this.Url.Link(
-                            "default",
-                            new { controller = "Videos", action = "Watch", id = video.Id });
-                        listItemModel.ThumbnailUrl = string.Format(
-                            "http://img.youtube.com/vi/{0}/default.jpg",
-                            video.ProviderVideoId);
+                        VideoListItemViewModel listItemModel = ViewModelHelper.PopulateVideoListItem(video, this.Url);
                         model.Videos.Add(listItemModel);
                     }  
                 }

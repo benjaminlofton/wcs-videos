@@ -138,17 +138,7 @@ namespace WcsVideos.Controllers
                     fullResults,
                     start,
                     SearchController.ResultsPerPage, 
-                    (dancer) =>
-                        {
-                            DancerListItemViewModel listItem = new DancerListItemViewModel();
-                            listItem.Name = dancer.Name;
-                            listItem.VideoCount = dancer.VideoIdList == null ? 0 : dancer.VideoIdList.Length;
-                            listItem.WsdcId = dancer.WsdcId;
-                            listItem.Url = this.Url.Link(
-                                "default",
-                                new { controller = "Home", action = "Dancer", id = dancer.WsdcId });
-                            return listItem;
-                        },
+                    (dancer) => ViewModelHelper.PopulateDancerListItem(dancer, this.Url),
                     (s) => this.Url.Link(
                         "default",
                         new

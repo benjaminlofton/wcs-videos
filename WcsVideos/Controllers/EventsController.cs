@@ -38,13 +38,7 @@ namespace WcsVideos.Controllers
             model.Title = contractEvent.Name;
             
             var videos = this.dataAccess.GetEventVideos(id);
-            model.Videos = videos.Select(
-                x => new VideoListItemViewModel
-                {
-                    Url = this.Url.Link("default", new { controller = "Videos", action = "Watch", id = x.Id }),
-                    Title = x.Title,
-                    ThumbnailUrl = string.Format("http://img.youtube.com/vi/{0}/default.jpg", x.ProviderVideoId)
-                }).ToList(); 
+            model.Videos = videos.Select(x => ViewModelHelper.PopulateVideoListItem(x, this.Url)).ToList(); 
             
             return this.View(model);
         }
