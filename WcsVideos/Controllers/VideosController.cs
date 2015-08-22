@@ -42,18 +42,21 @@ namespace WcsVideos.Controllers
             model.ProviderVideoId = video.ProviderVideoId;
             model.Dancers = new List<DancerLinkViewModel>();
             
-            foreach (string dancerId in video.DancerIdList)
+            if (video.DancerIdList != null)
             {
-                Dancer dancer = this.dataAccess.GetDancerById(dancerId);
-                if (dancer != null)
+                foreach (string dancerId in video.DancerIdList)
                 {
-                    DancerLinkViewModel dancerModel = new DancerLinkViewModel();
-                    dancerModel.DisplayName = dancer.Name;
-                    dancerModel.Url = this.Url.Link(
-                        "default",
-                         new { controller = "Home", action = "Dancer", id = dancer.WsdcId });
-                    model.Dancers.Add(dancerModel);
-                }    
+                    Dancer dancer = this.dataAccess.GetDancerById(dancerId);
+                    if (dancer != null)
+                    {
+                        DancerLinkViewModel dancerModel = new DancerLinkViewModel();
+                        dancerModel.DisplayName = dancer.Name;
+                        dancerModel.Url = this.Url.Link(
+                            "default",
+                            new { controller = "Home", action = "Dancer", id = dancer.WsdcId });
+                        model.Dancers.Add(dancerModel);
+                    }    
+                }
             }
             
             Event contractEvent = null;

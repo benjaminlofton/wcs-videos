@@ -36,25 +36,6 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td rowspan="@Math.Max(1, this.Model.Dancers.Count)">
-                                Dancers
-                            </td>
-                            <td>
-                                @if (this.Model.Dancers.Count >= 1)
-                                {
-                                    var dancer = this.Model.Dancers[0];
-                                    <a href="@dancer.Url">@dancer.DisplayName</a>
-                                }
-                            </td>
-                        </tr>
-                        @foreach (var dancer in this.Model.Dancers.Skip(1)) {
-                        <tr>
-                            <td>
-                                <a href="@dancer.Url">@dancer.DisplayName</a>
-                            </td>
-                        </tr>                        
-                        }
-                        <tr>
                             <td>
                                 Event
                             </td>
@@ -69,6 +50,29 @@
                                 }
                             </td>
                         </tr>
+                        <tr>
+                            <td rowspan="@Math.Max(1, this.Model.Dancers.Count)">
+                                Dancers
+                            </td>
+                            <td>
+                                @if (this.Model.Dancers.Count >= 1)
+                                {
+                                    var dancer = this.Model.Dancers[0];
+                                    <a href="@dancer.Url">@dancer.DisplayName</a>
+                                }
+                                else
+                                {
+                                    <text>(None)</text>
+                                }
+                            </td>
+                        </tr>
+                        @foreach (var dancer in this.Model.Dancers.Skip(1)) {
+                        <tr>
+                            <td>
+                                <a href="@dancer.Url">@dancer.DisplayName</a>
+                            </td>
+                        </tr>                        
+                        }
                     </tbody>
                 </table>
             </div>
