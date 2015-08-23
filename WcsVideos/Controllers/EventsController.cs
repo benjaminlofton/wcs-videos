@@ -35,7 +35,7 @@ namespace WcsVideos.Controllers
                 model,
                 this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
             
-            model.Title = contractEvent.Name;
+            model.Title = contractEvent.Name + " " + contractEvent.EventDate.Year;
             
             var videos = this.dataAccess.GetEventVideos(id);
             model.Videos = videos.Select(x => ViewModelHelper.PopulateVideoListItem(x, this.Url)).ToList(); 

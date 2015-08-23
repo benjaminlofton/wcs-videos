@@ -1,6 +1,6 @@
 {
     "AppSettings": {
-        "SiteTitle": "WCS Videos",
+        "SiteTitle": "Westie Connection",
         "DataAccessEndpoint": "http://localhost:8085/",
         "Username": "username",
         "Password": "password"

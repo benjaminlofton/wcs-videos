@@ -1,11 +1,9 @@
+@inject IOptions<AppSettings> AppSettings
 @model IndexViewModel
-@{
-    ViewBag.Title = "Home Page";
-}
 <div class="row">
     <div class="col-md-12">
         <div class="page-header">
-            <h2>Welcome to WCS Videos!</h2>
+            <h2>Welcome to @AppSettings.Options.SiteTitle!</h2>
         </div>
     </div>
 </div>
@@ -13,7 +11,7 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-body">
-                Welcome to WCS Videos where you can find all of your favorite WCS videos.  Search for a video by dancer, event, or title, or just browse through trending or new videos for some dance inspiration!
+                Welcome to @AppSettings.Options.SiteTitle where you can find all of your favorite WCS videos.  Search for a video by dancer, event, or title, or just browse through trending or new videos for some dance inspiration!
             </div>
         </div>
         <div class="panel panel-default">
@@ -35,7 +33,7 @@
                 Search
             </div>
             <div class="panel-body">
-                Search for your favorite videos!
+                <a asp-controller="Search" asp-action="Videos">Search</a> for your favorite videos!
             </div>
         </div>
     </div>
