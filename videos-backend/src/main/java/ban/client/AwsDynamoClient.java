@@ -5,6 +5,7 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Index;
 import com.amazonaws.services.dynamodbv2.document.Item;
@@ -70,7 +71,18 @@ public class AwsDynamoClient {
     video.setId(null);
 
     // AWS Will throw exception when saving empty Number Set (!!!)
-    if(video.getDancerIdList().isEmpty()) {
+    if(video.getDancerIdList() != null && video.getDancerIdList().isEmpty()) {
+      video.setDancerIdList(null);
+    }
+
+    dynamoMapper.save(video);
+    return video;
+  }
+
+  public VideoD updateVideo(VideoD video) {
+
+    // AWS Will throw exception when saving empty Number Set (!!!)
+    if(video.getDancerIdList() != null && video.getDancerIdList().isEmpty()) {
       video.setDancerIdList(null);
     }
 
@@ -83,6 +95,12 @@ public class AwsDynamoClient {
   }
 
   public void saveDancer(DancerD dancerD) {
+
+    // AWS Will throw exception when saving empty Number Set (!!!)
+    if(dancerD.getVideoIdList() != null && dancerD.getVideoIdList().isEmpty()) {
+      dancerD.setVideoIdList(null);
+    }
+
     dynamoMapper.save(dancerD);
   }
 

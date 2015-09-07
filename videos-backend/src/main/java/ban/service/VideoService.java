@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import ban.client.AwsDynamoClient;
 import ban.exception.InvalidRequestException;
@@ -88,12 +90,57 @@ public class VideoService {
   }
 
   private Video updateVideo(Video newState) {
-    throw new RuntimeException("NYI");
+
+    // Retrieve the existing video object
+    VideoD oldState = dynamoClient.getVideo(newState.getId());
+    if( oldState == null) {
+      throw new InvalidRequestException();
+    }
+
+    Set<Integer> oldStateDancers = oldState.getDancerIdList();
+    Set<Integer> newStateDancers = newState.getDancerIdList();
+
+    Set<Integer> addedDancers = newStateDancers.stream()
+            .filter(v -> !oldStateDancers.contains(v))
+            .collect(Collectors.toSet());
+
+    Set<Integer> removedDancers = oldStateDancers.stream()
+            .filter(v -> !newStateDancers.contains(v))
+            .collect(Collectors.toSet());
+
+    // Verify all added dancers exist
+    for(Integer dancerId : addedDancers) {
+
+      if(dynamoClient.getDancer(dancerId) == null) {
+        throw new InvalidRequestException();
+      }
+    }
+
+    // If event id was changed, verify event is valid
+    if(newState.getEventId() != null && !newState.getEventId().equals(oldState.getEventId())) {
+      if(dynamoClient.getEventById(newState.getEventId()) == null) {
+        throw new InvalidRequestException();
+      }
+    }
+
+    // *** Below this point we are updating dynamo objects, any exception could result in inconsistent data
+
+    // For each added dancer, associate the Dancer with the Video
+    for (Integer addedDancer : addedDancers) {
+      associateDancerWithVideo(addedDancer,oldState.getId());
+    }
+
+    // For each removed dancer, disassociate the Dancer with the Video
+    for (Integer removedDancer : removedDancers) {
+      disassociateDancerWithVideo(removedDancer,oldState.getId());
+    }
+
+    return videoMapper.mapToViewModel(dynamoClient.updateVideo(videoMapper.mapToPersistanceModel(newState)));
   }
 
   private Video addVideo(Video video) {
 
-    // Verify that the provider Id does not exist
+    // Verify that the provider Video Id does not exist
     if(existsByProviderId(video.getProviderVideoId())) {
       throw new InvalidRequestException();
     }
@@ -124,24 +171,45 @@ public class VideoService {
     // Add the id of this video to the Dancer object for each dancer found
     // in this video's dancerIdList
     for(Integer wsdcId: video.getDancerIdList()) {
-
-      DancerD dancer = dynamoClient.getDancer(wsdcId);
-
-      // Dancer should never be null, as we already checked this above
-      if(dancer != null) {
-
-        if (dancer.getVideoIdList() == null) {
-          dancer.setVideoIdList(new HashSet<>());
-        }
-
-        if (!dancer.getVideoIdList().contains(wsdcId)) {
-          dancer.getVideoIdList().add(pVideo.getId());
-          dynamoClient.saveDancer(dancer);
-        }
-
-      }
+      associateDancerWithVideo(wsdcId,pVideo.getId());
     }
 
     return videoMapper.mapToViewModel(pVideo);
   }
+
+  private void associateDancerWithVideo(Integer wsdcId, String videoId) {
+
+    DancerD dancer = dynamoClient.getDancer(wsdcId);
+
+    // Dancer should never be null, as we already checked this above
+    if(dancer != null) {
+
+      if (dancer.getVideoIdList() == null) {
+        dancer.setVideoIdList(new HashSet<>());
+      }
+
+      if (!dancer.getVideoIdList().contains(videoId)) {
+        dancer.getVideoIdList().add(videoId);
+        dynamoClient.saveDancer(dancer);
+      }
+    }
+  }
+
+  private void disassociateDancerWithVideo(Integer wsdcId, String videoId) {
+
+    DancerD dancer = dynamoClient.getDancer(wsdcId);
+
+    // Dancer should never be null, as we already checked this above
+    if(dancer != null) {
+
+      if (dancer.getVideoIdList() == null) {
+        // This should not happen; Removing a videoId from a Dancer that has no videoIds.
+        return;
+      }
+
+      dancer.getVideoIdList().remove(videoId);
+      dynamoClient.saveDancer(dancer);
+    }
+  }
+
 }
