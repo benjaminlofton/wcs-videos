@@ -24,9 +24,12 @@ public class ListController {
   ListService listService;
 
   @RequestMapping(value="/list/{listName}",method = RequestMethod.GET)
-  public ResourceList getListByName( @PathVariable String listName) {
+  public ResourceList getListByName(
+      @PathVariable String listName,
+      @RequestParam(value = "skip", required = false) Integer skip,
+      @RequestParam(value = "take", required = false) Integer take) {
 
-    return listService.getListByName(listName);
+    return listService.getListByName(listName, skip, take);
   }
 
 

@@ -15,13 +15,13 @@ public class ListService {
   @Autowired
   MostRecentVideoAggregator mostRecentVideoAggregator;
 
-  public ResourceList getListByName(String name) {
+  public ResourceList getListByName(String name, Integer skip, Integer take) {
 
     ResourceList resourceList = new ResourceList();
 
     switch(name) {
       case "latest-videos":
-        resourceList.setIds(mostRecentVideoAggregator.getMostRecent(10));
+        resourceList.setIds(mostRecentVideoAggregator.getMostRecent(skip,take));
         resourceList.setName(name);
         resourceList.setResourceType("Video");
         break;

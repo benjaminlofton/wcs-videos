@@ -21,10 +21,14 @@ import ban.service.LocalIndexedDataService;
 @Component
 public class MostRecentVideoAggregator {
 
+  private final static int DEFAULT_TAKE = 10;
+
   @Autowired
   LocalIndexedDataService localIndexedDataService;
 
-  public List<String> getMostRecent(int number) {
+  public List<String> getMostRecent(Integer skip, Integer take) {
+
+
 
     List<VideoD> videos = localIndexedDataService.getAllVideos();
 
@@ -44,7 +48,13 @@ public class MostRecentVideoAggregator {
 
     Collections.sort(validVideos, new VideoSortByCreateDateComparitor());
 
-    List<VideoD> firstNVideos = validVideos.subList(0, Math.min(number, validVideos.size()));
+    // Some input sanity
+    int intSkip = skip == null ? 0 : skip;
+    int intTake = take == null ? DEFAULT_TAKE : take;
+    intSkip = Math.max(0,intSkip);
+    intTake = Math.max(0,intTake);
+
+    List<VideoD> firstNVideos = validVideos.subList(Math.min(intSkip, validVideos.size()), Math.min(intSkip + intTake, validVideos.size()));
 
     List<String> returnList = new ArrayList<String>();
     for(VideoD videoD : firstNVideos) {
