@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNet.Mvc;
 using WcsVideos.Models;
+using WcsVideos.Models.Population;
 using WcsVideos.Contracts;
 using Microsoft.AspNet.Http;
 
@@ -34,12 +34,10 @@ namespace WcsVideos.Controllers
             ViewModelHelper.PopulateUserInfo(
                 model,
                 this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
-                
-            model.ExternalUrl = string.Format("https://www.youtube.com/watch?v={0}", video.ProviderVideoId);
-            model.EmbedUrl = string.Format("http://www.youtube.com/embed/{0}", video.ProviderVideoId);
-            model.ProviderName = "YouTube";
-            model.Title = video.Title;
-            model.ProviderVideoId = video.ProviderVideoId;
+            
+            IVideoViewModelPopulator populator = VideoViewModelPopulatorFactory.GetPopulator(video);
+            populator.Populate(model);
+            
             model.Dancers = new List<DancerLinkViewModel>();
             
             if (video.DancerIdList != null)
@@ -103,7 +101,7 @@ namespace WcsVideos.Controllers
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
             IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            model.ProviderId = requestCookies.Get("ProviderId");
+            model.ProviderId = 1;  //requestCookies.Get("ProviderId");
             model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderIdValid") ?? "True");
             model.ProviderVideoId = requestCookies.Get("ProviderVideoId");
             model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderVideoIdValid") ?? "True");
@@ -199,8 +197,10 @@ namespace WcsVideos.Controllers
             bool titleValid = true;
             bool dancerIdListValid = true;
             bool eventIdValid = true;
+            int parsedProviderId = 0;
             if (string.IsNullOrEmpty(providerId) ||
-                !string.Equals(providerId, "youtube", StringComparison.Ordinal))
+                !int.TryParse(providerId, out parsedProviderId) ||
+                parsedProviderId != 1)
             {
                 providerIdValid = false;
             }
@@ -252,7 +252,7 @@ namespace WcsVideos.Controllers
             if (providerIdValid && providerVideoIdValid && titleValid && dancerIdListValid && eventIdValid)
             {
                 Video video = new Video();
-                video.ProviderId = "1";
+                video.ProviderId = parsedProviderId;
                 video.ProviderVideoId = providerVideoId;
                 video.Title = title;
                 video.DancerIdList = dancerIds;

@@ -134,7 +134,7 @@ namespace WcsVideos.Contracts
 				new Video
 				{
 					Id = "1",
-					ProviderId = "youtube",
+					ProviderId = 1,
 					ProviderVideoId = "JMZxfwqlmd0",
 					Title = "Maxence and Tatiana Strictly Swing at Swingdiego",
 					DancerIdList = new string[] { "1", "2" }, 
@@ -145,7 +145,7 @@ namespace WcsVideos.Contracts
 				new Video
 				{
 					Id = "2",
-					ProviderId = "youtube",
+					ProviderId = 1,
 					ProviderVideoId = "EqVYEiRpYRE",
 					Title = "Kyle Redd and Patty Vo Jack and Jill to Secret by Maroon 5",
 					DancerIdList = new string[] { "3", "4" },
@@ -156,7 +156,7 @@ namespace WcsVideos.Contracts
 				new Video
 				{
 					Id = "3",
-					ProviderId = "youtube",
+					ProviderId = 1,
 					ProviderVideoId = "0PznFu7w7CQ",
 					Title = "Ben Morris and Torri Smith at US Open",
 					DancerIdList = new string[] { "5", "6" },
@@ -167,7 +167,7 @@ namespace WcsVideos.Contracts
 				new Video
 				{
 					Id = "4",
-					ProviderId = "youtube",
+					ProviderId = 1,
 					ProviderVideoId = "aOD-wL-qKiw",
 					Title = "Maxence and Virginie Demo at Budafest",
 					DancerIdList = new string[] { "1", "7" },
@@ -178,7 +178,7 @@ namespace WcsVideos.Contracts
 				new Video
 				{
 					Id = "5",
-					ProviderId = "youtube",
+					ProviderId = 1,
 					ProviderVideoId = "soBV5RboKFs",
 					Title = "Jordan and Jessica dance to She Wolf",
 					DancerIdList = new string[] { "8", "9" },
@@ -189,7 +189,7 @@ namespace WcsVideos.Contracts
 				new Video
 				{
 					Id = "6",
-					ProviderId = "youtube",
+					ProviderId = 1,
 					ProviderVideoId = "D021Irk6ByI",
 					Title = "Maxence and Tara with sweet drop",
 					DancerIdList = new string[] { "1", "10" },
@@ -200,7 +200,7 @@ namespace WcsVideos.Contracts
 				new Video
 				{
 					Id = "7",
-					ProviderId = "youtube",
+					ProviderId = 1,
 					ProviderVideoId = "smoboVc3qj8",
 					Title = "Kyle and Melissa at Chico",
 					DancerIdList = new string[] { "3", "11" }
@@ -211,7 +211,7 @@ namespace WcsVideos.Contracts
 				new Video
 				{
 					Id = "8",
-					ProviderId = "youtube",
+					ProviderId = 1,
 					ProviderVideoId = "erI704Rza64",
 					Title = "Diego Borges and Jessica Pacheco demo at Baltic Swing",
 					DancerIdList = new string[] { "12", "13" },
@@ -336,7 +336,8 @@ namespace WcsVideos.Contracts
         
         public bool ProviderVideoIdExists(string providerId, string providerVideoId)
         {
-            return true;
+            return this.videos.Values.Any(
+                v => string.Equals(v.ProviderVideoId, providerVideoId, StringComparison.Ordinal));
         }
         
         public ResourceList GetResourceList(string name)

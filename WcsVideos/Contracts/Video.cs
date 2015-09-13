@@ -4,7 +4,7 @@ namespace WcsVideos.Contracts
     {
         public string Id { get; set; }
         
-        public string ProviderId { get; set; }
+        public int ProviderId { get; set; }
         
         public string ProviderVideoId { get; set; }
         

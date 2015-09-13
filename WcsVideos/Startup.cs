@@ -54,8 +54,7 @@ namespace WcsVideos
 
 
             string key = Guid.NewGuid().ToString("N");
-            //services.AddSingleton(typeof(Contracts.IDataAccess), typeof(Contracts.CachingDataAccess));
-            //services.AddSingleton(typeof(Contracts.IDataAccess), typeof(Contracts.MockDataAccess));
+            //  services.AddSingleton(typeof(Contracts.IDataAccess), typeof(Contracts.MockDataAccess));
             services.AddSingleton(
                 typeof(IDataAccess),
                 (serviceProvider) => new CachingDataAccess(
@@ -67,10 +66,6 @@ namespace WcsVideos
                     this.Configuration.GetSubKey("AppSettings")["Username"],
                     this.Configuration.GetSubKey("AppSettings")["Password"],
                     key));
-
-            // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
-            // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
-            // services.AddWebApiConventions();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -107,9 +102,6 @@ namespace WcsVideos
                     name: "default",
                     template: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" });
-
-                // Uncomment the following line to add a route for porting Web API 2 controllers.
-                // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
         }
     }

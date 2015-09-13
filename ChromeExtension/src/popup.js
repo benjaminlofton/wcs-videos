@@ -1,5 +1,5 @@
 /* global chrome */
-var host = "localhost:5000";
+var host = "www.westieconnection.com";
 
 document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {

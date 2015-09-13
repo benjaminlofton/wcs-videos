@@ -2,7 +2,7 @@ namespace WcsVideos.Models
 {
 	public class VideosAddViewModel : BasePageViewModel
 	{              
-        public string ProviderId { get; set; }
+        public int ProviderId { get; set; }
         
         public string ProviderVideoId { get; set; }
         

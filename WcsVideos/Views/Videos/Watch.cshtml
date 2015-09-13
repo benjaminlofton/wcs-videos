@@ -1,7 +1,19 @@
+@inject IOptions<AppSettings> AppSettings
 @using System.Linq;
 @model WatchViewModel
 @{
     ViewBag.Title = this.Model.Title;
+}
+
+@section head
+{
+    <meta property="og:url" content="@this.Context.Request.Scheme://@this.Context.Request.Host@this.Context.Request.Path" />
+    <meta property="og:type" content="video.other" />
+    <meta property="og:title" content="@this.Model.Title" />
+    <meta property="og:description" content="@AppSettings.Options.SiteTitle - your source for west coast swing videos" />
+    <meta property="og:image" content="@this.Model.FacebookThumbnailUrl" />
+    <meta property="og:image:width" content="320" />
+    <meta property="og:image:height" content="180" />
 }
 
 <div class="row">
@@ -13,9 +25,7 @@
                 </h2>
             </div>
             <div class="panel-body">
-                <div class="embed-responsive embed-responsive-16by9">
-                    <iframe title="YouTube video player" class="embed-responsive-item" src="@this.Model.EmbedUrl" frameborder=0 allowfullscreen></iframe>
-                </div>
+                @Html.Raw(this.Model.EmbedCode)
             </div>
             <div class="panel-footer">
                 Watch video at <a href=@this.Model.ExternalUrl>@this.Model.ProviderName</a>

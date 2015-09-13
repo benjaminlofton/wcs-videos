@@ -9,8 +9,10 @@ namespace WcsVideos.Models
 		public string ProviderVideoId { get; set; }
 		
 		public string ExternalUrl { get; set; }
+        
+        public string FacebookThumbnailUrl { get; set; }
 		
-		public string EmbedUrl { get; set; }
+		public string EmbedCode { get; set; }
 		
 		public string ProviderName { get; set; }
 		
