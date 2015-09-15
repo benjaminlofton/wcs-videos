@@ -34,9 +34,10 @@
                             <ul class="dropdown-menu">
                                 @if (this.Model.ShowAdminActions)
                                 {
-                                    <li><a asp-controller="Videos" asp-action="Add">Add Video</a></li>
-                                    <li role="divider" class="separator"> </li>
                                 }
+                                
+                                <li><a asp-controller="Admin">Admin Console</a></li>
+                                <li role="separator" class="divider"> </li>
                                 
                                 @if (this.Model.ShowLoginLink)
                                 {

@@ -1,0 +1,52 @@
+@inject IOptions<AppSettings> AppSettings
+@model BasePageViewModel
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="page-header">
+                    <h2>@AppSettings.Options.SiteTitle Admin Console</h2>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item active">
+                        Video Management &nbsp;
+                        <span class="glyphicon glyphicon-facetime-video"> </span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="glyphicon glyphicon-plus-sign"> </span> &nbsp;
+                        <a asp-controller="Videos" asp-action="Add">Add a new video</a>
+                    </li>
+                    <li class="list-group-item disabled">
+                        <span class="glyphicon glyphicon-home"> </span> &nbsp;
+                        Edit videos missing events (coming soon)
+                    </li>
+                    <li class="list-group-item disabled">
+                        <span class="glyphicon glyphicon-user"> </span> &nbsp;
+                        Edit videos missing dancers (coming soon)
+                    </li>
+                </ul>
+                <ul class="list-group">
+                    <li class="list-group-item active">
+                        Event Management &nbsp;
+                        <span class="glyphicon glyphicon-home"> </span>
+                    </li>
+                    <li class="list-group-item disabled">
+                        <span class="glyphicon glyphicon-plus-sign"> </span> &nbsp;
+                        Add a new event (coming soon)
+                    </li>
+                </ul>
+                <ul class="list-group">
+                    <li class="list-group-item active">
+                        Dancer Management &nbsp;
+                        <span class="glyphicon glyphicon-user"> </span>
+                    </li>
+                    <li class="list-group-item disabled">
+                        <span class="glyphicon glyphicon-plus-sign"> </span> &nbsp;
+                        Add a new dancer (coming soon)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
