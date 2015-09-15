@@ -13,14 +13,14 @@ import ban.service.LocalIndexedDataService;
  * Created by bnorrish on 9/8/15.
  */
 @Component
-public class VideosWithNoEventAggregator {
+public class VideosWithNoEventAggregator implements ILister {
 
   private final static int DEFAULT_TAKE = 10;
 
   @Autowired
   LocalIndexedDataService localIndexedDataService;
 
-  public List<String> getVideosWithNoEvent(Integer skip, Integer take) {
+  public List<String> getResults(Integer skip, Integer take) {
 
     List<VideoD> videos = localIndexedDataService.getAllVideos();
 
@@ -39,5 +39,9 @@ public class VideosWithNoEventAggregator {
         .map(videoD -> videoD.getId())
         .collect(Collectors.toList());
 
+  }
+
+  public String getListType() {
+    return "Video";
   }
 }

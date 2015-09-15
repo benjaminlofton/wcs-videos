@@ -13,31 +13,17 @@ import ban.model.view.ResourceList;
 public class ListService {
 
   @Autowired
-  MostRecentVideoAggregator mostRecentVideoAggregator;
-
-  @Autowired
-  VideosWithNoEventAggregator videosWithNoEventAggregator;
+  ListManager listManager;
 
   public ResourceList getListByName(String name, Integer skip, Integer take) {
 
     ResourceList resourceList = new ResourceList();
     resourceList.setName(name);
 
-    switch(name) {
-      case "latest-videos":
-        resourceList.setIds(mostRecentVideoAggregator.getMostRecent(skip,take));
-        resourceList.setResourceType("Video");
-        break;
-      case "no-event":
-        resourceList.setIds(videosWithNoEventAggregator.getVideosWithNoEvent(skip,take));
-        resourceList.setResourceType("Video");
-        break;
-      default:
-        throw new InvalidRequestException();
-    }
+    ILister lister = listManager.getListerByName(name);
+    resourceList.setIds(lister.getResults(skip,take));
+    resourceList.setResourceType(lister.getListType());
 
     return resourceList;
   }
-
-
 }

@@ -19,14 +19,14 @@ import ban.service.LocalIndexedDataService;
  * Created by bnorrish on 8/17/15.
  */
 @Component
-public class MostRecentVideoAggregator {
+public class MostRecentVideoAggregator implements ILister {
 
   private final static int DEFAULT_TAKE = 10;
 
   @Autowired
   LocalIndexedDataService localIndexedDataService;
 
-  public List<String> getMostRecent(Integer skip, Integer take) {
+  public List<String> getResults(Integer skip, Integer take) {
 
 
 
@@ -62,6 +62,10 @@ public class MostRecentVideoAggregator {
     }
 
     return returnList;
+  }
+
+  public String getListType() {
+    return "Video";
   }
 
   class VideoSortByCreateDateComparitor implements Comparator<VideoD> {
