@@ -39,6 +39,9 @@ public class LocalIndexedDataService implements InitializingBean {
   @Autowired
   AwsDynamoClient awsDynamoClient;
 
+  // NOTE!
+  // This class has synchronization issues, as it is a Singleton with internal state
+  // Note!
   private Map<Integer,DancerD> wsdcIdToDancerMap = new HashMap<>();
   private Map<String, VideoD> videoIdToVideoMap = new HashMap<>();
   private Map<String, List<VideoD>> videoTitleFragToVideoMap = new HashMap<>();
@@ -128,6 +131,10 @@ public class LocalIndexedDataService implements InitializingBean {
 
   public List<VideoD> getAllVideos() {
     return new ArrayList<>(videoIdToVideoMap.values());
+  }
+
+  public VideoD getVideoById(String id) {
+    return videoIdToVideoMap.get(id);
   }
 
   public DancerD getDancer(String wsdcId) {

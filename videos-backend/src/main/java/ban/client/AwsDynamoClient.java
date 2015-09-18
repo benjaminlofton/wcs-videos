@@ -26,8 +26,10 @@ import java.util.Set;
 
 import ban.model.persistence.DancerD;
 import ban.model.persistence.EventD;
+import ban.model.persistence.FlaggedVideoD;
 import ban.model.persistence.ProviderD;
 import ban.model.persistence.VideoD;
+import ban.model.view.Video;
 
 @Component
 public class AwsDynamoClient {
@@ -63,6 +65,86 @@ public class AwsDynamoClient {
     }
 
     return results;
+  }
+
+  public FlaggedVideoD createFlaggedVideo(FlaggedVideoD video) {
+
+    video.setFlagId(null);
+
+    // AWS Will throw exception when saving empty Number Set (!!!)
+    if(video.getDancerIdList() != null && video.getDancerIdList().isEmpty()) {
+      video.setDancerIdList(null);
+    }
+
+    dynamoMapper.save(video);
+    return video;
+  }
+
+  public void removeFlaggedVideo(String flagId) {
+
+    FlaggedVideoD flaggedVideoD = dynamoMapper.load(FlaggedVideoD.class, flagId);
+
+    if(flaggedVideoD == null) {
+      return;
+    }
+
+    dynamoMapper.delete(flaggedVideoD);
+  }
+
+  public FlaggedVideoD getFlaggedVideo(String flagId) {
+    return dynamoMapper.load(FlaggedVideoD.class, flagId);
+  }
+
+  public List<FlaggedVideoD> getAllFlaggedVideos() {
+
+    ScanRequest scanRequest = new ScanRequest()
+        .withTableName("FlaggedVideo");
+
+    ScanResult scanResult = dynamoClient.scan(scanRequest);
+
+    List<FlaggedVideoD> result = new ArrayList<>();
+    for(Map<String,AttributeValue> item : scanResult.getItems()) {
+
+      FlaggedVideoD flaggedVideo = new FlaggedVideoD();
+      flaggedVideo.setFlagId(item.get("FlagId").getS());
+      flaggedVideo.setFlaggedVideoId(item.get("FlaggedVideoId").getS());
+
+      if(item.get("ProviderId") != null) {
+        flaggedVideo.setProviderId(Integer.parseInt(item.get("ProviderId").getN()));
+      }
+
+      if(item.get("ProviderVideoId") != null) {
+        flaggedVideo.setProviderVideoId(item.get("ProviderVideoId").getS());
+      }
+
+      if(item.get("Title") != null) {
+        flaggedVideo.setTitle(item.get("Title").getS());
+      }
+
+      if(item.get("EventId") != null) {
+        flaggedVideo.setEventId(item.get("EventId").getS());
+      }
+
+      if(item.get("Explanation") != null) {
+        flaggedVideo.setExplanation(item.get("Explanation").getS());
+      }
+
+      if(item.get("DancerIdList") != null) {
+
+        Set<Integer> dancerList = new HashSet<>();
+
+        List<String> rawDancerList = item.get("DancerIdList").getNS();
+        for(String strId : rawDancerList) {
+          dancerList.add(Integer.parseInt(strId));
+        }
+
+        flaggedVideo.setDancerIdList(dancerList);
+      }
+
+      result.add(flaggedVideo);
+    }
+
+    return result;
   }
 
   public VideoD createVideo(VideoD video) {
@@ -239,7 +321,5 @@ public class AwsDynamoClient {
     dynamoMapper.save(eventD);
     return eventD;
   }
-
-
 
 }

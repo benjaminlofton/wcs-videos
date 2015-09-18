@@ -52,7 +52,7 @@ public class VideosWithNoEventAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = videosWithNoEventAggregator.getVideosWithNoEvent(0,1);
+    List<String> result = videosWithNoEventAggregator.getResults(0,1);
 
     assertThat(result.size(), equalTo(1));
     assertThat(result.get(0), equalTo("1"));
@@ -66,7 +66,7 @@ public class VideosWithNoEventAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = videosWithNoEventAggregator.getVideosWithNoEvent(0,5);
+    List<String> result = videosWithNoEventAggregator.getResults(0,5);
 
     assertThat(result.size(), equalTo(2));
     assertThat(result.get(0), equalTo("1"));

@@ -55,7 +55,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(0,1);
+    List<String> result = mostRecentVideoAggregator.getResults(0,1);
 
     assertThat(result.size(), equalTo(1));
     assertThat(result.get(0), equalTo("5"));
@@ -66,7 +66,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(1,1);
+    List<String> result = mostRecentVideoAggregator.getResults(1,1);
 
     assertThat(result.size(), equalTo(1));
     assertThat(result.get(0), equalTo("4"));
@@ -77,7 +77,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(1,3);
+    List<String> result = mostRecentVideoAggregator.getResults(1,3);
 
     assertThat(result.size(), equalTo(3));
     assertThat(result.get(0), equalTo("4"));
@@ -90,7 +90,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(1,0);
+    List<String> result = mostRecentVideoAggregator.getResults(1,0);
 
     assertThat(result.size(), equalTo(0));
   }
@@ -100,7 +100,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(null,1);
+    List<String> result = mostRecentVideoAggregator.getResults(null,1);
 
     assertThat(result.size(), equalTo(1));
     assertThat(result.get(0), equalTo("5"));
@@ -111,7 +111,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(0,null);
+    List<String> result = mostRecentVideoAggregator.getResults(0,null);
 
     // test list size < default (10), all 5 should be returned
     assertThat(result.size(), equalTo(5));
@@ -122,7 +122,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(10,1);
+    List<String> result = mostRecentVideoAggregator.getResults(10,1);
 
     assertThat(result.size(), equalTo(0));
   }
@@ -132,7 +132,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(0,10);
+    List<String> result = mostRecentVideoAggregator.getResults(0,10);
 
     assertThat(result.size(), equalTo(5));
     assertThat(result.get(0), equalTo("5"));
@@ -150,7 +150,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(0,5);
+    List<String> result = mostRecentVideoAggregator.getResults(0,5);
 
     assertThat(result.size(), equalTo(4));
     assertThat(result.get(0), equalTo("5"));
@@ -167,7 +167,7 @@ public class MostRecentVideoAggregatorTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(LIST_OF_FIVE);
 
-    List<String> result = mostRecentVideoAggregator.getMostRecent(0,5);
+    List<String> result = mostRecentVideoAggregator.getResults(0,5);
 
     assertThat(result.size(), equalTo(4));
     assertThat(result.get(0), equalTo("5"));
