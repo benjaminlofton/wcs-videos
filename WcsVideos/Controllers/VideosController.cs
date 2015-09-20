@@ -410,7 +410,7 @@ namespace WcsVideos.Controllers
             {
                 // if there were no errors, this must be the initial load, so pull the data from the video
                 model.Title = video.Title;
-                model.DancerIdList = string.Join(";", video.DancerIdList);
+                model.DancerIdList = string.Join(";", video.DancerIdList ?? new string[] {});
                 model.EventId = video.EventId;
             }
 
@@ -426,7 +426,7 @@ namespace WcsVideos.Controllers
             }
             else
             {
-                string[] dancerIds = model.DancerIdList.Split(
+                string[] dancerIds = (model.DancerIdList ?? string.Empty).Split(
                     new char[] { ';' },
                     20,
                     StringSplitOptions.RemoveEmptyEntries);
