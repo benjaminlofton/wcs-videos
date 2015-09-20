@@ -148,11 +148,13 @@ public class VideoService {
       throw new InvalidRequestException();
     }
 
-    // Verify that all dancers exist
-    for(Integer dancerId : video.getDancerIdList()) {
+    if (video.getDancerIdList() != null) {
+      // Verify that all dancers exist
+      for(Integer dancerId : video.getDancerIdList()) {
 
-      if(dynamoClient.getDancer(dancerId) == null) {
-        throw new InvalidRequestException();
+        if (dynamoClient.getDancer(dancerId) == null) {
+          throw new InvalidRequestException();
+        }
       }
     }
 
