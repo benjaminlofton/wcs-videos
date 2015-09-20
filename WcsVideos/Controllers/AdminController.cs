@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
 using WcsVideos.Models;
@@ -9,6 +10,13 @@ namespace WcsVideos.Controllers
 {
     public class AdminController : Controller
     {
+        private const string MissingEventVideoListId = "no-event";
+        private const string MissingEventVideoListTitle = "Videos Without Events";
+        private static readonly Dictionary<string, string> ListIdTitleMapping = new Dictionary<string, string>
+        {
+            { AdminController.MissingEventVideoListId, MissingEventVideoListTitle }
+        };
+        
         private IDataAccess dataAccess;
         private IUserSessionHandler userSessionHandler;
         
@@ -35,8 +43,82 @@ namespace WcsVideos.Controllers
                 return this.RedirectToRoute("default", new { controller = "User", action = "Login" });
             }
             
-            BasePageViewModel model = new BasePageViewModel();
+            AdminIndexViewModel model = new AdminIndexViewModel();
             ViewModelHelper.PopulateUserInfo(model, loggedIn);
+            
+            model.MissingDancersVideoListUrl = this.Url.Link(
+                "default",
+                new { controller = "Admin", action = "VideoList", id = "" });
+            
+            model.MissingEventVideoListUrl = this.Url.Link(
+                "default",
+                new { controller = "Admin", action = "VideoList", id = "no-event" });
+            
+            return this.View(model);
+        }
+        
+        public IActionResult VideoList(string id, int start)
+        {
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies,
+                this.Context.Response.Cookies);
+            
+            if (!loggedIn)
+            {
+                CookieOptions loginCookieOptions = new CookieOptions();
+                loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
+                this.Context.Response.Cookies.Append(
+                    "LoginRedirect",
+                    this.Request.Path.ToUriComponent() + this.Request.QueryString,
+                    loginCookieOptions);
+                return this.RedirectToRoute("default", new { controller = "User", action = "Login" });
+            }
+            
+            ResourceList resourceList = this.dataAccess.GetResourceList(id);
+            if (resourceList == null ||
+                !string.Equals(resourceList.ResourceType, "video", StringComparison.OrdinalIgnoreCase))
+            {
+                return this.HttpNotFound();
+            }
+            
+            AdminVideoListViewModel model = new AdminVideoListViewModel();
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
+            
+            string title;
+            if (!AdminController.ListIdTitleMapping.TryGetValue(id, out title))
+            {
+                title = id;
+            }
+            
+            model.Title = title;
+            
+            ViewModelHelper.PopulateSearchResults(
+                model,
+                resourceList.Ids.ToList(),
+                start,
+                20,
+                (videoId) => 
+                {
+                    Video video = this.dataAccess.GetVideoById(videoId);
+                    var li = ViewModelHelper.PopulateVideoListItem(video, this.Url);
+                    li.Url = this.Url.Link(
+                        "default",
+                        new
+                        {
+                            controller = "Videos",
+                            action = "Edit",
+                            video.Id
+                        });
+                    return li;
+                },  
+                (s) => this.Url.Link(
+                    "default",
+                    new
+                    {
+                        controller = "Admin",
+                        action = "VideoList",
+                        start = s
+                    }));
             
             return this.View(model);
         }

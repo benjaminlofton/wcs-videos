@@ -18,11 +18,12 @@ namespace WcsVideos.Contracts
         private ConcurrentDictionary<string, List<string>> eventVideos;
         private ConcurrentDictionary<string, Event> events;
         private ConcurrentDictionary<string, ResourceList> resourceLists;
-        private List<Dancer> allDancers;
+        private Dancer[] allDancers;
         private List<Video> trendingVideos;
         private List<Event> recentEvents;
         private IDataAccess baseDataAccess;
         private ManualResetEvent allDancersLoaded;
+        private ReaderWriterLockSlim allDancersLock;
         
 		public CachingDataAccess(string endpoint)
 		{
@@ -199,7 +200,7 @@ namespace WcsVideos.Contracts
             return result;
         }
         
-        public List<Dancer> GetAllDancers()
+        public Dancer[] GetAllDancers()
         {
             if (this.allDancersLoaded.WaitOne(TimeSpan.FromSeconds(30)))
             {            
@@ -207,7 +208,7 @@ namespace WcsVideos.Contracts
             }
             else
             {
-                return new List<Dancer>();
+                return new Dancer[0];
             }
         }
         
@@ -220,26 +221,7 @@ namespace WcsVideos.Contracts
             {
                 foreach (string dancerId in video.DancerIdList)
                 {
-                    // remove exisitng dancer
-                    Dancer dancer;
-                    this.dancers.TryRemove(dancerId, out dancer);
-                    
-                    // get updated dancer
-                    dancer = this.GetDancerById(dancerId);
-                    
-                    // replace the updated dancer in the dictionary and allDancers array
-                    if (dancer != null)
-                    {
-                        this.dancers[dancer.WsdcId] = dancer;
-                        int index = this.allDancers.FindIndex(d => string.Equals(d.WsdcId, dancer.WsdcId));
-                        if (index > -1)
-                        {
-                            this.allDancers[index] = dancer;
-                        }
-                    }
-                    
-                    ResourceList removed;
-                    this.resourceLists.TryRemove("latest-videos", out removed);
+                    this.UpdateDancerInCache(dancerId);                    
                 }
             }
             
@@ -251,10 +233,69 @@ namespace WcsVideos.Contracts
                 
                 // let the mapping be reloaded automatically when it is requested next
             }
+
+            ResourceList removed;
+            this.resourceLists.TryRemove("latest-videos", out removed);
             
             this.HttpPost("admin/cache-reset").Wait();
             
             return videoId;
+        }
+        
+        public void UpdateVideo(Video video)
+        {
+            Video existingVideo = this.GetVideoById(video.Id);
+            
+            if (existingVideo == null)
+            {
+                throw new ArgumentException("Video does not exist", "video");
+            }
+            
+            HashSet<string> modifiedDancers = new HashSet<string>();
+            HashSet<string> modifiedEvents = new HashSet<string>();
+            
+            if (existingVideo.DancerIdList != null)
+            {
+                modifiedDancers.UnionWith(existingVideo.DancerIdList);
+            }
+            
+            if (video.DancerIdList != null)
+            {
+                foreach (string dancerId in video.DancerIdList)
+                {
+                    if (!modifiedDancers.Remove(dancerId))
+                    {
+                        modifiedDancers.Add(dancerId);
+                    }
+                }
+            }
+            
+            if (existingVideo.EventId != null)
+            {
+                modifiedEvents.Add(existingVideo.EventId);
+            }
+            
+            if (video.EventId != null)
+            {
+                if (!modifiedEvents.Remove(video.EventId))
+                {
+                    modifiedEvents.Add(video.EventId);
+                }
+            }
+                       
+            this.baseDataAccess.UpdateVideo(video);
+            foreach (string dancerId in modifiedEvents)
+            {
+                this.UpdateDancerInCache(dancerId);                    
+            }
+            
+            foreach (string eventId in modifiedEvents)
+            {
+                Event evt;
+                this.events.TryRemove(eventId, out evt);
+            }
+            
+            this.videos.TryRemove(video.Id, out video);
         }
         
         public List<Video> SearchForVideo(
@@ -281,6 +322,22 @@ namespace WcsVideos.Contracts
                     new StringContent(string.Empty, Encoding.UTF8, "application/json"));
                 string serialized = await response.Content.ReadAsStringAsync();
                 response.EnsureSuccessStatusCode();
+            }
+        }
+        
+        private void UpdateDancerInCache(string dancerId)
+        {
+            Dancer dancer = this.baseDataAccess.GetDancerById(dancerId);
+            
+            if (dancer != null)
+            {
+                this.dancers[dancer.WsdcId] = dancer;
+
+                int index = Array.FindIndex(this.allDancers, d => string.Equals(d.WsdcId, dancer.WsdcId));
+                if (index > -1)
+                {
+                    this.allDancers[index] = dancer;
+                }
             }
         }
         

@@ -1,5 +1,5 @@
 @inject IOptions<AppSettings> AppSettings
-@model BasePageViewModel
+@model AdminIndexViewModel
 
 <div class="row">
     <div class="col-md-12">
@@ -17,9 +17,9 @@
                         <span class="glyphicon glyphicon-plus-sign"> </span> &nbsp;
                         <a asp-controller="Videos" asp-action="Add">Add a new video</a>
                     </li>
-                    <li class="list-group-item disabled">
+                    <li class="list-group-item">
                         <span class="glyphicon glyphicon-home"> </span> &nbsp;
-                        Edit videos missing events (coming soon)
+                        <a href="@this.Model.MissingEventVideoListUrl">Edit videos missing events</a>
                     </li>
                     <li class="list-group-item disabled">
                         <span class="glyphicon glyphicon-user"> </span> &nbsp;

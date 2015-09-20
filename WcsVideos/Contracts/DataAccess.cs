@@ -94,9 +94,9 @@ namespace WcsVideos.Contracts
             throw new NotImplementedException();
         }
         
-        public List<Dancer> GetAllDancers()
+        public Dancer[] GetAllDancers()
         {
-            return this.HttpGet<List<Dancer>>("d/").Result;
+            return this.HttpGet<Dancer[]>("d/").Result;
         }
         
         public string AddVideo(Video video)
@@ -111,6 +111,18 @@ namespace WcsVideos.Contracts
             Video result = this.HttpPost<Video>("v/", serialized).Result;
             video.Id = result.Id;
             return result.Id;
+        }
+        
+        public void UpdateVideo(Video video)
+        {
+            string serialized = JsonConvert.SerializeObject(
+                video,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                });
+                
+            this.HttpPost("v/", serialized).Wait();
         }
         
         public List<Video> SearchForVideo(
@@ -190,5 +202,19 @@ namespace WcsVideos.Contracts
                 return result;
             }
         }
+        
+        private async Task HttpPost(string relativeUrl, string content)
+        {
+            Console.WriteLine("POST to " + relativeUrl);
+            Console.WriteLine(content);
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = this.WebserviceTarget;
+                HttpResponseMessage response = await client.PostAsync(
+                    relativeUrl,
+                    new StringContent(content, Encoding.UTF8, "application/json"));
+                response.EnsureSuccessStatusCode();
+            }
+        }       
     }
 }

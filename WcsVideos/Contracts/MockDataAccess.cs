@@ -203,7 +203,8 @@ namespace WcsVideos.Contracts
 					ProviderId = 1,
 					ProviderVideoId = "smoboVc3qj8",
 					Title = "Kyle and Melissa at Chico",
-					DancerIdList = new string[] { "3", "11" }
+					DancerIdList = new string[] { "3", "11" },
+                    EventId = "1",
 				}
 			},
 			{
@@ -219,24 +220,52 @@ namespace WcsVideos.Contracts
 			}
 		};
         
+        private readonly Dictionary<string, Event> events = new Dictionary<string, Event>
+        {
+            {
+                "1",
+                new Event
+                {
+                    EventId = "1",
+                    Name = "Chico",
+                    EventDate = new DateTime(2012, 12, 10, 0, 0, 0, DateTimeKind.Utc),
+                    LocationName = "Chico, CA",
+                    WsdcPointed = true,
+                }
+            },
+            {
+                "2",
+                new Event
+                {
+                    EventId = "2",
+                    Name = "Swingdiego",
+                    EventDate = new DateTime(2013, 5, 10, 0, 0, 0, DateTimeKind.Utc),
+                    LocationName = "San Diego, CA",
+                    WsdcPointed = true,
+                }
+            }
+        };
+        
         public Event GetEvent(string eventId)
         {
-            return null;
+            Event result;
+            this.events.TryGetValue(eventId, out result);
+            return result;
         }
 		
         public List<Video> GetEventVideos(string eventId)
         {
-            return new List<Video>();
+            return this.videos.Values.Where(v => string.Equals(v.EventId, eventId)).ToList();
         }
         
         public List<Event> SearchForEvent(string query)
         {
-            return new List<Event>();
+            return this.events.Values.Where(v => v.Name.Contains(query)).ToList();
         }
         
         public List<Event> GetRecentEvents()
         {
-            return new List<Event>();
+            return this.events.Values.ToList();
         }
         
         public List<Video> GetTrendingVideos()
@@ -302,9 +331,9 @@ namespace WcsVideos.Contracts
             return result;
         }
         
-        public List<Dancer> GetAllDancers()
+        public Dancer[] GetAllDancers()
         {
-            return this.dancers.Values.ToList();
+            return this.dancers.Values.ToArray();
         }
         
         public string AddVideo(Video video)
@@ -324,6 +353,28 @@ namespace WcsVideos.Contracts
             }
             
             return videoId;
+        }
+        
+        public void UpdateVideo(Video video)
+        {
+            Video existingVideo = this.videos[video.Id];
+            foreach (string dancerId in existingVideo.DancerIdList)
+            {
+                Dancer dancer = this.dancers[dancerId];
+                dancer.VideoIdList = dancer.VideoIdList.Where(v => !string.Equals(v, video.Id)).ToArray(); 
+            }
+            
+            this.videos[video.Id] = video;
+            
+            foreach (string dancerId in video.DancerIdList)
+            {
+                Dancer dancer = this.dancers[dancerId];
+                string[] existingVideoIdList = dancer.VideoIdList;
+                string[] newVideoIdList = new string[existingVideoIdList.Length + 1];
+                existingVideoIdList.CopyTo(newVideoIdList, 0);
+                newVideoIdList[existingVideoIdList.Length] = video.Id;
+                dancer.VideoIdList = newVideoIdList;
+            }
         }
         
         public List<Video> SearchForVideo(
@@ -346,7 +397,7 @@ namespace WcsVideos.Contracts
             {
                 Name = "name",
                 ResourceType = "Videos",
-                Ids = new string[0],  
+                Ids = this.videos.Values.Select(v => v.Id).ToArray(),  
             };
         }
     }

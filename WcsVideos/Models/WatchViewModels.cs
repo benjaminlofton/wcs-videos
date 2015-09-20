@@ -21,6 +21,8 @@ namespace WcsVideos.Models
         public string EventName { get; set; }
         
         public string EventUrl { get; set; }
+        
+        public string EditUrl { get; set; }
 	}
 	
 	public class DancerLinkViewModel

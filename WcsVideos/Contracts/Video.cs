@@ -13,5 +13,18 @@ namespace WcsVideos.Contracts
         public string[] DancerIdList { get; set; }
         
         public string EventId { get; set; }
+
+        public Video Clone()
+        {
+            return new Video
+            {
+                Id = this.Id,
+                ProviderId = this.ProviderId,
+                ProviderVideoId = this.ProviderVideoId,
+                Title = this.Title,
+                DancerIdList = (string[])DancerIdList.Clone(),
+                EventId = this.EventId,
+            };
+        }
     }
 }

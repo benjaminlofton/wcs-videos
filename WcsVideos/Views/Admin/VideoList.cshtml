@@ -1,0 +1,60 @@
+@model AdminVideoListViewModel
+
+
+
+<div class="row">
+    <div class="col-md-12">
+    <div class="panel">
+        <div class="panel-body">
+            <div class="page-header">
+                <h2>
+                    Videos With No Event
+                </h2>
+            </div>
+            <p>
+                Showing videos @this.Model.ResultsStart
+                to @this.Model.ResultsEnd of @this.Model.ResultsTotal.
+            </p>
+            @Html.Partial("VideoListGroup", this.Model.Entries)
+            
+            <nav>
+                <ul class="pager">
+                    @if (this.Model.ShowPreviousLink)
+                    {
+                        <li class="previous">
+                            <a href="@this.Model.PreviousLinkUrl">
+                                <span aria-hidden="true">&laquo;</span> Previous Page
+                            </a>    
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="previous disabled">
+                            <a href="#">
+                                <span aria-hidden="true">&laquo;</span> Previous Page
+                            </a>    
+                        </li>
+                    }
+                    
+                    @if (this.Model.ShowNextLink)
+                    {
+                        <li class="next">
+                            <a href="@this.Model.NextLinkUrl">
+                                Next Page <span aria-hidden="true">&raquo;</span>
+                            </a>    
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="next disabled">
+                            <a href="#">
+                                Next Page <span aria-hidden="true">&raquo;</span>
+                            </a> 
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+    </div>
+</div>

@@ -20,9 +20,11 @@ namespace WcsVideos.Contracts
         
         List<Dancer> SearchForDancer(string query);
         
-        List<Dancer> GetAllDancers();
+        Dancer[] GetAllDancers();
         
         string AddVideo(Video video);
+        
+        void UpdateVideo(Video video);
         
         List<Video> SearchForVideo(
             IEnumerable<string> titleFragments,
