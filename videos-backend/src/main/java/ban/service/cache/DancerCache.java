@@ -45,4 +45,21 @@ public class DancerCache {
     DancerD dancer = awsDynamoClient.getDancer(wsdcId);
     dancerCache.put(wsdcId,dancer);
   }
+
+  public boolean exists(Integer wsdcId) {
+
+    if(dancerCache.containsKey(wsdcId)) {
+      return true;
+    }
+
+    DancerD dancer = awsDynamoClient.getDancer(wsdcId);
+
+    if (dancer == null) {
+      return false;
+    }
+
+    dancerCache.put(wsdcId,dancer);
+
+    return true;
+  }
 }

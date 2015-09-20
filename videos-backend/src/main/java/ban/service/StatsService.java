@@ -27,20 +27,8 @@ public class StatsService {
 
     WscVideoStats stats = new WscVideoStats();
 
-    List<DancerD> dancers = dynamoClient.getAllDancers();
-    stats.setNumDancers(dancers.size());
-
-    int dancersWithVideos = 0;
-    for(DancerD dancerD: dancers) {
-      if(dancerD.getVideoIdList() != null && !dancerD.getVideoIdList().isEmpty()) {
-        dancersWithVideos++;
-      }
-    }
-    stats.setNumDancersWithVideos(dancersWithVideos);
-
     List<VideoD> videos = dynamoClient.getAllVideos();
     stats.setNumVideos(videos.size());
-
     stats.setCacheSizeItems(localIndexedDataService.size());
 
     return stats;

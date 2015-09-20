@@ -17,6 +17,7 @@ import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
 import ban.model.view.Dancer;
 import ban.model.view.Video;
+import ban.service.cache.DancerCache;
 import ban.service.mapper.DancerMapper;
 import ban.service.mapper.VideoMapper;
 
@@ -37,6 +38,9 @@ public class DancerService {
 
   @Autowired
   WsdcRestClient wsdcRestClient;
+
+  @Autowired
+  DancerCache dancerCache;
 
   public List<Video> getVideosByDancerWsdcId(int wsdcId) {
 
@@ -67,18 +71,6 @@ public class DancerService {
     return dancerMapper.mapToViewModel(awsDynamoClient.getDancer(wsdcId));
   }
 
-  public List<Dancer> getDancerList() {
-
-    List<Dancer> viewList = new ArrayList<>();
-
-    for(DancerD dancerD : awsDynamoClient.getAllDancers()) {
-      viewList.add(dancerMapper.mapToViewModel(dancerD));
-    }
-
-    // java 1.8 FTW
-    return viewList.stream().sorted((obj1,obj2) -> obj1.getWsdcId().compareTo(obj2.getWsdcId())).collect(Collectors.toList());
-  }
-
   public void addDancer(Dancer dancer) {
 
     DancerD dancerD = dancerMapper.mapToPersistenceModel(dancer);
@@ -94,17 +86,11 @@ public class DancerService {
 
     List<Dancer> addedDancers = new ArrayList<>();
 
-    List<DancerD> existingDancers = awsDynamoClient.getAllDancers();
-    Map<Integer,DancerD> existingDancerMap = new HashMap<>();
-    for(DancerD dancerD: existingDancers) {
-      existingDancerMap.put(dancerD.getWsdcId(),dancerD);
-    }
-
     for(WsdcDancer d :wsdcRestClient.getDancersByFragment(fragment)) {
 
       Integer wsdcId = d.getValue();
 
-      if(!existingDancerMap.containsKey(wsdcId)) {
+      if(!dancerCache.exists(wsdcId)) {
 
         DancerD newDancer = new DancerD();
         newDancer.setWsdcId(wsdcId);
