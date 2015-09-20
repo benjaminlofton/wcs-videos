@@ -7,7 +7,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +17,7 @@ import ban.exception.InvalidRequestException;
 import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
 import ban.model.view.Video;
+import ban.service.cache.DancerCache;
 import ban.service.mapper.VideoMapper;
 
 /**
@@ -32,6 +32,9 @@ public class VideoService {
 
   @Autowired
   private VideoMapper videoMapper;
+
+  @Autowired
+  private DancerCache dancerCache;
 
   /**
    * Determines if an existing video key already exists
@@ -191,6 +194,7 @@ public class VideoService {
       if (!dancer.getVideoIdList().contains(videoId)) {
         dancer.getVideoIdList().add(videoId);
         dynamoClient.saveDancer(dancer);
+        dancerCache.refreshDancer(dancer.getWsdcId());
       }
     }
   }
@@ -209,6 +213,7 @@ public class VideoService {
 
       dancer.getVideoIdList().remove(videoId);
       dynamoClient.saveDancer(dancer);
+      dancerCache.refreshDancer(dancer.getWsdcId());
     }
   }
 

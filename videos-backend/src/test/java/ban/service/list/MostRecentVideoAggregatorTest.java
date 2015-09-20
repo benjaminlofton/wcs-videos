@@ -36,6 +36,7 @@ public class MostRecentVideoAggregatorTest {
   @Before
   public void initMocks() {
 
+    LIST_OF_FIVE.clear();
     for (int i = 1; i < 6; i++) {
 
       VideoD v = new VideoD();

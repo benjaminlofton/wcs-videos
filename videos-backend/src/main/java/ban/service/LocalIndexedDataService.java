@@ -18,13 +18,12 @@ import ban.client.AwsDynamoClient;
 import ban.model.persistence.DancerD;
 import ban.model.persistence.EventD;
 import ban.model.persistence.VideoD;
-import ban.model.view.Video;
+import ban.service.cache.DancerCache;
 
 /**
  * Class contains a local in-memory HashMap based storage of:
  *
  * [Key]    - [Object]
- * WsdcId   - Dancer
  * VideoId  - Video
  * VideoTitle    - List of Videos
  * EventTitle    - List of Events
@@ -39,10 +38,12 @@ public class LocalIndexedDataService implements InitializingBean {
   @Autowired
   AwsDynamoClient awsDynamoClient;
 
+  @Autowired
+  DancerCache dancerCache;
+
   // NOTE!
   // This class has synchronization issues, as it is a Singleton with internal state
   // Note!
-  private Map<Integer,DancerD> wsdcIdToDancerMap = new HashMap<>();
   private Map<String, VideoD> videoIdToVideoMap = new HashMap<>();
   private Map<String, List<VideoD>> videoTitleFragToVideoMap = new HashMap<>();
   private Map<String, List<EventD>> eventTitleFragToEventMap = new HashMap<>();
@@ -50,7 +51,6 @@ public class LocalIndexedDataService implements InitializingBean {
   private Map<String,List<VideoD>> eventIdToVideoMap = new HashMap<>();
 
   public void clear() {
-    wsdcIdToDancerMap.clear();
     videoIdToVideoMap.clear();
     videoTitleFragToVideoMap.clear();
     eventTitleFragToEventMap.clear();
@@ -59,10 +59,6 @@ public class LocalIndexedDataService implements InitializingBean {
   }
 
   public void load() {
-
-    for(DancerD dancer : awsDynamoClient.getAllDancers()) {
-      wsdcIdToDancerMap.put(dancer.getWsdcId(), dancer);
-    }
 
     for(VideoD video : awsDynamoClient.getAllVideos()) {
       videoIdToVideoMap.put(video.getId(), video);
@@ -137,14 +133,10 @@ public class LocalIndexedDataService implements InitializingBean {
     return videoIdToVideoMap.get(id);
   }
 
-  public DancerD getDancer(String wsdcId) {
-    return wsdcIdToDancerMap.get(wsdcId);
-  }
-
   public List<VideoD> getVideosByDancerWsdcId(String wsdcId) {
     List<VideoD> results = new ArrayList<>();
 
-    DancerD dancerD = wsdcIdToDancerMap.get(Integer.parseInt(wsdcId)
+    DancerD dancerD = dancerCache.getDancer(Integer.parseInt(wsdcId)
     );
 
     if(dancerD == null || dancerD.getVideoIdList() == null) {
@@ -242,8 +234,7 @@ public class LocalIndexedDataService implements InitializingBean {
   }
 
   public int size() {
-    return wsdcIdToDancerMap.size() +
-           videoIdToVideoMap.size() +
+    return videoIdToVideoMap.size() +
            videoTitleFragToVideoMap.size() +
            eventDList.size() +
            eventTitleFragToEventMap.size() +
