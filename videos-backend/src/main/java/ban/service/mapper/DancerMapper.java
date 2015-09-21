@@ -2,6 +2,9 @@ package ban.service.mapper;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ban.model.persistence.DancerD;
 import ban.model.view.Dancer;
 
@@ -11,6 +14,16 @@ import ban.model.view.Dancer;
  */
 @Component
 public class DancerMapper {
+
+  public List<Dancer> mapToViewModel(List<DancerD> dancerDs) {
+
+    List<Dancer> dancers = new ArrayList<>();
+    for(DancerD dancerD : dancerDs) {
+      dancers.add(mapToViewModel(dancerD));
+    }
+
+    return dancers;
+  }
 
   public Dancer mapToViewModel(DancerD dancerD) {
 

@@ -45,4 +45,9 @@ public class DancerController {
     return dancerService.getDancer(wsdcId);
   }
 
+  @RequestMapping(value="/d", method = RequestMethod.GET)
+  public List<Dancer> getDancerList() {
+    return dancerService.getDancerList();
+  }
+
 }

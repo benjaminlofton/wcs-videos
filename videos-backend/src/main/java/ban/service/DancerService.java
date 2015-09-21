@@ -114,4 +114,7 @@ public class DancerService {
     return addedDancers;
   }
 
+  public List<Dancer> getDancerList() {
+    return dancerMapper.mapToViewModel(awsDynamoClient.getAllDancers());
+  }
 }
