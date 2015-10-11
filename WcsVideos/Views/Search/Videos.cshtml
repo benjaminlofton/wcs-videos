@@ -5,194 +5,157 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="page-header">
-            <h2>
-                Video Search
-            </h2>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <p>Search for a video:</p>
-        <form class="form-horizontal" role="form" method="get" action="" id="searchform">
-            <div class="form-group">
-                <div class="col-sm-6">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-default">Search</button>
-                        </span>
-                    </div>
-                </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="h3">
+                    Video Search
+                </h1>
             </div>
-            <div class="form-group">
-                <div class="col-sm-12">
-                    <div class="checkbox">
-                        <label>
-                            @Html.CheckBox(
-                                "advancedSearch",
-                                this.Model.AdvancedSearch,
-                                new Dictionary<string, object>
-                                {
-                                    { "id", "advancedSearch"}
-                                })
-                            Advanced Search
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" id="advancedSearchPanel" style="@(this.Model.AdvancedSearch ? "" : "display:none;")">
-                <div class="col-sm-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Advanced Search Fields
+            <div class="panel-body">
+                <p>Search for a video:</p>
+                <form class="form-horizontal" role="form" method="get" action="" id="searchform">
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="query" id="query" value="@this.Model.Query">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-default">Search</button>
+                                </span>
+                            </div>
                         </div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <label for="dancerIdList" class="col-sm-2 control-label">Dancers</label>
-                                <div class="col-sm-10">
-                                    <p class="form-control-static" id="dancerNameList">@this.Model.DancerNameList</p>
-                                    <input type="hidden" name="dancerIdList" id="dancerIdList" value="@this.Model.DancerIdList">
+                    </div>
+                    <div class="form-group" id="advancedSearchPanel">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Filters
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <a role="button" class="btn btn-default" id="findDancerLink" href="javascript:void(0)">
-                                        <span class="glyphicon glyphicon-plus-sign"> </span> add dancer
-                                    </a>
-                                    &nbsp; or &nbsp;
-                                    <a role="button" class="btn btn-default" id="clearDancerLink" href="javascript:void(0)">
-                                        <span class="glyphicon glyphicon-remove-sign"> </span> clear dancers
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <div style="display:none;" class="panel panel-default" id="findDancerPanel">
-                                    <div class="panel-heading">
-                                        Dancer Search
-                                    </div>
-                                    <div class="panel-body">
-                                        <p>
-                                            <input type="text" class="form-control" id="dancerQuery">
-                                        </p>
-                                        <div id="dancerSearchResults">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label for="dancerIdList" class="col-sm-2 control-label">Dancers</label>
+                                        <div class="col-sm-10">
+                                            <p class="form-control-static" id="dancerNameList">@this.Model.DancerNameList</p>
+                                            <input type="hidden" name="dancerIdList" id="dancerIdList" value="@this.Model.DancerIdList">
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="dancerIdList" class="col-sm-2 control-label">Event</label>
-                                <div class="col-sm-10">
-                                    <p class="form-control-static" id="eventName">@this.Model.EventName</p>
-                                    <input type="hidden" name="eventId" id="eventId" value="@this.Model.EventId">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <a role="button" class="btn btn-default" id="findEventLink" href="javascript:void(0)">
-                                        <span class="glyphicon glyphicon-plus-sign"> </span> select event
-                                    </a>
-                                    &nbsp; or &nbsp;
-                                    <a role="button" class="btn btn-default" id="clearEventLink" href="javascript:void(0)">
-                                        <span class="glyphicon glyphicon-remove-sign"> </span> remove event
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <div style="display:none;" class="panel panel-default" id="findEventPanel">
-                                    <div class="panel-heading">
-                                        Event Search
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <a role="button" class="btn btn-default" id="findDancerLink" href="javascript:void(0)">
+                                                <span class="glyphicon glyphicon-plus-sign"> </span> add dancer
+                                            </a>
+                                            &nbsp; or &nbsp;
+                                            <a role="button" class="btn btn-default" id="clearDancerLink" href="javascript:void(0)">
+                                                <span class="glyphicon glyphicon-remove-sign"> </span> clear dancers
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="panel-body">
-                                        <p>
-                                            <input type="text" class="form-control" id="eventQuery">
-                                        </p>
-                                        <div id="eventSearchResults">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <div style="display:none;" class="panel panel-default" id="findDancerPanel">
+                                            <div class="panel-heading">
+                                                Dancer Search
+                                            </div>
+                                            <div class="panel-body">
+                                                <p>
+                                                    <input type="text" class="form-control" id="dancerQuery">
+                                                </p>
+                                                <div id="dancerSearchResults">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dancerIdList" class="col-sm-2 control-label">Event</label>
+                                        <div class="col-sm-10">
+                                            <p class="form-control-static" id="eventName">@this.Model.EventName</p>
+                                            <input type="hidden" name="eventId" id="eventId" value="@this.Model.EventId">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <a role="button" class="btn btn-default" id="findEventLink" href="javascript:void(0)">
+                                                <span class="glyphicon glyphicon-plus-sign"> </span> select event
+                                            </a>
+                                            &nbsp; or &nbsp;
+                                            <a role="button" class="btn btn-default" id="clearEventLink" href="javascript:void(0)">
+                                                <span class="glyphicon glyphicon-remove-sign"> </span> remove event
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <div style="display:none;" class="panel panel-default" id="findEventPanel">
+                                            <div class="panel-heading">
+                                                Event Search
+                                            </div>
+                                            <div class="panel-body">
+                                                <p>
+                                                    <input type="text" class="form-control" id="eventQuery">
+                                                </p>
+                                                <div id="eventSearchResults">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
+                </form>
 
-<div class="row">
-    <div class="col-md-12">
-        @if (this.Model.ShowResults)
-        {
-            <p>
-                Showing search results @this.Model.ResultsStart
-                to @this.Model.ResultsEnd of @this.Model.ResultsTotal
-                for &quot;@this.Model.Query&quot;.
-            </p>
-            
-            @Html.Partial("VideoListGroup", this.Model.Entries)
-            
-            <nav>
-                <ul class="pager">
-                    @if (this.Model.ShowPreviousLink)
-                    {
-                        <li class="previous">
-                            <a href="@this.Model.PreviousLinkUrl">
-                                <span aria-hidden="true">&laquo;</span> Previous Page
-                            </a>    
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="previous disabled">
-                            <a href="#">
-                                <span aria-hidden="true">&laquo;</span> Previous Page
-                            </a>    
-                        </li>
-                    }
+                @if (this.Model.ShowResults)
+                {
+                    <p>
+                        Showing search results @this.Model.ResultsStart
+                        to @this.Model.ResultsEnd of @this.Model.ResultsTotal
+                        for &quot;@this.Model.Query&quot;.
+                    </p>
                     
-                    @if (this.Model.ShowNextLink)
-                    {
-                        <li class="next">
-                            <a href="@this.Model.NextLinkUrl">
-                                Next Page <span aria-hidden="true">&raquo;</span>
-                            </a>    
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="next disabled">
-                            <a href="#">
-                                Next Page <span aria-hidden="true">&raquo;</span>
-                            </a> 
-                        </li>
-                    }
-                </ul>
-            </nav>
-        }
+                    @Html.Partial("VideoListGroup", this.Model.Entries)
+                    
+                    <nav>
+                        <ul class="pager">
+                            @if (this.Model.ShowPreviousLink)
+                            {
+                                <li class="previous">
+                                    <a href="@this.Model.PreviousLinkUrl">
+                                        <span aria-hidden="true">&laquo;</span> Previous Page
+                                    </a>    
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="previous disabled">
+                                    <a href="#">
+                                        <span aria-hidden="true">&laquo;</span> Previous Page
+                                    </a>    
+                                </li>
+                            }
+                            
+                            @if (this.Model.ShowNextLink)
+                            {
+                                <li class="next">
+                                    <a href="@this.Model.NextLinkUrl">
+                                        Next Page <span aria-hidden="true">&raquo;</span>
+                                    </a>    
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="next disabled">
+                                    <a href="#">
+                                        Next Page <span aria-hidden="true">&raquo;</span>
+                                    </a> 
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
     </div>
 </div>
 
 @section scripts
 {
-    <script>       
-        $(function() {            
-            $("#advancedSearch").on(
-                "change",
-                function() {
-                    if ($("#advancedSearch").prop("checked"))
-                    {
-                        $("#advancedSearchPanel").show();
-                    }
-                    else
-                    {
-                        $("#advancedSearchPanel").hide();
-                    }
-                }
-            );
-        });        
-    </script>
     <script src="/js/inlinedancersearch.js"></script>
     <script src="/js/inlineeventsearch.js"></script>
 }

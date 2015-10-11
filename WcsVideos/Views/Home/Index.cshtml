@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="page-header">
-            <h2>Welcome to @AppSettings.Options.SiteTitle!</h2>
+            <h1 class="h2" style="text-align:center;">Welcome to @AppSettings.Options.SiteTitle!</h1>
         </div>
     </div>
 </div>
@@ -16,7 +16,7 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                Recently Added Videos
+                <strong>Recently Added Videos</strong>
             </div>
             @Html.Partial("VideoListGroup", this.Model.Videos)
         </div>
@@ -24,7 +24,7 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                Recent Events
+                <strong>Recent Events</strong>
             </div>
             @Html.Partial("EventListGroup", this.Model.Events)
         </div>

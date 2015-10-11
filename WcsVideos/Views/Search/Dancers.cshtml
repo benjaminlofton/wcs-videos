@@ -5,39 +5,38 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="page-header">
-            <h2>
-                Dancer Search
-            </h2>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="h3">
+                    Dancer Search
+                </h1>
+            </div>
+            <div class="panel-body">
+                <p>Search for a dancer:</p>
+                <form class="form-horizontal" role="form" method="get" action="" id="searchform">
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="query" id="dancerQuery" value="@this.Model.Query">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-default">Search</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <div id="dancerSearchResults">
+                    @if (this.Model.ShowResults)
+                    {
+                        @Html.Partial("DancerSearchResults", this.Model)
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-12">
-        <p>Search for a dancer:</p>
-        <form class="form-horizontal" role="form" method="get" action="" id="searchform">
-            <div class="form-group">
-                <div class="col-sm-6">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="query" id="dancerQuery" value="@this.Model.Query">
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-default">Search</button>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-md-12" id="dancerSearchResults">
-        @if (this.Model.ShowResults)
-        {
-            @Html.Partial("DancerSearchResults", this.Model)
-        }
-    </div>
-</div>
 
 @section scripts
 {
