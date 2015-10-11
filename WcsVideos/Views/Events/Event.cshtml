@@ -11,6 +11,41 @@
                     Event - @this.Model.Title
                 </h1>
             </div>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>
+                            Event Date
+                        </td>
+                        <td>
+                            @this.Model.EventDate
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Location
+                        </td>
+                        <td>
+                            @this.Model.Location
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            WSDC Status
+                        </td>
+                        <td>
+                            @if (this.Model.Pointed)
+                            {
+                                <text>Pointed</text>
+                            }
+                            else
+                            {
+                                <text>Not pointed</text>  
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="panel-body">
                 <h2 class="h4">Videos</h2>
                 @Html.Partial("VideoListGroup", this.Model.Videos)

@@ -34,6 +34,9 @@ namespace WcsVideos.Controllers
             ViewModelHelper.PopulateUserInfo(
                 model,
                 this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+            model.EventDate = contractEvent.EventDate.ToString("MMMM d, yyyy");
+            model.Location = contractEvent.LocationName;
+            model.Pointed = contractEvent.WsdcPointed;
             
             model.Title = contractEvent.Name + " " + contractEvent.EventDate.Year;
             

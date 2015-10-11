@@ -6,6 +6,12 @@ namespace WcsVideos.Models
 	{
 		public string Title { get; set; }
 		
+        public string EventDate { get; set; }
+        
+        public string Location { get; set; }
+        
+        public bool Pointed { get; set; }
+        
 		public List<VideoListItemViewModel> Videos { get; set; }
 	}
 }
