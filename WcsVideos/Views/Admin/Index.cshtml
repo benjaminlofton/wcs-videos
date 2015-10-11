@@ -6,7 +6,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="page-header">
-                    <h2>@AppSettings.Options.SiteTitle Admin Console</h2>
+                    <h1 class="h3">@AppSettings.Options.SiteTitle Admin Console</h1>
                 </div>
                 <ul class="list-group">
                     <li class="list-group-item active">
@@ -20,6 +20,10 @@
                     <li class="list-group-item">
                         <span class="glyphicon glyphicon-home"> </span> &nbsp;
                         <a href="@this.Model.MissingEventVideoListUrl">Edit videos missing events</a>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="glyphicon glyphicon-flag"> </span> &nbsp;
+                        <a asp-controller="Admin" asp-action="FlaggedVideoList">Review flagged videos</a>
                     </li>
                     <li class="list-group-item disabled">
                         <span class="glyphicon glyphicon-user"> </span> &nbsp;

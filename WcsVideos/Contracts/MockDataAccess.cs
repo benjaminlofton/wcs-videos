@@ -246,6 +246,20 @@ namespace WcsVideos.Contracts
             }
         };
         
+        private List<FlaggedVideo> flaggedVideos = new List<FlaggedVideo>()
+        {
+            new FlaggedVideo
+            {
+                FlagId = "1",
+                FlaggedVideoId = "1",
+                ProviderId = 1,
+                ProviderVideoId = "JMZxfwqlmd0",
+                Title = "Maxence and Tatiana Strictly Swing at Swingdiego",
+                DancerIdList = new string[] { "1", "2" },
+                EventId = "2", 
+            }
+        };
+        
         public Event GetEvent(string eventId)
         {
             Event result;
@@ -399,6 +413,29 @@ namespace WcsVideos.Contracts
                 ResourceType = "Videos",
                 Ids = this.videos.Values.Select(v => v.Id).ToArray(),  
             };
+        }
+        
+        public string AddFlaggedVideo(FlaggedVideo flaggedVideo)
+        {
+            flaggedVideo.FlagId = Guid.NewGuid().ToString();
+            this.flaggedVideos.Add(flaggedVideo);
+            return flaggedVideo.FlagId;
+        }
+        
+        public List<FlaggedVideo> GetFlaggedVideos()
+        {
+            return new List<FlaggedVideo>(this.flaggedVideos);
+        }
+        
+        public FlaggedVideo GetFlaggedVideo(string flagId)
+        {
+            return this.flaggedVideos.FirstOrDefault(x => string.Equals(x.FlagId, flagId));
+        }
+        
+        public void DeleteFlaggedVideo(string flagId)
+        {
+            this.flaggedVideos = new List<FlaggedVideo>(
+                this.flaggedVideos.Where(x => !string.Equals(x.FlagId, flagId)));
         }
     }
 }

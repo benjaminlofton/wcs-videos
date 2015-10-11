@@ -1,0 +1,38 @@
+@inject IOptions<AppSettings> AppSettings
+@using System.Linq;
+@model ReviewFlagViewModel
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="h3">
+                    Review Corrections
+                </h1>
+            </div>
+            <div class="panel-body">
+                <p>
+                    This page allows you to update the details and metadata associated with a video based on submitted corrections.  Changes take effect immediatly upon submission.  You may also delete the corrections instead of applying them.
+                </p>
+                <p>
+                    <form method="POST" action="@this.Model.DeleteFlagUrl">
+                        <button type="submit" class="btn btn-default">Delete</button> corrections to ignore them, or revise and submit them using the following form:
+                        <input type="hidden" name="flagId" value="@this.Model.FlagId" />
+                    </form>
+                </p>
+                <div class="row">
+                    <form method="POST" action="@this.Model.PostbackUrl">
+                        @Html.Partial("ModifyVideo", this.Model)
+                        <input type="hidden" name="flagId" value="@this.Model.FlagId" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="/js/inlinedancersearch.js"></script>
+    <script src="/js/inlineeventsearch.js"></script>
+}

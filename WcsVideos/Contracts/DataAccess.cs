@@ -169,6 +169,34 @@ namespace WcsVideos.Contracts
             return this.HttpGet<ResourceList>("list/" + Uri.EscapeUriString(name)).Result;
         }
 
+        public string AddFlaggedVideo(FlaggedVideo flaggedVideo)
+        {
+            string serialized = JsonConvert.SerializeObject(
+                flaggedVideo,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                });
+            
+            FlaggedVideo result = this.HttpPost<FlaggedVideo>("flagged/v", serialized).Result;
+            return result.FlagId;
+        }
+        
+        public List<FlaggedVideo> GetFlaggedVideos()
+        {
+            return this.HttpGet<List<FlaggedVideo>>("flagged/v").Result;
+        }
+
+        public FlaggedVideo GetFlaggedVideo(string flagId)
+        {
+            return this.HttpGet<FlaggedVideo>("flagged/v/" + Uri.EscapeUriString(flagId)).Result;
+        }
+
+        public void DeleteFlaggedVideo(string flagId)
+        {
+            this.HttpDelete("flagged/v/" + Uri.EscapeUriString(flagId)).Wait();
+        }
+
         private async Task<T> HttpGet<T>(string relativeUrl)
         {
             Console.WriteLine("GET from " + relativeUrl);
@@ -215,6 +243,17 @@ namespace WcsVideos.Contracts
                     new StringContent(content, Encoding.UTF8, "application/json"));
                 response.EnsureSuccessStatusCode();
             }
-        }       
+        }
+        
+        private async Task HttpDelete(string relativeUrl)
+        {
+            Console.WriteLine("DELETE to " + relativeUrl);
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = this.WebserviceTarget;
+                HttpResponseMessage response = await client.DeleteAsync(relativeUrl);
+                response.EnsureSuccessStatusCode();
+            }
+        }
     }
 }

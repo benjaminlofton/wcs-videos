@@ -122,5 +122,43 @@ namespace WcsVideos.Controllers
             
             return this.View(model);
         }
+        
+        public IActionResult FlaggedVideoList(int start)
+        {
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies,
+                this.Context.Response.Cookies);
+            
+            if (!loggedIn)
+            {
+                CookieOptions loginCookieOptions = new CookieOptions();
+                loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
+                this.Context.Response.Cookies.Append(
+                    "LoginRedirect",
+                    this.Request.Path.ToUriComponent() + this.Request.QueryString,
+                    loginCookieOptions);
+                return this.RedirectToRoute("default", new { controller = "User", action = "Login" });
+            }
+            
+            FlaggedVideoListViewModel model = new FlaggedVideoListViewModel();
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
+            ViewModelHelper.PopulateSearchResults(
+                model,
+                this.dataAccess.GetFlaggedVideos(),
+                0,
+                30,
+                f => new FlaggedVideoListItemViewModel()
+                {
+                    Title = f.Title,
+                    ReviewUrl = this.Url.Link(
+                        "default",
+                        new { controller = "Videos", action = "ReviewFlag", id = f.FlagId })                    
+                },
+                s => this.Url.Link(
+                    "default",
+                    new { controller = "Admin", action = "FlaggedVideoList", start = s }));
+            
+            return View(model);
+        }
     }
 }

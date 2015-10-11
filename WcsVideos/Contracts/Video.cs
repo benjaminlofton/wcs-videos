@@ -22,7 +22,7 @@ namespace WcsVideos.Contracts
                 ProviderId = this.ProviderId,
                 ProviderVideoId = this.ProviderVideoId,
                 Title = this.Title,
-                DancerIdList = (string[])DancerIdList.Clone(),
+                DancerIdList = this.DancerIdList == null ? null : (string[])DancerIdList.Clone(),
                 EventId = this.EventId,
             };
         }

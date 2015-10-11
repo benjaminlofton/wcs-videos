@@ -1,0 +1,39 @@
+@model IPagingViewModel
+
+<nav>
+    <ul class="pager">
+        @if (this.Model.ShowPreviousLink)
+        {
+            <li class="previous">
+                <a href="@this.Model.PreviousLinkUrl">
+                    <span aria-hidden="true">&laquo;</span> Previous Page
+                </a>    
+            </li>
+        }
+        else
+        {
+            <li class="previous disabled">
+                <a href="#">
+                    <span aria-hidden="true">&laquo;</span> Previous Page
+                </a>    
+            </li>
+        }
+        
+        @if (this.Model.ShowNextLink)
+        {
+            <li class="next">
+                <a href="@this.Model.NextLinkUrl">
+                    Next Page <span aria-hidden="true">&raquo;</span>
+                </a>    
+            </li>
+        }
+        else
+        {
+            <li class="next disabled">
+                <a href="#">
+                    Next Page <span aria-hidden="true">&raquo;</span>
+                </a> 
+            </li>
+        }
+    </ul>
+</nav>

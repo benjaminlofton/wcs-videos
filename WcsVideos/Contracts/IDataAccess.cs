@@ -34,5 +34,13 @@ namespace WcsVideos.Contracts
         bool ProviderVideoIdExists(string providerId, string providerVideoId);
         
         ResourceList GetResourceList(string name);
+        
+        string AddFlaggedVideo(FlaggedVideo flaggedVideo);
+        
+        List<FlaggedVideo> GetFlaggedVideos();
+        
+        FlaggedVideo GetFlaggedVideo(string flagId);
+        
+        void DeleteFlaggedVideo(string flagId);
     }
 }

@@ -79,6 +79,47 @@ namespace WcsVideos.Models
             return listItem;
         }
         
+        public static string GetDancerNames(IDataAccess dataAccess, IEnumerable<string> dancerIds)
+        {
+            if (dancerIds != null)
+            {
+                List<string> dancerNameList = new List<string>();
+                foreach (string dancerId in dancerIds)
+                {
+                    Dancer dancer = dataAccess.GetDancerById(dancerId);
+                    if (dancer != null)
+                    {
+                        dancerNameList.Add(dancer.Name + " (" + dancerId + ")");
+                    }
+                }
+                
+                if (dancerNameList.Count > 0)
+                {
+                    return string.Join("; ", dancerNameList);
+                }
+            }
+
+            return "(None)";
+        }
+        
+        public static string GetEventName(IDataAccess dataAccess, string eventId)
+        {
+            Event contractEvent = null;
+            if (!string.IsNullOrEmpty(eventId))
+            {
+                contractEvent = dataAccess.GetEvent(eventId);
+            }
+            
+            if (contractEvent == null)
+            {
+                return "(None)";
+            }
+            else
+            {
+                return contractEvent.Name + " " + contractEvent.EventDate.Year;
+            } 
+        }
+        
         public static void PopulateUserInfo(BasePageViewModel model, bool isLoggedIn)
         {
             if (isLoggedIn)

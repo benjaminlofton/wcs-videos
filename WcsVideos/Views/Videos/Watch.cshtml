@@ -20,9 +20,9 @@
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h2>
+                <h1 class="h3">
                     @this.Model.Title
-                </h2>
+                </h1>
             </div>
             <div class="panel-body">
                 @Html.Raw(this.Model.EmbedCode)
@@ -96,17 +96,16 @@
                         </a>
                     </div>
                 }
-                @*
                 else
                 {
-                    <text>Is there something wrong in the details of this video?</text> 
-                    <a href="@this.Model.EditUrl" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-flag"> </span>
-                        Flag it
-                    </a>
-                    <text>for review.</text>
+                    <div style="text-align:right;">
+                        <text>Is there something wrong in the details of this video?</text> 
+                        <a href="@this.Model.EditUrl" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-flag"> </span>
+                            Submit Corrections
+                        </a>
+                    </div>
                 }
-                *@
             </div>
         </div>
     </div>

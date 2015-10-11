@@ -1,0 +1,27 @@
+@model FlaggedVideoListViewModel
+
+<div class="row">
+    <div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="h3">
+                Flagged Videos
+            </h1>
+        </div>
+        <div class="panel-body">
+            <p>
+                Showing videos @this.Model.ResultsStart
+                to @this.Model.ResultsEnd of @this.Model.ResultsTotal.
+            </p>
+            <ul class="list-group">
+                @foreach (var video in this.Model.Entries) {
+                    <li class="list-group-item">
+                        <a href="@video.ReviewUrl">@video.Title</a>
+                    </li>    
+                }
+            </ul>
+            @Html.Partial("Pager", this.Model)
+        </div>
+    </div>
+    </div>
+</div>

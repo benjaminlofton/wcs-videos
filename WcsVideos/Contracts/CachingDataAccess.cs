@@ -284,7 +284,7 @@ namespace WcsVideos.Contracts
             }
                        
             this.baseDataAccess.UpdateVideo(video);
-            foreach (string dancerId in modifiedEvents)
+            foreach (string dancerId in modifiedDancers)
             {
                 this.UpdateDancerInCache(dancerId);                    
             }
@@ -329,7 +329,7 @@ namespace WcsVideos.Contracts
         {
             Dancer dancer = this.baseDataAccess.GetDancerById(dancerId);
             
-            if (dancer != null)
+            if (dancer != null && !string.IsNullOrEmpty(dancer.WsdcId))
             {
                 this.dancers[dancer.WsdcId] = dancer;
 
@@ -354,6 +354,26 @@ namespace WcsVideos.Contracts
             }
             
             return list;
+        }
+        
+        public string AddFlaggedVideo(FlaggedVideo flaggedVideo)
+        {
+            return this.baseDataAccess.AddFlaggedVideo(flaggedVideo);
+        }
+        
+        public List<FlaggedVideo> GetFlaggedVideos()
+        {
+            return this.baseDataAccess.GetFlaggedVideos();
+        }
+        
+        public FlaggedVideo GetFlaggedVideo(string flagId)
+        {
+            return this.baseDataAccess.GetFlaggedVideo(flagId);
+        }
+        
+        public void DeleteFlaggedVideo(string flagId)
+        {
+            this.baseDataAccess.DeleteFlaggedVideo(flagId);
         }
 	}
 }
