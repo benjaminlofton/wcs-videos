@@ -103,14 +103,21 @@ public class VideoService {
     Set<Integer> oldStateDancers = oldState.getDancerIdList();
     Set<Integer> newStateDancers = newState.getDancerIdList();
 
-    Set<Integer> addedDancers = newStateDancers.stream()
+    Set<Integer> addedDancers;
+    Set<Integer> removedDancers;
+    
+    if( newStateDancers == null || oldStateDancers == null) {
+      addedDancers = newStateDancers == null ? new HashSet<Integer>() : newStateDancers;
+      removedDancers = oldStateDancers == null ? new HashSet<Integer>() : oldStateDancers;
+    } else {
+      addedDancers = newStateDancers.stream()
             .filter(v -> !oldStateDancers.contains(v))
             .collect(Collectors.toSet());
-
-    Set<Integer> removedDancers = oldStateDancers.stream()
+      removedDancers = oldStateDancers.stream()
             .filter(v -> !newStateDancers.contains(v))
-            .collect(Collectors.toSet());
-
+            .collect(Collectors.toSet());  
+    }
+    
     // Verify all added dancers exist
     for(Integer dancerId : addedDancers) {
 
