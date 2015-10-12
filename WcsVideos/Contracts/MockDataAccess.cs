@@ -437,5 +437,12 @@ namespace WcsVideos.Contracts
             this.flaggedVideos = new List<FlaggedVideo>(
                 this.flaggedVideos.Where(x => !string.Equals(x.FlagId, flagId)));
         }
+        
+        public string AddEvent(Event contractEvent)
+        {
+            contractEvent.EventId = Guid.NewGuid().ToString();
+            this.events.Add(contractEvent.EventId, contractEvent);
+            return contractEvent.EventId;
+        }
     }
 }

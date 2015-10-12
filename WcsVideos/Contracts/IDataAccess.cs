@@ -42,5 +42,7 @@ namespace WcsVideos.Contracts
         FlaggedVideo GetFlaggedVideo(string flagId);
         
         void DeleteFlaggedVideo(string flagId);
+        
+        string AddEvent(Event contractEvent);
     }
 }

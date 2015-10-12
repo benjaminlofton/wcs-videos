@@ -194,9 +194,24 @@ namespace WcsVideos.Contracts
 
         public void DeleteFlaggedVideo(string flagId)
         {
+            
             this.HttpDelete("flagged/v/" + Uri.EscapeUriString(flagId)).Wait();
         }
 
+        public string AddEvent(Event contractEvent)
+        {
+            string serialized = JsonConvert.SerializeObject(
+                contractEvent,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+                    DateFormatString = "yyyy-MM-dd",
+                });
+                
+            Event addedEvent = this.HttpPost<Event>("event", serialized).Result;
+            return addedEvent.EventId;
+        }
+        
         private async Task<T> HttpGet<T>(string relativeUrl)
         {
             Console.WriteLine("GET from " + relativeUrl);

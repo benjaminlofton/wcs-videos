@@ -284,6 +284,7 @@ namespace WcsVideos.Contracts
             }
                        
             this.baseDataAccess.UpdateVideo(video);
+            this.HttpPost("admin/cache-reset").Wait();
             foreach (string dancerId in modifiedDancers)
             {
                 this.UpdateDancerInCache(dancerId);                    
@@ -291,8 +292,8 @@ namespace WcsVideos.Contracts
             
             foreach (string eventId in modifiedEvents)
             {
-                Event evt;
-                this.events.TryRemove(eventId, out evt);
+                List<string> eventVideos;
+                this.eventVideos.TryRemove(video.EventId, out eventVideos);
             }
             
             this.videos.TryRemove(video.Id, out video);
@@ -374,6 +375,13 @@ namespace WcsVideos.Contracts
         public void DeleteFlaggedVideo(string flagId)
         {
             this.baseDataAccess.DeleteFlaggedVideo(flagId);
+        }
+        
+        public string AddEvent(Event contractEvent)
+        {
+            string eventId = this.baseDataAccess.AddEvent(contractEvent);
+            this.HttpPost("admin/cache-reset").Wait();
+            return eventId;
         }
 	}
 }
