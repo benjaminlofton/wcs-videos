@@ -55,9 +55,9 @@ public class EventSearchService {
         .collect(Collectors.toList());
   }
 
-  public static Predicate<EventD> matchWsdcPointed(boolean isPointed) {
+  public static Predicate<EventD> matchWsdcPointed(Boolean isPointed) {
     return e -> {
-      if(e.isWsdcPointed() == null) {
+      if(isPointed == null) {
         return true;
       }
       return e.isWsdcPointed().equals(isPointed);
