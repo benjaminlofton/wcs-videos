@@ -72,7 +72,7 @@ public class EventSearchService {
 
       boolean containsAllFrags = true;
       for(String frag : nameFragList.split(",")) {
-        containsAllFrags = containsAllFrags && e.getName().contains(frag);
+        containsAllFrags = containsAllFrags && e.getName().toLowerCase().contains(frag.toLowerCase());
       }
       return containsAllFrags;
     };
