@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -53,7 +54,7 @@ public class VideoD {
   public String getTitle() { return title; }
   public void setTitle(String title) { this.title = title;}
 
-  public Set<Integer> getDancerIdList() { return dancerIdList; }
+  public Set<Integer> getDancerIdList() { return dancerIdList == null ? new HashSet<>() : dancerIdList; }
   public void setDancerIdList(Set<Integer> dancerIdList) { this.dancerIdList = dancerIdList; }
 
   public String getEventId() {

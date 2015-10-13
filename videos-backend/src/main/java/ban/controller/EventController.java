@@ -39,14 +39,11 @@ public class EventController {
   public List<Event> eventList(
       @RequestParam(value = "name-frag", required =  false) String nameFragList,
       @RequestParam(value = "wsdc-pointed", required =  false) Boolean isPointed,
-      @RequestParam(value = "year", required = false) Integer year,
       @RequestParam(value = "after-date", required = false) String afterDate,
       @RequestParam(value = "before-date", required = false) String beforeDate) {
 
-
-    return eventSearchService.search(nameFragList, isPointed, year, afterDate, beforeDate);
+    return eventSearchService.search(nameFragList, isPointed, afterDate, beforeDate);
   }
-
 
   @RequestMapping(value="/event", method = RequestMethod.POST)
   public Event postEvent(@RequestBody Event event) throws InvalidEventException {

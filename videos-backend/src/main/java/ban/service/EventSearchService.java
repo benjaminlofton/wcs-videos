@@ -5,13 +5,14 @@ import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import ban.exception.InvalidRequestException;
+import ban.model.persistence.EventD;
 import ban.model.view.Event;
 import ban.service.mapper.EventMapper;
-import ban.util.CollectionUtil;
 
 /**
  * Created by bnorrish on 7/10/15.
@@ -25,10 +26,11 @@ public class EventSearchService {
   @Autowired
   LocalIndexedDataService localIndexedDataService;
 
-  public List<Event> search(String nameFragList, Boolean isWsdcPointed, Integer year, String afterDateString, String beforeDateString) {
+  public List<Event> search(String nameFragList, Boolean isWsdcPointed, String afterDateString, String beforeDateString) {
 
-    DateTime afterDate = null;
-    DateTime beforeDate = null;
+    // I don't have a better way to validate dates then to attempt to load them into a DateTime
+    DateTime afterDate;
+    DateTime beforeDate;
     try {
       afterDate = (afterDateString == null) ? null : DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(afterDateString);
       beforeDate = (beforeDateString == null) ? null : DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(beforeDateString);
@@ -43,38 +45,65 @@ public class EventSearchService {
       throw new InvalidRequestException();
     }
 
-    List<Event> dateSearchResults = null;
-    if(afterDate != null || beforeDate != null) {
-      dateSearchResults = eventMapper.mapToViewModel(localIndexedDataService.getEventsBetween(afterDate,beforeDate));
-    }
+    List<EventD> events = localIndexedDataService.getAllEvents();
 
-    List<Event> wsdcPointedSearchResults = null;
-    if(isWsdcPointed != null) {
-      wsdcPointedSearchResults = eventMapper.mapToViewModel(localIndexedDataService.getEventsByWsdcPointed(isWsdcPointed));
-    }
-
-    List<Event> yearSearchResults = null;
-    if(year != null) {
-      yearSearchResults = eventMapper.mapToViewModel(localIndexedDataService.getEventsByYear(year));
-    }
-
-    List<Event> nameFragSearchResults = null;
-    if (nameFragList != null) {
-      nameFragSearchResults = new ArrayList<>();
-
-      for (String nameFrag : nameFragList.split(",")) {
-
-        List<Event> singleWordNameFragResults = eventMapper
-            .mapToViewModel(localIndexedDataService.getEventsBySingleWordNameFrag(nameFrag));
-
-        if (nameFragSearchResults.isEmpty()) {
-          nameFragSearchResults.addAll(singleWordNameFragResults);
-        } else {
-          nameFragSearchResults = CollectionUtil.mergeEventLists(nameFragSearchResults, singleWordNameFragResults);
-        }
-      }
-    }
-
-    return CollectionUtil.mergeEventLists(nameFragSearchResults,wsdcPointedSearchResults, yearSearchResults, dateSearchResults);
+    return events.stream()
+        .filter(matchWsdcPointed(isWsdcPointed))
+        .filter(matchNameFragmentList(nameFragList))
+        .filter(matchDates(afterDate,beforeDate))
+        .map(e -> eventMapper.mapToViewModel(e))
+        .collect(Collectors.toList());
   }
+
+  public static Predicate<EventD> matchWsdcPointed(boolean isPointed) {
+    return e -> {
+      if(e.isWsdcPointed() == null) {
+        return true;
+      }
+      return e.isWsdcPointed().equals(isPointed);
+    };
+  }
+
+  public static Predicate<EventD> matchNameFragmentList(String nameFragList) {
+    return e -> {
+      if (nameFragList == null) {
+        return true;
+      }
+
+      boolean containsAllFrags = true;
+      for(String frag : nameFragList.split(",")) {
+        containsAllFrags = containsAllFrags && e.getName().contains(frag);
+      }
+      return containsAllFrags;
+    };
+  }
+
+  public static Predicate<EventD> matchDates(DateTime ad, DateTime bd) {
+    return e -> {
+
+      if (ad == null && bd == null) {
+        return true;
+      }
+
+      boolean keep = true;
+
+      // Seems bad to do this for every date, for every search
+      DateTime eventDate = DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(e.getEventDate());
+
+      if (ad != null) {
+        keep = keep && (eventDate.isAfter(ad) || eventDate.isEqual(ad));
+      }
+
+      if (bd != null) {
+        keep = keep && (eventDate.isBefore(bd) || eventDate.isEqual(bd));
+      }
+
+      return keep;
+    };
+  }
+
+
+
+
+
 }

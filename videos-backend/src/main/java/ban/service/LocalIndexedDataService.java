@@ -197,6 +197,10 @@ public class LocalIndexedDataService implements InitializingBean {
     return results;
   }
 
+  public List<EventD> getAllEvents() {
+    return new ArrayList<EventD>(eventDList);
+  }
+
   public List<EventD> getEventsBetween(DateTime afterDate, DateTime beforeDate) {
 
     List<EventD> results = new ArrayList<>();

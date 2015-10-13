@@ -35,7 +35,7 @@ public class Video {
   public void setTitle(String title) { this.title = title;  }
 
   private Set<Integer> dancerIdList = new HashSet<>();
-  public Set<Integer> getDancerIdList() { return dancerIdList; }
+  public Set<Integer> getDancerIdList() { return dancerIdList == null ? new HashSet<>() : dancerIdList; }
   public void setDancerIdList(Set<Integer> dancerIdList) { this.dancerIdList = dancerIdList; }
 
   private String eventId;
