@@ -24,6 +24,7 @@ public class ListManager {
   public ListManager() {
     listNameToBeanNameMap.put("latest-videos", "mostRecentVideoAggregator");
     listNameToBeanNameMap.put("no-event", "videosWithNoEventAggregator");
+    listNameToBeanNameMap.put("videos-needing-dancers", "videosWithNoDancers");
   }
 
   public List<String> getAllListerNames() {
@@ -40,7 +41,7 @@ public class ListManager {
     try {
       lister = appContext.getBean(listNameToBeanNameMap.get(name), ILister.class);
     } catch (Exception ex) {
-      throw new IllegalStateException("List of type: " + listNameToBeanNameMap.get(name) + " cannot be found; has it beem moved or renamed?", ex);
+      throw new IllegalStateException("List of type: " + listNameToBeanNameMap.get(name) + " cannot be found; has it been moved or renamed?", ex);
     }
 
     return lister;

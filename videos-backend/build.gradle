@@ -57,6 +57,7 @@ dependencies {
     testCompile("info.cukes:cucumber-java:1.2.2")
 
     testIntegrationCompile("info.cukes:cucumber-java:1.2.2")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
