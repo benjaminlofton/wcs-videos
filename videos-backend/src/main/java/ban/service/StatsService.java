@@ -27,7 +27,7 @@ public class StatsService {
 
     WscVideoStats stats = new WscVideoStats();
 
-    List<VideoD> videos = dynamoClient.getAllVideos();
+    List<VideoD> videos = dynamoClient.getAllVideos("Video");
     stats.setNumVideos(videos.size());
     stats.setCacheSizeItems(localIndexedDataService.size());
 

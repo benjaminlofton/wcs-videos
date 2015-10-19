@@ -1,0 +1,7 @@
+[
+            {
+                "KeyType": "HASH",
+                "AttributeName": "VideoId"
+            }
+]
+

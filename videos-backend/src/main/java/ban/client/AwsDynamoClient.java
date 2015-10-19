@@ -31,6 +31,7 @@ import ban.model.persistence.ProviderD;
 import ban.model.persistence.VideoD;
 import ban.model.view.Video;
 
+// This class needs refactoring list a week old zit needs popping
 @Component
 public class AwsDynamoClient {
 
@@ -147,6 +148,20 @@ public class AwsDynamoClient {
     return result;
   }
 
+  public VideoD recordSuggestedVideo(VideoD video) {
+
+    // Id will be Dynamo auto-generated UUID
+    video.setId(null);
+
+    // AWS Will throw exception when saving empty Number Set (!!!)
+    if(video.getDancerIdList() != null && video.getDancerIdList().isEmpty()) {
+      video.setDancerIdList(null);
+    }
+
+    dynamoMapper.save(video, new DynamoDBMapperConfig(new DynamoDBMapperConfig.TableNameOverride("SuggestedVideo")));
+    return video;
+  }
+
   public VideoD createVideo(VideoD video) {
 
     // Id will be Dynamo auto-generated UUID
@@ -186,10 +201,18 @@ public class AwsDynamoClient {
     dynamoMapper.save(dancerD);
   }
 
-  public List<VideoD> getAllVideos() {
+  /**
+   * Gets either all Videos, or all SuggestedVideos
+   * todo: The param 'tableName' is horrible LeakyAbstraction!
+   * todo: ... why should a service object know a Dynamo Table Name! EWW!
+   *
+   * @param tableName either "Video" or "SuggestedVideo"
+   * @return all Video objects in the given table name
+   */
+  public List<VideoD> getAllVideos(String tableName) {
 
     ScanRequest scanRequest = new ScanRequest()
-        .withTableName("Video");
+        .withTableName(tableName);
 
     ScanResult scanResult = dynamoClient.scan(scanRequest);
 
@@ -310,8 +333,6 @@ public class AwsDynamoClient {
 
     return result;
   }
-
-
 
   public EventD addEvent(EventD eventD) {
 

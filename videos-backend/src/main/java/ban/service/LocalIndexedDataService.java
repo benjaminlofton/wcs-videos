@@ -60,7 +60,7 @@ public class LocalIndexedDataService implements InitializingBean {
 
   public void load() {
 
-    for(VideoD video : awsDynamoClient.getAllVideos()) {
+    for(VideoD video : awsDynamoClient.getAllVideos("Video")) {
       videoIdToVideoMap.put(video.getId(), video);
 
       List<String> wordList = Arrays.asList(video.getTitle().split(" "));
