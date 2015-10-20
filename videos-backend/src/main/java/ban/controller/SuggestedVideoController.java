@@ -3,6 +3,7 @@ package ban.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +35,13 @@ public class SuggestedVideoController {
   public List<Video> getSuggestedVideos() {
 
     return suggestedVideoService.getSuggestedVideos();
+  }
+
+  @RequestMapping(value="sv/{videoId}", method = RequestMethod.DELETE)
+  public void deleteSuggestedVideo(@PathVariable String videoId) {
+
+    suggestedVideoService.deleteVideo(videoId);
+
   }
 
 }

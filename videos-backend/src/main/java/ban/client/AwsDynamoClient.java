@@ -6,9 +6,11 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.document.DeleteItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Index;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -343,4 +345,15 @@ public class AwsDynamoClient {
     return eventD;
   }
 
+  public void deleteSuggestedVideo(String videoId) {
+
+    DynamoDB db = new DynamoDB(dynamoClient);
+
+    DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
+        .withPrimaryKey("VideoId", videoId);
+
+    DeleteItemOutcome outcome = db.getTable("SuggestedVideo").deleteItem(deleteItemSpec);
+
+    // Do we need to check anything here?
+  }
 }

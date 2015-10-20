@@ -37,4 +37,10 @@ public class SuggestedVideoService {
 
     return videoMapper.mapToViewModel(videos);
   }
+
+  public void deleteVideo(String videoId) {
+
+    awsDynamoClient.deleteSuggestedVideo(videoId);
+
+  }
 }
