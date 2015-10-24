@@ -71,6 +71,17 @@ public class LocalIndexedDataService implements InitializingBean {
     return videoIdToVideoMap.get(id);
   }
 
+  public void refreshVideoById(String id) {
+
+    videoIdToVideoMap.remove(id);
+
+    VideoD videoD = awsDynamoClient.getVideo(id);
+
+    if(videoD != null) {
+      videoIdToVideoMap.put(videoD.getId(), videoD);
+    }
+  }
+
   public List<EventD> getAllEvents() {
     return new ArrayList<>(eventIdToEventMap.values());
   }

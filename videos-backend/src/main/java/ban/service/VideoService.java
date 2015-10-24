@@ -133,7 +133,7 @@ public class VideoService {
       }
     }
 
-    // *** Below this point we are updating dynamo objects, any exception could result in inconsistent data
+    // *** Below this point we are updating persisted objects, any exception WILL result in inconsistent data
 
     // For each added dancer, associate the Dancer with the Video
     for (Integer addedDancer : addedDancers) {
@@ -145,7 +145,11 @@ public class VideoService {
       disassociateDancerWithVideo(removedDancer,oldState.getId());
     }
 
-    return videoMapper.mapToViewModel(dynamoClient.updateVideo(videoMapper.mapToPersistanceModel(newState)));
+    VideoD updatedVideo = dynamoClient.updateVideo(videoMapper.mapToPersistanceModel(newState));
+
+    localIndexedDataService.refreshVideoById(updatedVideo.getId());
+
+    return videoMapper.mapToViewModel(updatedVideo);
   }
 
   private Video addVideo(Video video) {
@@ -185,6 +189,9 @@ public class VideoService {
     for(Integer wsdcId: video.getDancerIdList()) {
       associateDancerWithVideo(wsdcId,pVideo.getId());
     }
+
+    localIndexedDataService.refreshVideoById(video.getId());
+
 
     return videoMapper.mapToViewModel(pVideo);
   }
