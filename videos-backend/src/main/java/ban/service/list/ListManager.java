@@ -25,6 +25,7 @@ public class ListManager {
     listNameToBeanNameMap.put("latest-videos", "mostRecentVideoAggregator");
     listNameToBeanNameMap.put("no-event", "videosWithNoEventAggregator");
     listNameToBeanNameMap.put("videos-needing-dancers", "videosWithNoDancers");
+    listNameToBeanNameMap.put("no-level", "videosWithNoLevelAggregator");
   }
 
   public List<String> getAllListerNames() {
