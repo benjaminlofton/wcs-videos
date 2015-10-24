@@ -31,6 +31,7 @@ public class VideoMapper {
     video.setDancerIdList(pVideo.getDancerIdList());
     video.setEventId(pVideo.getEventId());
     video.setCreatedDateTime(pVideo.getCreatedDateTime());
+    video.setSkillLevel(pVideo.getSkillLevel());
 
     return video;
   }
@@ -60,6 +61,7 @@ public class VideoMapper {
         .withEventId(video.getEventId())
         .withDancerIdList(video.getDancerIdList())
         .withCreatedDateTime(video.getCreatedDateTime())
+        .withSkillLevel(video.getSkillLevel())
         .build();
   }
 }

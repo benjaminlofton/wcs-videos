@@ -59,11 +59,12 @@ public class VideoController {
   @RequestMapping(value="/v", method = RequestMethod.GET)
   public ResponseEntity<List<Video>> searchVideos(
       @RequestParam(value = "wsdc-id", required = false) String wsdcIdList,
+      @RequestParam(value = "level", required = false) String level,
       @RequestParam(value = "title-frag", required =  false) String titleFragList,
       @RequestParam(value = "provider-id", required = false) String providerVideoId,
       @RequestParam(value = "event-id", required = false) String eventIdList) {
 
-    if(wsdcIdList == null && titleFragList == null && providerVideoId == null && eventIdList == null) {
+    if(wsdcIdList == null && titleFragList == null && providerVideoId == null && eventIdList == null && level == null) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
@@ -81,7 +82,7 @@ public class VideoController {
       return new ResponseEntity<>(Arrays.asList(v),HttpStatus.OK);
     }
 
-    List<Video> videos = videoSearchService.search(wsdcIdList,titleFragList,eventIdList);
+    List<Video> videos = videoSearchService.search(wsdcIdList,titleFragList,eventIdList, level);
     return new ResponseEntity<>(videos,HttpStatus.OK);
   }
 

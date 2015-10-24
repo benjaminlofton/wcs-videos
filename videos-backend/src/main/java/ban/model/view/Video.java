@@ -3,6 +3,8 @@ package ban.model.view;
 import java.util.HashSet;
 import java.util.Set;
 
+import ban.model.persistence.SkillLevel;
+
 /**
  * Video class as presented as Resource in REST endpoints 
  */
@@ -52,5 +54,13 @@ public class Video {
   }
   public void setCreatedDateTime(String createdDateTime) {
     CreatedDateTime = createdDateTime;
+  }
+
+  private SkillLevel skillLevel;
+  public SkillLevel getSkillLevel() {
+    return skillLevel;
+  }
+  public void setSkillLevel(SkillLevel skillLevel) {
+    this.skillLevel = skillLevel;
   }
 }

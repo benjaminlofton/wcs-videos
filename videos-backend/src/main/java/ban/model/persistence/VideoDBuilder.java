@@ -15,6 +15,7 @@ public class VideoDBuilder {
   private String eventId = null;
   private Set<Integer> dancerIdList = new HashSet<>();
   private String createdDateTime = null;
+  private SkillLevel skillLevel = null;
 
   public VideoDBuilder withId(String id) {
     this.id = id;
@@ -56,6 +57,11 @@ public class VideoDBuilder {
     return this;
   }
 
+  public VideoDBuilder withSkillLevel(SkillLevel skillLevel) {
+    this.skillLevel = skillLevel;
+    return this;
+  }
+
   public VideoD build() {
 
     VideoD video = new VideoD();
@@ -66,6 +72,7 @@ public class VideoDBuilder {
     video.setDancerIdList(dancerIdList);
     video.setEventId(eventId);
     video.setCreatedDateTime(createdDateTime);
+    video.setSkillLevel(skillLevel);
 
     return video;
   }

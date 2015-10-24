@@ -30,10 +30,10 @@ import ban.model.persistence.DancerD;
 import ban.model.persistence.EventD;
 import ban.model.persistence.FlaggedVideoD;
 import ban.model.persistence.ProviderD;
+import ban.model.persistence.SkillLevel;
 import ban.model.persistence.VideoD;
-import ban.model.view.Video;
 
-// This class needs refactoring list a week old zit needs popping
+// This class needs refactoring like a week old zit needs popping
 @Component
 public class AwsDynamoClient {
 
@@ -111,6 +111,10 @@ public class AwsDynamoClient {
       FlaggedVideoD flaggedVideo = new FlaggedVideoD();
       flaggedVideo.setFlagId(item.get("FlagId").getS());
       flaggedVideo.setFlaggedVideoId(item.get("FlaggedVideoId").getS());
+
+      if(item.get("SkillLevel") != null) {
+        flaggedVideo.setSkillLevel(SkillLevel.valueOf(item.get("SkillLevel").getS()));
+      }
 
       if(item.get("ProviderId") != null) {
         flaggedVideo.setProviderId(Integer.parseInt(item.get("ProviderId").getN()));
@@ -226,6 +230,10 @@ public class AwsDynamoClient {
       videoD.setProviderId(Integer.parseInt(item.get("ProviderId").getN()));
       videoD.setProviderVideoId(item.get("ProviderVideoId").getS());
       videoD.setTitle(item.get("Title").getS());
+
+      if(item.get("SkillLevel") != null) {
+        videoD.setSkillLevel(SkillLevel.valueOf(item.get("SkillLevel").getS()));
+      }
 
       if(item.get("CreatedDateTime") != null) {
         videoD.setCreatedDateTime(item.get("CreatedDateTime").getS());

@@ -1,5 +1,7 @@
 package ban.model.persistence;
 
+import org.codehaus.jackson.annotate.JsonCreator;
+
 /**
  * Created by bnorrish on 9/20/15.
  */
@@ -15,8 +17,5 @@ public enum SkillLevel {
   ALLSTAR,
   CHAMPION_INVITATIONAL,
   OPEN;
-
-
-
 
 }

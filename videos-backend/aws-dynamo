@@ -1,0 +1,47 @@
+aws dynamodb create-table --attribute-definitions 
+[
+            {
+                "AttributeName": "ProviderVideoId", 
+                "AttributeType": "S"
+            }, 
+            {
+                "AttributeName": "VideoId", 
+                "AttributeType": "S"
+            }
+]
+--table-name SuggestedVideo
+--key-schema 
+[
+            {
+                "KeyType": "HASH", 
+                "AttributeName": "VideoId"
+            }
+]
+--global-secondary-indexes
+[
+            {
+                "IndexSizeBytes": 242884, 
+                "IndexName": "ProviderVideoId-index", 
+                "Projection": {
+                    "ProjectionType": "ALL"
+                }, 
+                "ProvisionedThroughput": {
+                    "NumberOfDecreasesToday": 0, 
+                    "WriteCapacityUnits": 2, 
+                    "ReadCapacityUnits": 1
+                }, 
+                "IndexStatus": "ACTIVE", 
+                "KeySchema": [
+                    {
+                        "KeyType": "HASH", 
+                        "AttributeName": "ProviderVideoId"
+                    }
+]
+--provisioned-throughput
+{ 
+            "WriteCapacityUnits": 1,  
+            "ReadCapacityUnits": 2
+}
+ 
+
+
