@@ -14,7 +14,6 @@ import ban.model.view.WscVideoStats;
 import ban.service.DancerService;
 import ban.service.LocalIndexedDataService;
 import ban.service.StatsService;
-import ban.service.cache.DancerCache;
 
 /**
  * Created by bnorrish on 7/11/15.
@@ -30,9 +29,6 @@ public class AdminController {
   LocalIndexedDataService localIndexedDataService;
 
   @Autowired
-  DancerCache dancerCache;
-
-  @Autowired
   StatsService statsService;
 
   @RequestMapping(value="/admin/add-by-frag", method = RequestMethod.POST)
@@ -44,8 +40,6 @@ public class AdminController {
   public WscVideoStats resetCache() {
     localIndexedDataService.clear();
     localIndexedDataService.load();
-
-    dancerCache.clear();
 
     return statsService.getBasicStats();
   }

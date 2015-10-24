@@ -1,34 +1,25 @@
 package ban.service;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import ban.client.AwsDynamoClient;
 import ban.model.persistence.DancerD;
 import ban.model.persistence.EventD;
 import ban.model.persistence.VideoD;
-import ban.service.cache.DancerCache;
 
 /**
  * Class contains a local in-memory HashMap based storage of:
  *
  * [Key]    - [Object]
  * VideoId  - Video
- * VideoTitle    - List of Videos
- * EventTitle    - List of Events
- * EventList
- * EventId       - List of Videos
+ * EventId  - Event
  *
  * Created by bnorrish on 6/28/15.
  */
@@ -38,91 +29,38 @@ public class LocalIndexedDataService implements InitializingBean {
   @Autowired
   AwsDynamoClient awsDynamoClient;
 
-  @Autowired
-  DancerCache dancerCache;
-
   // NOTE!
   // This class has synchronization issues, as it is a Singleton with internal state
-  // Note!
-  private Map<String, VideoD> videoIdToVideoMap = new HashMap<>();
-  private Map<String, List<VideoD>> videoTitleFragToVideoMap = new HashMap<>();
-  private Map<String, List<EventD>> eventTitleFragToEventMap = new HashMap<>();
-  private List<EventD> eventDList = new ArrayList<>();
-  private Map<String,List<VideoD>> eventIdToVideoMap = new HashMap<>();
+  // Any modification of videoIdToVideoMap or eventIdToEventMap needs to be Synchronized
+  //
+  // Event and Video caches are fully loaded at start-up, and kept consistent on any Update;
+  // Dancer cache is NOT fully loaded; at any time, local map will only contain partial list;
+  //
 
-  public void clear() {
-    videoIdToVideoMap.clear();
-    videoTitleFragToVideoMap.clear();
-    eventTitleFragToEventMap.clear();
-    eventDList.clear();
-    eventIdToVideoMap.clear();
-  }
+  private Map<String, VideoD> videoIdToVideoMap = new HashMap<>();
+  private Map<String, EventD> eventIdToEventMap = new HashMap<>();
+  private Map<Integer, DancerD> wsdcIdToDancerMap = new HashMap<>();
 
   public void load() {
 
+    // Load ALL videos at Start Up
     for(VideoD video : awsDynamoClient.getAllVideos("Video")) {
       videoIdToVideoMap.put(video.getId(), video);
-
-      List<String> wordList = Arrays.asList(video.getTitle().split(" "));
-
-      wordList = deDuplicate(wordList);
-
-      for(String word : wordList) {
-
-        word = word.toLowerCase();
-
-        if(videoTitleFragToVideoMap.get(word) == null) {
-          videoTitleFragToVideoMap.put(word,new ArrayList<>());
-        }
-
-        videoTitleFragToVideoMap.get(word).add(video);
-      }
-
-      if(video.getId().equals("465c0943-e116-44f3-9623-6b6cf0483b6b")) {
-        int i = 0;
-        System.out.println(i);
-      }
-
-      if((video.getEventId() != null) && (!video.getEventId().isEmpty())) {
-
-        if(!eventIdToVideoMap.containsKey(video.getEventId())) {
-          eventIdToVideoMap.put(video.getEventId(), new ArrayList<>());
-        }
-
-        eventIdToVideoMap.get(video.getEventId()).add(video);
-      }
     }
 
+    // Load ALL Events at Start Up
     for(EventD eventD : awsDynamoClient.getEventList()) {
-
-      eventDList.add(eventD);
-
-      List<String> wordList = Arrays.asList(eventD.getName().split(" "));
-
-      wordList = deDuplicate(wordList);
-
-      for (String word : wordList) {
-
-        word = word.toLowerCase();
-
-        if(eventTitleFragToEventMap.get(word) == null) {
-          eventTitleFragToEventMap.put(word,new ArrayList<>());
-        }
-
-        eventTitleFragToEventMap.get(word).add(eventD);
-      }
+      eventIdToEventMap.put(eventD.getEventId(), eventD);
     }
+
+    // Do NOT load all Dancers at Start Up
+
   }
 
-  public List<VideoD> getVideosBySingleWordTitleFrag(String sigleWordTitleFragment) {
-
-    List<VideoD> returnList = videoTitleFragToVideoMap.get(sigleWordTitleFragment.toLowerCase());
-
-    if(returnList == null) {
-      return new ArrayList<>();
-    }
-
-    return returnList;
+  public void clear() {
+    videoIdToVideoMap.clear();
+    eventIdToEventMap.clear();
+    wsdcIdToDancerMap.clear();
   }
 
   public List<VideoD> getAllVideos() {
@@ -133,129 +71,55 @@ public class LocalIndexedDataService implements InitializingBean {
     return videoIdToVideoMap.get(id);
   }
 
-  public List<VideoD> getVideosByDancerWsdcId(String wsdcId) {
-    List<VideoD> results = new ArrayList<>();
-
-    DancerD dancerD = dancerCache.getDancer(Integer.parseInt(wsdcId)
-    );
-
-    if(dancerD == null || dancerD.getVideoIdList() == null) {
-      return results;
-    }
-
-    for(String videoId : dancerD.getVideoIdList()) {
-
-      VideoD videoD = videoIdToVideoMap.get(videoId);
-
-      if(videoD != null) {
-        results.add(videoD);
-      } else {
-        // Log error; Video does not exist for a video referenced in the Dancer Object
-
-      }
-    }
-
-    return results;
-  }
-
-  public List<EventD> getEventsBySingleWordNameFrag(String singleWordNameFragment) {
-
-    List<EventD> returnList = eventTitleFragToEventMap.get(singleWordNameFragment.toLowerCase());
-
-    if(returnList == null) {
-      return new ArrayList<>();
-    }
-
-    return returnList;
-  }
-
-  public List<EventD> getEventsByWsdcPointed(boolean isWsdcPointed) {
-
-    List<EventD> returnList = new ArrayList<>();
-
-    for (EventD eventD : eventDList) {
-      if(eventD.isWsdcPointed().equals(isWsdcPointed)) {
-        returnList.add(eventD);
-      }
-    }
-
-    return returnList;
-  }
-
-  public List<EventD> getEventsByYear(Integer year) {
-
-    List<EventD> results = new ArrayList<>();
-    for(EventD eventD : eventDList) {
-      if(eventD.getEventDate() != null) {
-        DateTime date = DateTime.parse(eventD.getEventDate());
-        if(year.equals(date.getYear())) {
-          results.add(eventD);
-        }
-      }
-    }
-
-    return results;
-  }
-
   public List<EventD> getAllEvents() {
-    return new ArrayList<EventD>(eventDList);
+    return new ArrayList<>(eventIdToEventMap.values());
   }
 
-  public List<EventD> getEventsBetween(DateTime afterDate, DateTime beforeDate) {
-
-    List<EventD> results = new ArrayList<>();
-
-    for (EventD eventD : eventDList) {
-
-      boolean keep = true;
-
-      // Seems bad to do this for every date, for every search
-      DateTime eventDate = DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(eventD.getEventDate());
-
-      if(afterDate != null) {
-        keep = keep && (eventDate.isAfter(afterDate) || eventDate.isEqual(afterDate));
-      }
-
-      if(beforeDate != null) {
-        keep = keep && (eventDate.isBefore(beforeDate) || eventDate.isEqual(beforeDate));
-      }
-
-      if(keep) {
-        results.add(eventD);
-      }
-    }
-
-    return results;
+  public EventD getEventById(String id) {
+    return eventIdToEventMap.get(id);
   }
 
-  public List<VideoD> getVideosByEventId(String eventId) {
+  public List<DancerD> getAllDancers() {
+    // Local cache is not guaranteed to be full; pull from persistence
 
-    if(!eventIdToVideoMap.containsKey(eventId)) {
-      return new ArrayList<>();
+    List<DancerD> allDancers = awsDynamoClient.getAllDancers();
+
+    for(DancerD dancer : allDancers) {
+      wsdcIdToDancerMap.put(dancer.getWsdcId(),dancer);
     }
 
-    return eventIdToVideoMap.get(eventId);
+    return allDancers;
+  }
+
+  public DancerD getDancerById(Integer wsdcId) {
+
+    if(wsdcIdToDancerMap.containsKey(wsdcId)) {
+      return wsdcIdToDancerMap.get(wsdcId);
+    }
+
+    DancerD dancer = awsDynamoClient.getDancer(wsdcId);
+
+    // Currently no restriction on the size of this collection;
+    // We are expecting to be able to hold all dancers in memory for foreseeable future,
+    // we just can't load them all at one.
+    if(dancer != null) {
+      wsdcIdToDancerMap.put(wsdcId, dancer);
+    }
+
+    return dancer;
+  }
+
+  public boolean dancerExists(Integer wsdcId) {
+    return getDancerById(wsdcId) == null;
+  }
+
+  public void evictDancer(Integer wsdcId) {
+    wsdcIdToDancerMap.remove(wsdcId);
   }
 
   public int size() {
     return videoIdToVideoMap.size() +
-           videoTitleFragToVideoMap.size() +
-           eventDList.size() +
-           eventTitleFragToEventMap.size() +
-           eventIdToVideoMap.size();
-  }
-
-  private List<String> deDuplicate(List<String> initialList) {
-
-    Set<String> result = new HashSet<>();
-
-    for( String item : initialList) {
-      result.add(item);
-    }
-
-    ArrayList<String> resultList = new ArrayList<>();
-    resultList.addAll(result);
-    return resultList;
+           eventIdToEventMap.size();
   }
 
   @Override

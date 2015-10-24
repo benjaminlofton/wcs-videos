@@ -4,11 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import ban.client.AwsDynamoClient;
 import ban.client.WsdcDancer;
@@ -17,7 +14,6 @@ import ban.model.persistence.DancerD;
 import ban.model.persistence.VideoD;
 import ban.model.view.Dancer;
 import ban.model.view.Video;
-import ban.service.cache.DancerCache;
 import ban.service.mapper.DancerMapper;
 import ban.service.mapper.VideoMapper;
 
@@ -40,7 +36,7 @@ public class DancerService {
   WsdcRestClient wsdcRestClient;
 
   @Autowired
-  DancerCache dancerCache;
+  LocalIndexedDataService localIndexedDataService;
 
   public List<Video> getVideosByDancerWsdcId(int wsdcId) {
 
@@ -68,7 +64,7 @@ public class DancerService {
   }
 
   public Dancer getDancer(Integer wsdcId) {
-    return dancerMapper.mapToViewModel(awsDynamoClient.getDancer(wsdcId));
+    return dancerMapper.mapToViewModel(localIndexedDataService.getDancerById(wsdcId));
   }
 
   public void addDancer(Dancer dancer) {
@@ -90,7 +86,7 @@ public class DancerService {
 
       Integer wsdcId = d.getValue();
 
-      if(!dancerCache.exists(wsdcId)) {
+      if(!localIndexedDataService.dancerExists(wsdcId)) {
 
         DancerD newDancer = new DancerD();
         newDancer.setWsdcId(wsdcId);
@@ -115,6 +111,7 @@ public class DancerService {
   }
 
   public List<Dancer> getDancerList() {
-    return dancerMapper.mapToViewModel(awsDynamoClient.getAllDancers());
+
+    return dancerMapper.mapToViewModel(localIndexedDataService.getAllDancers());
   }
 }

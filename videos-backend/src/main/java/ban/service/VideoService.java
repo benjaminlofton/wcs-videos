@@ -34,7 +34,7 @@ public class VideoService {
   private VideoMapper videoMapper;
 
   @Autowired
-  private DancerCache dancerCache;
+  LocalIndexedDataService localIndexedDataService;
 
   /**
    * Determines if an existing video key already exists
@@ -203,7 +203,7 @@ public class VideoService {
       if (!dancer.getVideoIdList().contains(videoId)) {
         dancer.getVideoIdList().add(videoId);
         dynamoClient.saveDancer(dancer);
-        dancerCache.refreshDancer(dancer.getWsdcId());
+        localIndexedDataService.evictDancer(dancer.getWsdcId());
       }
     }
   }
@@ -222,7 +222,7 @@ public class VideoService {
 
       dancer.getVideoIdList().remove(videoId);
       dynamoClient.saveDancer(dancer);
-      dancerCache.refreshDancer(dancer.getWsdcId());
+      localIndexedDataService.evictDancer(dancer.getWsdcId());
     }
   }
 
