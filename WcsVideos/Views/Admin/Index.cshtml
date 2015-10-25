@@ -18,16 +18,16 @@
                         <a asp-controller="Videos" asp-action="Add">Add a new video</a>
                     </li>
                     <li class="list-group-item">
+                        <span class="glyphicon glyphicon-flag"> </span> &nbsp;
+                        <a asp-controller="Admin" asp-action="FlaggedVideoList">Review flagged videos</a>
+                    </li>
+                    <li class="list-group-item">
                         <span class="glyphicon glyphicon-home"> </span> &nbsp;
                         <a href="@this.Model.MissingEventVideoListUrl">Edit videos missing events</a>
                     </li>
                     <li class="list-group-item">
-                        <span class="glyphicon glyphicon-flag"> </span> &nbsp;
-                        <a asp-controller="Admin" asp-action="FlaggedVideoList">Review flagged videos</a>
-                    </li>
-                    <li class="list-group-item disabled">
                         <span class="glyphicon glyphicon-user"> </span> &nbsp;
-                        Edit videos missing dancers (coming soon)
+                        <a href="@this.Model.MissingDancersVideoListUrl">Edit videos missing dancers</a>
                     </li>
                 </ul>
                 <ul class="list-group">
