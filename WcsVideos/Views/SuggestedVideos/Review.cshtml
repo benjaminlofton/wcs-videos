@@ -1,0 +1,40 @@
+@inject IOptions<AppSettings> AppSettings
+@using System.Linq;
+@model ReviewSuggestedVideoViewModel
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="h3">
+                    Review Suggested Video
+                </h1>
+            </div>
+            <div class="panel-body">
+                <p>
+                    This page allows you to review a suggested video and approve with modifications or delete it.
+                </p>
+                <p>
+                    <form method="POST" action="@this.Model.DeleteSuggestedVideoUrl">
+                        <button type="submit" class="btn btn-default">Delete</button> the suggested video, or approve it with the following form:
+                        <input type="hidden" name="suggestedVideoId" value="@this.Model.SuggestedVideoId" />
+                    </form>
+                </p>
+                <div class="row">
+                    <form method="POST" action="@this.Model.PostbackUrl">
+                        @Html.Partial("ModifyVideo", this.Model)
+                        <input type="hidden" name="suggestedVideoId" value="@this.Model.SuggestedVideoId" />
+                        <input type="hidden" name="providerVideoId" value="@this.Model.ProviderVideoId" />
+                        <input type="hidden" name="providerId" value="@this.Model.ProviderId" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="/js/inlinedancersearch.js"></script>
+    <script src="/js/inlineeventsearch.js"></script>
+}

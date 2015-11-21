@@ -312,6 +312,26 @@ namespace WcsVideos.Contracts
             return this.baseDataAccess.ProviderVideoIdExists(providerId, providerVideoId);
         }
         
+        public string AddSuggestedVideo(Video suggestedVideo)
+        {
+            return this.baseDataAccess.AddSuggestedVideo(suggestedVideo);
+        }
+        
+        public Video GetSuggestedVideo(string suggestedVideoId)
+        {
+            return this.baseDataAccess.GetSuggestedVideo(suggestedVideoId);
+        }
+        
+        public List<Video> GetSuggestedVideos()
+        {
+            return this.baseDataAccess.GetSuggestedVideos();
+        }
+        
+        public void DeleteSuggestedVideo(string suggestedVideoId)
+        {
+            this.baseDataAccess.DeleteSuggestedVideo(suggestedVideoId);
+        }
+        
         private async Task HttpPost(string relativeUrl)
         {
             Console.WriteLine("POST to " + relativeUrl);

@@ -44,5 +44,13 @@ namespace WcsVideos.Contracts
         void DeleteFlaggedVideo(string flagId);
         
         string AddEvent(Event contractEvent);
+        
+        string AddSuggestedVideo(Video suggestedVideo);
+        
+        Video GetSuggestedVideo(string suggestedVideoId);
+        
+        List<Video> GetSuggestedVideos();
+        
+        void DeleteSuggestedVideo(string suggestedVideoId);
     }
 }

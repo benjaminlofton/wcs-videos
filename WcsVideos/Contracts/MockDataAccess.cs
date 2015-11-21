@@ -260,6 +260,18 @@ namespace WcsVideos.Contracts
             }
         };
         
+        private List<Video> suggestedVideos = new List<Video>()
+        {
+            new Video
+            {
+                Id = "1",
+                ProviderId = 1,
+                ProviderVideoId = "doesnotexist",
+                Title = "Jordan Frisbee and Jessica Pacheco social dancing",
+                DancerIdList = new string[] { "8", "13" },
+            }
+        };
+        
         public Event GetEvent(string eventId)
         {
             Event result;
@@ -443,6 +455,30 @@ namespace WcsVideos.Contracts
             contractEvent.EventId = Guid.NewGuid().ToString();
             this.events.Add(contractEvent.EventId, contractEvent);
             return contractEvent.EventId;
+        }
+        
+        public string AddSuggestedVideo(Video suggestedVideo)
+        {
+            suggestedVideo.Id = Guid.NewGuid().ToString();
+            this.suggestedVideos.Add(suggestedVideo);
+            return suggestedVideo.Id;
+        }
+        
+        public Video GetSuggestedVideo(string suggestedVideoId)
+        {
+            return this.suggestedVideos.FirstOrDefault(
+                x => string.Equals(suggestedVideoId, x.Id, StringComparison.Ordinal));
+        }
+        
+        public List<Video> GetSuggestedVideos()
+        {
+            return new List<Video>(this.suggestedVideos);
+        }
+        
+        public void DeleteSuggestedVideo(string suggestedVideoId)
+        {
+            this.suggestedVideos = new List<Video>(
+                this.suggestedVideos.Where(x => !string.Equals(x.Id, suggestedVideoId, StringComparison.Ordinal)));
         }
     }
 }

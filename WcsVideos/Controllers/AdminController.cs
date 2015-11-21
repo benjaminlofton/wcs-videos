@@ -60,6 +60,59 @@ namespace WcsVideos.Controllers
             return this.View(model);
         }
         
+        public IActionResult SuggestedVideoList(int start)
+        {
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies,
+                this.Context.Response.Cookies);
+            
+            if (!loggedIn)
+            {
+                CookieOptions loginCookieOptions = new CookieOptions();
+                loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
+                this.Context.Response.Cookies.Append(
+                    "LoginRedirect",
+                    this.Request.Path.ToUriComponent() + this.Request.QueryString,
+                    loginCookieOptions);
+                return this.RedirectToRoute("default", new { controller = "User", action = "Login" });
+            }
+            
+            AdminVideoListViewModel model = new AdminVideoListViewModel();
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
+            List<Video> suggestedVideos = this.dataAccess.GetSuggestedVideos();
+            
+            model.Title = "Review Suggested Videos";
+
+            ViewModelHelper.PopulateSearchResults(
+                model,
+                suggestedVideos,
+                start,
+                20,
+                (video) => 
+                {
+                    var li = ViewModelHelper.PopulateVideoListItem(video, this.Url);
+                    li.Url = this.Url.Link(
+                        "default",
+                        new
+                        {
+                            controller = "SuggestedVideos",
+                            action = "Review",
+                            video.Id
+                        });
+                    return li;
+                },  
+                (s) => this.Url.Link(
+                    "default",
+                    new
+                    {
+                        controller = "Admin",
+                        action = "SuggestedVideoList",
+                        start = s
+                    }));
+            
+            return this.View("VideoList", model);            
+        }
+        
         public IActionResult VideoList(string id, int start)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(

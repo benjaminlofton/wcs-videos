@@ -212,6 +212,26 @@ namespace WcsVideos.Contracts
             return addedEvent.EventId;
         }
         
+        public string AddSuggestedVideo(Video suggestedVideo)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public Video GetSuggestedVideo(string suggestedVideoId)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public List<Video> GetSuggestedVideos()
+        {
+            throw new NotImplementedException();
+        }
+        
+        public void DeleteSuggestedVideo(string suggestedVideoId)
+        {
+            throw new NotImplementedException();
+        }
+        
         private async Task<T> HttpGet<T>(string relativeUrl)
         {
             Console.WriteLine("GET from " + relativeUrl);
