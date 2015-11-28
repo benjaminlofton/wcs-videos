@@ -214,22 +214,32 @@ namespace WcsVideos.Contracts
         
         public string AddSuggestedVideo(Video suggestedVideo)
         {
-            throw new NotImplementedException();
+            string serialized = JsonConvert.SerializeObject(
+                suggestedVideo,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                });
+                
+            Video result = this.HttpPost<Video>("sv/", serialized).Result;
+            suggestedVideo.Id = result.Id;
+            return result.Id;
         }
         
         public Video GetSuggestedVideo(string suggestedVideoId)
         {
-            throw new NotImplementedException();
+            return this.GetSuggestedVideos().FirstOrDefault(
+                x => string.Equals(x.Id, suggestedVideoId, StringComparison.Ordinal));
         }
         
         public List<Video> GetSuggestedVideos()
         {
-            throw new NotImplementedException();
+            return this.HttpGet<List<Video>>("sv/").Result;
         }
         
         public void DeleteSuggestedVideo(string suggestedVideoId)
         {
-            throw new NotImplementedException();
+            this.HttpDelete("sv/" + Uri.EscapeUriString(suggestedVideoId)).Wait();
         }
         
         private async Task<T> HttpGet<T>(string relativeUrl)

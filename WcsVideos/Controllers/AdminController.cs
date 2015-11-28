@@ -14,10 +14,13 @@ namespace WcsVideos.Controllers
         private const string MissingEventVideoListTitle = "Videos Without Events";
         private const string MissingDancersVideoListId = "videos-needing-dancers";
         private const string MissingDancersVideoListTitle = "Videos Missing Dancers";
+        private const string MissingLevelVideoListId = "no-level";
+        private const string MissingLevelVideoListTitle = "Videos Without Skill Levels";
         private static readonly Dictionary<string, string> ListIdTitleMapping = new Dictionary<string, string>
         {
             { AdminController.MissingEventVideoListId, MissingEventVideoListTitle },
             { AdminController.MissingDancersVideoListId, MissingDancersVideoListTitle },
+            { AdminController.MissingLevelVideoListId, MissingLevelVideoListTitle },
         };
         
         private IDataAccess dataAccess;
@@ -55,7 +58,11 @@ namespace WcsVideos.Controllers
             
             model.MissingEventVideoListUrl = this.Url.Link(
                 "default",
-                new { controller = "Admin", action = "VideoList", id = AdminController.MissingEventVideoListId});
+                new { controller = "Admin", action = "VideoList", id = AdminController.MissingEventVideoListId });
+                
+            model.MissingLevelVideoListUrl = this.Url.Link(
+                "default",
+                new { controller = "Admin", action = "VideoList", id = AdminController.MissingLevelVideoListId });
             
             return this.View(model);
         }

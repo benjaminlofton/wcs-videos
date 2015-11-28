@@ -18,7 +18,7 @@
                         <a asp-controller="Videos" asp-action="Add">Add a new video</a>
                     </li>
                     <li class="list-group-item">
-                        <span class="glyphicon glyphicon-plus-sign"> </span> &nbsp;
+                        <span class="glyphicon glyphicon-cloud-upload"> </span> &nbsp;
                         <a asp-controller="Admin" asp-action="SuggestedVideoList">Review suggested videos</a>
                     </li>
                     <li class="list-group-item">
@@ -32,6 +32,10 @@
                     <li class="list-group-item">
                         <span class="glyphicon glyphicon-user"> </span> &nbsp;
                         <a href="@this.Model.MissingDancersVideoListUrl">Edit videos missing dancers</a>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="glyphicon glyphicon-dashboard"> </span> &nbsp;
+                        <a href="@this.Model.MissingLevelVideoListUrl">Edit videos missing a skill level</a>
                     </li>
                 </ul>
                 <ul class="list-group">

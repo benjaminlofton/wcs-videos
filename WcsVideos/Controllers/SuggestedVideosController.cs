@@ -208,7 +208,12 @@ namespace WcsVideos.Controllers
         
         public IActionResult AddSuccess(string id)
         {
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies,
+                this.Context.Response.Cookies);
+            
             VideosAddSuccessViewModel model = new VideosAddSuccessViewModel();
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
             
             Video video = this.dataAccess.GetSuggestedVideo(id);
             string eventName = null;
@@ -424,7 +429,7 @@ namespace WcsVideos.Controllers
                 this.dataAccess.AddVideo(video);
                 this.dataAccess.DeleteSuggestedVideo(suggestedVideoId);
                 
-                return this.RedirectToRoute("default", new { Controller = "Admin", action = "SuggestedVideoList" });
+                return this.RedirectToRoute("default", new { Controller = "Admin", Action = "SuggestedVideoList" });
             }
             else
             {
