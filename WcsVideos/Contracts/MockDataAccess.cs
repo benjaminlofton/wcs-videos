@@ -226,7 +226,46 @@ namespace WcsVideos.Contracts
 					DancerIdList = new string[] { "12", "13" },
                     SkillLevel = SkillLevel.ChampionInvitational,
 				}
-			}
+			},
+			{
+				"9",
+				new Video
+				{
+					Id = "9",
+					ProviderId = 1,
+					ProviderVideoId = "smoboVc3qj8",
+					Title = "Pete Green and Sarah Vann Drake at Chico",
+					DancerIdList = new string[] {},
+                    EventId = "1",
+                    SkillLevel = SkillLevel.ChampionInvitational,
+				}
+			},
+			{
+				"10",
+				new Video
+				{
+					Id = "10",
+					ProviderId = 1,
+					ProviderVideoId = "smoboVc3qj8",
+					Title = "John Lindo and Jessica Cox at Chico",
+					DancerIdList = new string[] {},
+                    EventId = "1",
+                    SkillLevel = SkillLevel.ChampionInvitational,
+				}
+			},
+			{
+				"11",
+				new Video
+				{
+					Id = "11",
+					ProviderId = 1,
+					ProviderVideoId = "smoboVc3qj8",
+					Title = "Maxence Martin and Yenni Setiawan at Chico",
+					DancerIdList = new string[] {},
+                    EventId = "1",
+                    SkillLevel = SkillLevel.Allstar,
+				}
+			},
 		};
         
         private readonly Dictionary<string, Event> events = new Dictionary<string, Event>

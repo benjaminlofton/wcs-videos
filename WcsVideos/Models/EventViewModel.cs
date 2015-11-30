@@ -12,6 +12,6 @@ namespace WcsVideos.Models
         
         public bool Pointed { get; set; }
         
-		public List<VideoListItemViewModel> Videos { get; set; }
+		public List<VideoGroupViewModel> VideoGroups { get; set; }
 	}
 }

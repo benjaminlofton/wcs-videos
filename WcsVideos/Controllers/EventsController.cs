@@ -44,7 +44,40 @@ namespace WcsVideos.Controllers
             model.Title = contractEvent.Name + " " + contractEvent.EventDate.Year;
             
             var videos = this.dataAccess.GetEventVideos(id);
-            model.Videos = videos.Select(x => ViewModelHelper.PopulateVideoListItem(x, this.Url)).ToList(); 
+            
+            Dictionary<string, VideoGroupViewModel> groups;
+            groups = new Dictionary<string, VideoGroupViewModel>();
+            
+            foreach (Video video in videos)
+            {
+                string groupId;
+                if (string.IsNullOrEmpty(video.SkillLevel))
+                {
+                    groupId = string.Empty;
+                }
+                else
+                {
+                    groupId = SkillLevel.GetValidatedSkillLevel(video.SkillLevel);
+                }
+                
+                VideoGroupViewModel group;
+                if (!groups.TryGetValue(groupId, out group))
+                {
+                    group = new VideoGroupViewModel
+                    {
+                        Name = string.IsNullOrEmpty(video.SkillLevel) ?
+                            "Videos" :
+                            SkillLevel.GetSkillLevelDisplayName(video.SkillLevel) + " Videos",
+                        Videos = new List<VideoListItemViewModel>()
+                    };
+                    
+                    groups[groupId] = group;
+                }
+                
+                group.Videos.Add(ViewModelHelper.PopulateVideoListItem(video, this.Url));
+            }
+
+            model.VideoGroups = groups.OrderBy(x => SkillLevel.GetOrder(x.Key)).Select(x => x.Value).ToList();
             
             return this.View(model);
         }

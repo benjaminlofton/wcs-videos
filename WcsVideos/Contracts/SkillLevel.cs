@@ -18,6 +18,21 @@ namespace WcsVideos.Contracts
             { SkillLevel.Open, "Open" },
         };
         
+        private static readonly Dictionary<string, int> OrderMap = new Dictionary<string, int>
+        {
+            { string.Empty, 10},
+            { SkillLevel.Masters, 9 },
+            { SkillLevel.Sophisticated, 8 },
+            { SkillLevel.Juniors, 7},
+            { SkillLevel.Newcomer, 6 },
+            { SkillLevel.Novice, 5 },
+            { SkillLevel.Intermediate, 4 },
+            { SkillLevel.Advanced, 3 },
+            { SkillLevel.Allstar, 2 },
+            { SkillLevel.Open, 1 },
+            { SkillLevel.ChampionInvitational, 0 },
+        };
+        
         public static string GetValidatedSkillLevel(string skillLevelId)
         {
             if (skillLevelId == null || !SkillLevel.DisplayNames.ContainsKey(skillLevelId))
@@ -34,6 +49,17 @@ namespace WcsVideos.Contracts
             if (string.IsNullOrEmpty(skillLevelId) || !SkillLevel.DisplayNames.TryGetValue(skillLevelId, out ret))
             {
                 ret = "(None)";
+            }
+            
+            return ret;
+        }
+        
+        public static int GetOrder(string skillLevelId)
+        {
+            int ret;
+            if (!SkillLevel.OrderMap.TryGetValue(skillLevelId, out ret))
+            {
+                ret = SkillLevel.OrderMap[string.Empty];
             }
             
             return ret;
