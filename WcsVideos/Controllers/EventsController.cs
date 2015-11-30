@@ -66,8 +66,8 @@ namespace WcsVideos.Controllers
                     group = new VideoGroupViewModel
                     {
                         Name = string.IsNullOrEmpty(video.SkillLevel) ?
-                            "Videos" :
-                            SkillLevel.GetSkillLevelDisplayName(video.SkillLevel) + " Videos",
+                            "Uncategorized Videos" :
+                            SkillLevel.GetSkillLevelDisplayName(video.SkillLevel) + " Division Videos",
                         Videos = new List<VideoListItemViewModel>()
                     };
                     

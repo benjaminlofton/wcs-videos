@@ -12,7 +12,7 @@ namespace WcsVideos.Contracts
             { SkillLevel.Newcomer, "Newcomer" },
             { SkillLevel.Novice, "Novice" },
             { SkillLevel.Intermediate, "Intermediate" },
-            { SkillLevel.Advanced, "Advance" },
+            { SkillLevel.Advanced, "Advanced" },
             { SkillLevel.Allstar, "Allstar" },
             { SkillLevel.ChampionInvitational, "Champion / Invitational" },
             { SkillLevel.Open, "Open" },
