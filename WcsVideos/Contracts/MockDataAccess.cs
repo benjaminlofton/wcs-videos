@@ -137,7 +137,9 @@ namespace WcsVideos.Contracts
 					ProviderId = 1,
 					ProviderVideoId = "JMZxfwqlmd0",
 					Title = "Maxence and Tatiana Strictly Swing at Swingdiego",
-					DancerIdList = new string[] { "1", "2" }, 
+					DancerIdList = new string[] { "1", "2" },
+                    EventId = "2",
+                    SkillLevel = SkillLevel.ChampionInvitational,
 				}
 			},
 			{
@@ -149,6 +151,7 @@ namespace WcsVideos.Contracts
 					ProviderVideoId = "EqVYEiRpYRE",
 					Title = "Kyle Redd and Patty Vo Jack and Jill to Secret by Maroon 5",
 					DancerIdList = new string[] { "3", "4" },
+                    SkillLevel = SkillLevel.ChampionInvitational,
 				}
 			},
 			{
@@ -160,6 +163,7 @@ namespace WcsVideos.Contracts
 					ProviderVideoId = "0PznFu7w7CQ",
 					Title = "Ben Morris and Torri Smith at US Open",
 					DancerIdList = new string[] { "5", "6" },
+                    SkillLevel = SkillLevel.ChampionInvitational,
 				}
 			},
 			{
@@ -171,6 +175,7 @@ namespace WcsVideos.Contracts
 					ProviderVideoId = "aOD-wL-qKiw",
 					Title = "Maxence and Virginie Demo at Budafest",
 					DancerIdList = new string[] { "1", "7" },
+                    SkillLevel = SkillLevel.ChampionInvitational,
 				}
 			},
 			{
@@ -182,6 +187,7 @@ namespace WcsVideos.Contracts
 					ProviderVideoId = "soBV5RboKFs",
 					Title = "Jordan and Jessica dance to She Wolf",
 					DancerIdList = new string[] { "8", "9" },
+                    SkillLevel = SkillLevel.ChampionInvitational,
 				}
 			},
 			{
@@ -193,6 +199,7 @@ namespace WcsVideos.Contracts
 					ProviderVideoId = "D021Irk6ByI",
 					Title = "Maxence and Tara with sweet drop",
 					DancerIdList = new string[] { "1", "10" },
+                    SkillLevel = SkillLevel.Allstar,
 				}
 			},
 			{
@@ -205,6 +212,7 @@ namespace WcsVideos.Contracts
 					Title = "Kyle and Melissa at Chico",
 					DancerIdList = new string[] { "3", "11" },
                     EventId = "1",
+                    SkillLevel = SkillLevel.ChampionInvitational,
 				}
 			},
 			{
@@ -216,6 +224,7 @@ namespace WcsVideos.Contracts
 					ProviderVideoId = "erI704Rza64",
 					Title = "Diego Borges and Jessica Pacheco demo at Baltic Swing",
 					DancerIdList = new string[] { "12", "13" },
+                    SkillLevel = SkillLevel.ChampionInvitational,
 				}
 			}
 		};

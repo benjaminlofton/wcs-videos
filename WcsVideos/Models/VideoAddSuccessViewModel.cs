@@ -15,5 +15,7 @@ namespace WcsVideos.Models
         public string VideoUrl { get; set; }
         
         public string AddVideoUrl { get; set; }
+        
+        public string SkillLevel { get; set; }
 	}
 }

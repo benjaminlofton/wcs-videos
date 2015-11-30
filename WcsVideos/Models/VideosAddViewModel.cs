@@ -23,5 +23,7 @@ namespace WcsVideos.Models
         public string EventName { get; set; }
         
         public bool EventIdValidationError { get; set; }
+        
+        public string SkillLevelId { get; set; }
 	}
 }

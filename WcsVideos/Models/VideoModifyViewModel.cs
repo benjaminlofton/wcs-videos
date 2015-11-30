@@ -21,6 +21,8 @@ namespace WcsVideos.Models
         public bool EventIdValidationError { get; set; }
 
         public string PostbackUrl { get; set; }
+        
+        public string SkillLevelId { get; set; }
 
         public WatchViewModel Existing { get; set; }
     }

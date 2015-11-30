@@ -32,6 +32,14 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>
+                        Level
+                    </td>
+                    <td>
+                        @this.Model.Existing.SkillLevel
+                    </td>
+                </tr>
+                <tr>
                     <td rowspan="@Math.Max(1, this.Model.Existing.Dancers.Count)">
                         Dancers
                     </td>
@@ -75,6 +83,23 @@
                         The video title must not be blank.
                     </p>
                 }
+            </div>
+            <div class="form-group">
+                <label for="skillLevelId" class="control-label">Level</label>
+                <select class="form-control" name="skillLevelId" id="skillLevelId">
+                    <option value="">(None)</option>
+                    @foreach (KeyValuePair<string, string> entry in SkillLevel.DisplayNames)
+                    {
+                        @if (string.Equals(this.Model.SkillLevelId, entry.Key, StringComparison.Ordinal))
+                        {
+                            <option value="@(entry.Key)" selected="selected">@entry.Value</option>
+                        }
+                        else
+                        {
+                            <option value="@(entry.Key)">@entry.Value</option>
+                        }
+                    }
+                </select>
             </div>
             <div class="form-group @(this.Model.DancerIdListValidationError ? "has-error" : "")">
                 <label for="dancerIdList" class="control-label">Dancers</label>

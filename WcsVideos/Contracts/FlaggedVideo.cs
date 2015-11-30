@@ -16,6 +16,8 @@ namespace WcsVideos.Contracts
         
         public string EventId { get; set; }
         
+        public string SkillLevel { get; set; }
+        
         public string Explanation { get; set; }
 
         public static FlaggedVideo FromVideo(Video video)
@@ -28,6 +30,7 @@ namespace WcsVideos.Contracts
                 Title = video.Title,
                 DancerIdList = video.DancerIdList == null ? null : (string[])video.DancerIdList.Clone(),
                 EventId = video.EventId,
+                SkillLevel = video.SkillLevel,
             };
         }
         
@@ -41,6 +44,7 @@ namespace WcsVideos.Contracts
                 Title = this.Title,
                 DancerIdList = this.DancerIdList == null ? null : (string[])this.DancerIdList.Clone(),
                 EventId = this.EventId,
+                SkillLevel = this.SkillLevel,
             };
         }
     }

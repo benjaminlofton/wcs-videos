@@ -13,6 +13,8 @@ namespace WcsVideos.Contracts
         public string[] DancerIdList { get; set; }
         
         public string EventId { get; set; }
+        
+        public string SkillLevel { get; set; }
 
         public Video Clone()
         {
