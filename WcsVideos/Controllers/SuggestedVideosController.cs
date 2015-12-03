@@ -5,7 +5,7 @@ using WcsVideos.Models;
 using WcsVideos.Models.Population;
 using WcsVideos.Contracts;
 using Microsoft.AspNet.Http;
-using System.Linq;
+using WcsVideos.Providers;
 
 namespace WcsVideos.Controllers
 {
@@ -45,40 +45,38 @@ namespace WcsVideos.Controllers
             return this.View(model);
         }
         
-        // TODO: Use youtube APIs to retreive 
-        // TODO: Factor out logic to a class per supported provider
         public IActionResult SubmitUrl(string url)
         {
             string validationErrorMessage = null;
             Uri parsedUrl;
+            IVideoDetailsProvider provider;
+            
             if (string.IsNullOrEmpty(url))
             {
                 validationErrorMessage = "A URL must be provided";
             }
             else if (!Uri.TryCreate(url, UriKind.Absolute, out parsedUrl))
             {
-                validationErrorMessage = "Ooops, that doesn't appear to be a valid URL";
+                validationErrorMessage = "That doesn't appear to be a valid URL";
             }
-            else if (string.Equals(parsedUrl.Host, "www.youtube.com", StringComparison.Ordinal))
+            else if (VideoDetailsProviderFactory.TryGetProvider(parsedUrl, out provider))
             {
-                string[] parameters = parsedUrl.Query.TrimStart('?').Split('&');
+                VideoDetails videoDetails = provider.GetVideoDetails();
                 
-                string videoParameter = parameters.FirstOrDefault(x => x.StartsWith("v="));
-                
-                if (string.IsNullOrEmpty(videoParameter))
+                if (videoDetails == null)
                 {
-                    validationErrorMessage = "Oops, the URL you entered does not correspond to a video";
+                    validationErrorMessage = "There doesn't appear to be a video at that URL";
                 }
                 else
                 {
-                    string providerVideoId = videoParameter.Substring(2);
-                    return this.RedirectToAction("Add", new { providerVideoId = providerVideoId });
+                    return this.RedirectToAction(
+                        "Add",
+                        new
+                        {
+                            ProviderVideoId = videoDetails.ProviderVideoId,
+                            Title = videoDetails.Title,
+                        });
                 }
-            }
-            else if (string.Equals(parsedUrl.Host, "youtu.be", StringComparison.Ordinal))
-            {
-                string providerVideoId = parsedUrl.AbsolutePath.TrimStart('/');
-                return this.RedirectToAction("Add", new { providerVideoId = providerVideoId });
             }
             else
             {
