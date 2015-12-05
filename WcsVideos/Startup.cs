@@ -5,6 +5,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
+using WcsVideos.Contracts;
 using WcsVideos.Controllers;
 using WcsVideos.Providers;
 

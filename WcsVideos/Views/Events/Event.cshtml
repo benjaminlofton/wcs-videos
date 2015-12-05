@@ -58,7 +58,7 @@
                     {
                         <text>|</text>
                     }
-                    <a href="@link.Url">@link.Label</a>
+                    <a href="@link.Url">@Html.Raw(System.Net.WebUtility.HtmlEncode(link.Label).Replace(" ", "&nbsp;"))</a>
                 }
                 
                 @foreach (VideoGroupViewModel group in this.Model.VideoGroups)
