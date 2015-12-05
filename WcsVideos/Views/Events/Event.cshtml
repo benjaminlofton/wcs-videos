@@ -47,8 +47,23 @@
                 </tbody>
             </table>
             <div class="panel-body">
+                @{ bool first = true; }
+                @foreach (JumpListItemViewModel link in this.Model.JumpList)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        <text>|</text>
+                    }
+                    <a href="@link.Url">@link.Label</a>
+                }
+                
                 @foreach (VideoGroupViewModel group in this.Model.VideoGroups)
                 {
+                    <a name="@group.Anchor"></a>
                     <h2 class="h4">@group.Name</h2>
                     @Html.Partial("VideoListGroup", group.Videos)
                 }

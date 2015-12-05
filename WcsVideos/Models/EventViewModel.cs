@@ -13,5 +13,6 @@ namespace WcsVideos.Models
         public bool Pointed { get; set; }
         
 		public List<VideoGroupViewModel> VideoGroups { get; set; }
+        public List<JumpListItemViewModel> JumpList { get; set; }
 	}
 }

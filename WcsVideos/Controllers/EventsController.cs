@@ -65,6 +65,7 @@ namespace WcsVideos.Controllers
                 {
                     group = new VideoGroupViewModel
                     {
+                        Anchor = string.IsNullOrEmpty(groupId) ? "Default" : groupId,
                         Name = string.IsNullOrEmpty(video.SkillLevel) ?
                             "Uncategorized Videos" :
                             SkillLevel.GetSkillLevelDisplayName(video.SkillLevel) + " Division Videos",
@@ -76,8 +77,20 @@ namespace WcsVideos.Controllers
                 
                 group.Videos.Add(ViewModelHelper.PopulateVideoListItem(video, this.Url));
             }
-
+            
             model.VideoGroups = groups.OrderBy(x => SkillLevel.GetOrder(x.Key)).Select(x => x.Value).ToList();
+            
+            model.JumpList = new List<JumpListItemViewModel>();
+            if (model.VideoGroups.Count > 1)
+            {
+                model.JumpList.AddRange(model.VideoGroups.Select(
+                    x => new JumpListItemViewModel
+                    {
+                        Label = x.Name,
+                        Url = "#" + x.Anchor
+                    }
+                ));
+            }
             
             return this.View(model);
         }

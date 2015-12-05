@@ -44,11 +44,11 @@ namespace WcsVideos
             services.AddMvc();
 
             string key = Guid.NewGuid().ToString("N");
-            services.AddSingleton(typeof(Contracts.IDataAccess), typeof(Contracts.MockDataAccess));
-            // services.AddSingleton(
-            //     typeof(IDataAccess),
-            //     (serviceProvider) => new CachingDataAccess(
-            //         this.Configuration.GetSubKey("AppSettings")["DataAccessEndpoint"]));
+            // services.AddSingleton(typeof(Contracts.IDataAccess), typeof(Contracts.MockDataAccess));
+            services.AddSingleton(
+                typeof(IDataAccess),
+                (serviceProvider) => new CachingDataAccess(
+                    this.Configuration.GetSubKey("AppSettings")["DataAccessEndpoint"]));
                     
             services.AddSingleton(
                 typeof(IUserSessionHandler),
