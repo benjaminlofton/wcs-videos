@@ -3,6 +3,8 @@ package ban.service.list;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 import ban.exception.InvalidRequestException;
 import ban.model.view.ResourceList;
 
@@ -25,5 +27,9 @@ public class ListService {
     resourceList.setResourceType(lister.getListType());
 
     return resourceList;
+  }
+
+  public List<String> getAllListNames() {
+    return listManager.getAllListerNames();
   }
 }

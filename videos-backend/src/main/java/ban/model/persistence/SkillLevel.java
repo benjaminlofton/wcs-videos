@@ -16,6 +16,7 @@ public enum SkillLevel {
   ADVANCED,
   ALLSTAR,
   CHAMPION_INVITATIONAL,
+  PRO_AM,
   OPEN;
 
 }

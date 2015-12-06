@@ -32,6 +32,9 @@ public class ListController {
     return listService.getListByName(listName, skip, take);
   }
 
-
+  @RequestMapping(value="/list/", method = RequestMethod.GET)
+  public List<String> getAllListNames() {
+    return listService.getAllListNames();
+  }
 
 }

@@ -190,8 +190,9 @@ public class VideoService {
       associateDancerWithVideo(wsdcId,pVideo.getId());
     }
 
-    localIndexedDataService.refreshVideoById(video.getId());
-
+    // Can't call localIndexedDataService.refreshVideo, because AWS by default has "eventually consistent" reads.
+    // We might try to read the Video before the createVideo if fully consistent
+    localIndexedDataService.putVideo(pVideo);
 
     return videoMapper.mapToViewModel(pVideo);
   }

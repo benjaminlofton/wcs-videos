@@ -82,6 +82,15 @@ public class LocalIndexedDataService implements InitializingBean {
     }
   }
 
+  public void putVideo(VideoD videoD) {
+
+    if(videoD == null || videoD.getId() == null) {
+      throw new IllegalArgumentException();
+    }
+
+    videoIdToVideoMap.put(videoD.getId(),videoD);
+  }
+
   public List<EventD> getAllEvents() {
     return new ArrayList<>(eventIdToEventMap.values());
   }
