@@ -4,6 +4,7 @@ using Microsoft.AspNet.Mvc;
 using WcsVideos.Models;
 using WcsVideos.Models.Population;
 using WcsVideos.Contracts;
+using WcsVideos.Providers;
 using Microsoft.AspNet.Http;
 
 namespace WcsVideos.Controllers
@@ -103,6 +104,94 @@ namespace WcsVideos.Controllers
             model.SkillLevel = SkillLevel.GetSkillLevelDisplayName(video.SkillLevel);
             
             return model;
+        }
+        
+        public IActionResult AddUrl()
+        {
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies,
+                this.Context.Response.Cookies);
+            
+            if (!loggedIn)
+            {
+                CookieOptions loginCookieOptions = new CookieOptions();
+                loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
+                this.Context.Response.Cookies.Append(
+                    "LoginRedirect",
+                    this.Request.Path.ToUriComponent() + this.Request.QueryString,
+                    loginCookieOptions);
+                return this.RedirectToRoute("default", new { controller = "User", action = "Login" });
+            }
+                
+            AddVideoUrlViewModel model = new AddVideoUrlViewModel();
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
+            
+            // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
+            // which will redirect to this page with all of the necessary cookies populated.
+            IReadableStringCollection requestCookies = this.Context.Request.Cookies;            
+            model.ValidationError = bool.Parse(requestCookies.Get("ValidationError") ?? "False");
+            model.ValidationErrorMessage = requestCookies.Get("ValidationErrorMessage");
+            model.Url = requestCookies.Get("Url");
+            
+            CookieOptions cookieOptions = new CookieOptions();
+            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            responseCookies.Delete("ValidationError", cookieOptions);
+            responseCookies.Delete("ValidationErrorMessage", cookieOptions);
+            responseCookies.Delete("Url", cookieOptions);
+            
+            return this.View(model);
+        }
+        
+        public IActionResult SubmitUrl(string url)
+        {
+            string validationErrorMessage = null;
+            Uri parsedUrl;
+            IVideoDetailsProvider provider;
+            
+            if (string.IsNullOrEmpty(url))
+            {
+                validationErrorMessage = "A URL must be provided";
+            }
+            else if (!Uri.TryCreate(url, UriKind.Absolute, out parsedUrl))
+            {
+                validationErrorMessage = "That doesn't appear to be a valid URL";
+            }
+            else if (VideoDetailsProviderFactory.TryGetProvider(parsedUrl, out provider))
+            {
+                VideoDetails videoDetails = provider.GetVideoDetails();
+                
+                if (videoDetails == null)
+                {
+                    validationErrorMessage = "There doesn't appear to be a video at that URL";
+                }
+                else
+                {
+                    return this.RedirectToAction(
+                        "Add",
+                        new
+                        {
+                            ProviderVideoId = videoDetails.ProviderVideoId,
+                            Title = videoDetails.Title,
+                        });
+                }
+            }
+            else
+            {
+                validationErrorMessage = "Only www.youtube.com URLs are supported";
+            }
+            
+            CookieOptions cookieOptions = new CookieOptions();
+            cookieOptions.Expires = DateTime.UtcNow.AddDays(1);
+            
+            // Populate cookies with form data so that we can repopulate the form after the redirect.
+            // Traditionally this would be done using session variables, but we are using cookies here so
+            // that we don't need to worry about session management.
+            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            responseCookies.Append("Url", url, cookieOptions);
+            responseCookies.Append("ValidationError", true.ToString(), cookieOptions);
+            responseCookies.Append("ValidationErrorMessage", validationErrorMessage, cookieOptions);
+            
+            return this.RedirectToAction("AddUrl");
         }
         
         public IActionResult Add(string title, string providerVideoId)
