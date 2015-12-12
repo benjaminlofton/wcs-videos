@@ -47,7 +47,9 @@ namespace WcsVideos.Providers.AutoPopulation
             {
                 return SkillLevel.Advanced;
             }
-            else if (matcher.ContainsWord("Allstar") || matcher.ContainsWord("All-Star"))
+            else if (matcher.ContainsWord("Allstar") ||
+                matcher.ContainsWord("All-Star") ||
+                matcher.ContainsWord("All Star"))
             {
                 return SkillLevel.Allstar;
             }

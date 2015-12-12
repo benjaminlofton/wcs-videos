@@ -3,11 +3,13 @@
 @model WatchViewModel
 @{
     ViewBag.Title = this.Model.Title;
+    string host = this.Context.Request.Host.ToString();
+    string shareUrl = this.Context.Request.Scheme + "://" + host + this.Context.Request.Path;
 }
 
 @section head
 {
-    <meta property="og:url" content="@this.Context.Request.Scheme://@this.Context.Request.Host@this.Context.Request.Path" />
+    <meta property="og:url" content="@shareUrl" />
     <meta property="og:type" content="video.other" />
     <meta property="og:title" content="@this.Model.Title" />
     <meta property="og:description" content="@AppSettings.Options.SiteTitle - your source for west coast swing videos" />
@@ -28,6 +30,7 @@
                 @Html.Raw(this.Model.EmbedCode)
             </div>
             <div class="panel-footer">
+                <div class="fb-share-button" style="float:right;" data-href="@shareUrl" data-layout="button"></div>
                 Watch video at <a href=@this.Model.ExternalUrl>@this.Model.ProviderName</a>
             </div>
         </div>
@@ -119,3 +122,17 @@
         </div>
     </div>
 </div>
+
+<div id="fb-root"></div>
+
+@section scripts
+{
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5";
+        fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+}
