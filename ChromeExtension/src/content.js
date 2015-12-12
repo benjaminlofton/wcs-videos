@@ -2,25 +2,19 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.method == "getVideoInfo")
         {
-            var videoId;
-            var canonicalUrl = document.URL;
+            var providerVideoId;
+            var cannonicalUrl = document.URL;
             
-            if (canonicalUrl)
+            if (cannonicalUrl)
             {
-                var index = canonicalUrl.indexOf("=") + 1;
-                videoId = canonicalUrl.substr(index).split('&')[0];
-            }
-            
-            var videoNameNode = document.getElementById("eow-title");
-            var videoName;
-            if (videoNameNode)
-            {
-                videoName = videoNameNode.innerText;
+                var index = cannonicalUrl.indexOf("=") + 1;
+                providerVideoId = cannonicalUrl.substr(index).split('&')[0];
             }
             
             sendResponse({
-                videoName: videoName,
-                videoId: videoId
+                providerId: 1,
+                providerVideoId: providerVideoId,
+                url: cannonicalUrl,
             });
         }
     }

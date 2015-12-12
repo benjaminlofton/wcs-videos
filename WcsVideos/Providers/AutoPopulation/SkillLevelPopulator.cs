@@ -27,10 +27,10 @@ namespace WcsVideos.Providers.AutoPopulation
             {
                 return SkillLevel.Juniors;
             }
-            else if (matcher.ContainsWord("Pro-am") || matcher.ContainsWord("Pro Am") || matcher.ContainsWord("ProAm"))
-            {
-                return SkillLevel.ProAm;
-            }
+            // else if (matcher.ContainsWord("Pro-am") || matcher.ContainsWord("Pro Am") || matcher.ContainsWord("ProAm"))
+            // {
+            //     return SkillLevel.ProAm;
+            // }
             else if (matcher.ContainsWord("Intermediate"))
             {
                 return SkillLevel.Intermediate;
@@ -55,7 +55,11 @@ namespace WcsVideos.Providers.AutoPopulation
                 matcher.ContainsWord("showcase") ||
                 matcher.ContainsWord("classic") ||
                 matcher.ContainsWord("cabaret") ||
-                matcher.ContainsWord("routine"))
+                matcher.ContainsWord("routine") ||
+                matcher.ContainsWord("All-American") ||
+                matcher.ContainsWord("All American") ||
+                matcher.ContainsWord("All-Canadian") ||
+                matcher.ContainsWord("All Canadian"))
             {
                 return SkillLevel.Open;
             }
