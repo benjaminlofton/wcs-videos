@@ -22,7 +22,7 @@ namespace WcsVideos.Contracts
 				new Dancer
 				{
 					WsdcId = "2",
-					Name = "Mollman, Tatiana",
+					Name = "Mollmann, Tatiana",
 					VideoIdList = new string[] { "1" },
 				}
 			},

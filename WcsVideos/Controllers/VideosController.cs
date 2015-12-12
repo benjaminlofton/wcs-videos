@@ -5,6 +5,7 @@ using WcsVideos.Models;
 using WcsVideos.Models.Population;
 using WcsVideos.Contracts;
 using WcsVideos.Providers;
+using WcsVideos.Providers.AutoPopulation;
 using Microsoft.AspNet.Http;
 
 namespace WcsVideos.Controllers
@@ -164,14 +165,24 @@ namespace WcsVideos.Controllers
                 {
                     validationErrorMessage = "There doesn't appear to be a video at that URL";
                 }
+                else if (this.dataAccess.ProviderVideoIdExists(
+                    videoDetails.ProviderId.ToString(),
+                    videoDetails.ProviderVideoId))
+                {
+                    validationErrorMessage = "The selected video already exists";
+                }
                 else
                 {
+                    string skillLevel = SkillLevelPopulator.GetSkillLevel(videoDetails);
+                    string dancerIdList = new DancerPopulator(this.dataAccess).GetDancers(videoDetails);
                     return this.RedirectToAction(
                         "Add",
                         new
                         {
                             ProviderVideoId = videoDetails.ProviderVideoId,
                             Title = videoDetails.Title,
+                            SkillLevel = skillLevel,
+                            dancerIdList = dancerIdList,
                         });
                 }
             }
@@ -193,8 +204,13 @@ namespace WcsVideos.Controllers
             
             return this.RedirectToAction("AddUrl");
         }
+
         
-        public IActionResult Add(string title, string providerVideoId)
+        public IActionResult Add(
+            string title,
+            string providerVideoId,
+            string skillLevel,
+            string dancerIdList)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
                 this.Context.Request.Cookies,
@@ -251,6 +267,16 @@ namespace WcsVideos.Controllers
             if (!string.IsNullOrEmpty(providerVideoId))
             {
                 model.ProviderVideoId = providerVideoId;
+            }
+
+            if (!string.IsNullOrEmpty(skillLevel))
+            {
+                model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(skillLevel);
+            }
+
+            if (!string.IsNullOrEmpty(dancerIdList))
+            {
+                model.DancerIdList = dancerIdList;
             }
 
             Event contractEvent = null;
