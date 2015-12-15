@@ -27,6 +27,15 @@
                 <div class="col-sm-10">
                     <select name="providerId" class="form-control" id="providerId">
                         <option value="1">YouTube</option>
+                        
+                        @if (this.Model.ProviderId == 2)
+                        {
+                            <option value="2" selected="selected">Vimeo</option>
+                        }
+                        else
+                        {
+                            <option value="2">Vimeo</option>    
+                        }
                     </select>
                 </div>
             </div>

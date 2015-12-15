@@ -8,15 +8,17 @@ namespace WcsVideos.Providers
         {
             provider = null;
             
-            if (string.Equals(url.Host, "www.youtube.com", StringComparison.Ordinal))
+            if (string.Equals(url.Host, "www.youtube.com", StringComparison.Ordinal) ||
+                string.Equals(url.Host, "youtu.be", StringComparison.Ordinal) ||
+                string.Equals(url.Host, "youtube.com", StringComparison.Ordinal))
             {
                 provider = new YoutubeVideoDetailsProvider(url);
                 return true;
             }
-            
-            if (string.Equals(url.Host, "youtu.be", StringComparison.Ordinal))
+
+            if (string.Equals(url.Host, "vimeo.com", StringComparison.Ordinal))
             {
-                provider = new YoutubeVideoDetailsProvider(url);
+                provider = new VimeoVideoDetailsProvider(url);
                 return true;
             }
 

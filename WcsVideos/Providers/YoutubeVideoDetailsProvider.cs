@@ -40,10 +40,16 @@ namespace WcsVideos.Providers
                 client.BaseAddress = new Uri(YoutubeVideoDetailsProvider.BaseUrl);
                 string relativeUrl = string.Format(
                     YoutubeVideoDetailsProvider.SnippetUrlTemplate,
-                    providerVideoId,
+                    this.providerVideoId,
                     YoutubeVideoDetailsProvider.GoogleApiKey);
 
                 HttpResponseMessage response = client.GetAsync(relativeUrl).Result;
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+                
                 string serialized = response.Content.ReadAsStringAsync().Result;
   
                 JObject parsed = JObject.Parse(serialized);

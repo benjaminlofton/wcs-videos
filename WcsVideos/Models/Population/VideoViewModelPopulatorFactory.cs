@@ -10,6 +10,10 @@ namespace WcsVideos.Models.Population
             {
                 return new YoutubeVideoViewModelPopulator(video);
             }
+            else if (video.ProviderId == 2)
+            {
+                return new VimeoVideoViewModelPopulator(video);
+            }
             
             throw new NotImplementedException();
         }

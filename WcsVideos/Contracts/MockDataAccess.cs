@@ -129,6 +129,19 @@ namespace WcsVideos.Contracts
 		
 		private readonly Dictionary<string, Video> videos = new Dictionary<string, Video>()
 		{
+            {
+                "0",
+                new Video
+                {
+                    Id = "0",
+                    ProviderId = 2,
+                    ProviderVideoId = "148709106",
+                    Title = "Warsaw Halloween Swing - Sophisticated Jack and Jill Final",
+                    DancerIdList = new string[] { },
+                    EventId = "3",
+                    SkillLevel = SkillLevel.Sophisticated,
+                }
+            },
 			{
 				"1",
 				new Video
@@ -289,6 +302,17 @@ namespace WcsVideos.Contracts
                     Name = "Swingdiego",
                     EventDate = new DateTime(2013, 5, 10, 0, 0, 0, DateTimeKind.Utc),
                     LocationName = "San Diego, CA",
+                    WsdcPointed = true,
+                }
+            },
+            {
+                "3",
+                new Event
+                {
+                    EventId = "3",
+                    Name = "Warsaw Halloween Swing",
+                    EventDate = new DateTime(2015, 10, 30, 0, 0, 0, DateTimeKind.Utc),
+                    LocationName = "Warsaw",
                     WsdcPointed = true,
                 }
             }

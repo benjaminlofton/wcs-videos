@@ -18,14 +18,26 @@ namespace WcsVideos.Models.Population
         
         public void Populate(WatchViewModel model)
         {
-            model.FacebookThumbnailUrl = string.Format("http://img.youtube.com/vi/{0}/mqdefault.jpg", video.ProviderVideoId);
+            model.FacebookThumbnailUrl = string.Format(
+                "http://img.youtube.com/vi/{0}/mqdefault.jpg",
+                this.video.ProviderVideoId);
             model.ExternalUrl = string.Format("https://www.youtube.com/watch?v={0}", video.ProviderVideoId);
             model.EmbedCode = string.Format(
                 YoutubeVideoViewModelPopulator.EmbedFormatString,
-                video.ProviderVideoId);
+                this.video.ProviderVideoId);
             model.ProviderName = "YouTube";
-            model.Title = video.Title;
-            model.ProviderVideoId = video.ProviderVideoId;
+            model.Title = this.video.Title;
+            model.ProviderVideoId = this.video.ProviderVideoId;
+        }
+        
+        public void Populate(VideoListItemViewModel model)
+        {
+            model.ThumbnailUrl = string.Format(
+                "http://img.youtube.com/vi/{0}/mqdefault.jpg",
+                video.ProviderVideoId);
+            model.Title = this.video.Title;
+            model.Width = 160;
+            model.Height = 90;
         }
     }
 }

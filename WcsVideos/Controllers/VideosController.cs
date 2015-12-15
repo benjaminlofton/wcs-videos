@@ -179,16 +179,17 @@ namespace WcsVideos.Controllers
                         "Add",
                         new
                         {
-                            ProviderVideoId = videoDetails.ProviderVideoId,
-                            Title = videoDetails.Title,
-                            SkillLevel = skillLevel,
+                            providerId = videoDetails.ProviderId,
+                            providerVideoId = videoDetails.ProviderVideoId,
+                            title = videoDetails.Title,
+                            skillLevel = skillLevel,
                             dancerIdList = dancerIdList,
                         });
                 }
             }
             else
             {
-                validationErrorMessage = "Only www.youtube.com URLs are supported";
+                validationErrorMessage = "Videos from the provided site are not supported";
             }
             
             CookieOptions cookieOptions = new CookieOptions();
@@ -204,10 +205,10 @@ namespace WcsVideos.Controllers
             
             return this.RedirectToAction("AddUrl");
         }
-
         
         public IActionResult Add(
             string title,
+            int providerId,
             string providerVideoId,
             string skillLevel,
             string dancerIdList)
@@ -233,7 +234,14 @@ namespace WcsVideos.Controllers
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
             IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            model.ProviderId = 1;  //requestCookies.Get("ProviderId");
+            string rawProviderId = requestCookies.Get("ProviderId");
+            int parsedProviderId;
+            if (string.IsNullOrEmpty(rawProviderId) || !int.TryParse(rawProviderId, out parsedProviderId))
+            {
+                parsedProviderId = 1;    
+            }
+            
+            model.ProviderId = parsedProviderId;
             model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderIdValid") ?? "True");
             model.ProviderVideoId = requestCookies.Get("ProviderVideoId");
             model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderVideoIdValid") ?? "True");
@@ -262,6 +270,11 @@ namespace WcsVideos.Controllers
             if (!string.IsNullOrEmpty(title))
             {
                 model.Title = title;
+            }
+            
+            if (providerId != 0)
+            {
+                model.ProviderId = providerId;
             }
             
             if (!string.IsNullOrEmpty(providerVideoId))
@@ -345,7 +358,7 @@ namespace WcsVideos.Controllers
             int parsedProviderId = 0;
             if (string.IsNullOrEmpty(providerId) ||
                 !int.TryParse(providerId, out parsedProviderId) ||
-                parsedProviderId != 1)
+                (parsedProviderId != 1 && parsedProviderId != 2))
             {
                 providerIdValid = false;
             }
