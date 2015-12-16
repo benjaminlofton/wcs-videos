@@ -4,11 +4,20 @@ chrome.runtime.onMessage.addListener(
         {
             var providerVideoId;
             var cannonicalUrl = document.URL;
+            var index;
             
             if (cannonicalUrl)
             {
-                var index = cannonicalUrl.indexOf("=") + 1;
-                providerVideoId = cannonicalUrl.substr(index).split('&')[0];
+                if (cannonicalUrl.indexOf("www.youtube.com/") > -1)
+                {
+                    index = cannonicalUrl.indexOf("=") + 1;
+                    providerVideoId = cannonicalUrl.substr(index).split('&')[0];
+                }
+                else if (cannonicalUrl.indexOf("vimeo.com/") > -1)
+                {
+                    index = cannonicalUrl.indexOf("vimeo.com/") + "vimeo.com/".length;
+                    providerVideoId = cannonicalUrl.substring(index);
+                }
             }
             
             sendResponse({
