@@ -11,6 +11,10 @@ namespace WcsVideos.Models
 		public string ExternalUrl { get; set; }
         
         public string FacebookThumbnailUrl { get; set; }
+        
+        public int FacebookThumbnailWidth { get; set; }
+        
+        public int FacebookThumbnailHeight { get; set; }
 		
 		public string EmbedCode { get; set; }
 		

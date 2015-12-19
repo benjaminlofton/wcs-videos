@@ -21,6 +21,8 @@ namespace WcsVideos.Models.Population
             model.FacebookThumbnailUrl = string.Format(
                 "http://img.youtube.com/vi/{0}/mqdefault.jpg",
                 this.video.ProviderVideoId);
+            model.FacebookThumbnailWidth = 320;
+            model.FacebookThumbnailHeight = 180;
             model.ExternalUrl = string.Format("https://www.youtube.com/watch?v={0}", video.ProviderVideoId);
             model.EmbedCode = string.Format(
                 YoutubeVideoViewModelPopulator.EmbedFormatString,

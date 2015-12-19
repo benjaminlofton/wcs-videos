@@ -21,6 +21,8 @@ namespace WcsVideos.Models.Population
             model.FacebookThumbnailUrl = string.Format(
                 "/img/placeholder.png",
                 video.ProviderVideoId);
+            model.FacebookThumbnailWidth = 160;
+            model.FacebookThumbnailHeight = 90;
             model.ExternalUrl = string.Format("https://vimeo.com/{0}", video.ProviderVideoId);
             model.EmbedCode = string.Format(
                 VimeoVideoViewModelPopulator.EmbedFormatString,
