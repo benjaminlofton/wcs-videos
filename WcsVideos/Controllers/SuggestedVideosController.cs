@@ -497,7 +497,7 @@ namespace WcsVideos.Controllers
             int parsedProviderId = 0;
             if (string.IsNullOrEmpty(providerId) ||
                 !int.TryParse(providerId, out parsedProviderId) ||
-                parsedProviderId != 1)
+                (parsedProviderId != 1 && parsedProviderId != 2))
             {
                 providerIdValid = false;
             }
