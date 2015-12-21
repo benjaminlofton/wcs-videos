@@ -47,18 +47,16 @@
                 </tbody>
             </table>
             <div class="panel-body">
-                @{ bool first = true; }
-                @foreach (JumpListItemViewModel link in this.Model.JumpList)
+                @if (this.Model.JumpList.Count > 0)
                 {
-                    if (first)
+                    <ul class="nav nav-pills">
+                    @foreach (JumpListItemViewModel link in this.Model.JumpList)
                     {
-                        first = false;
+                        <li role="presentation">
+                        <a href="@link.Url">@Html.Raw(System.Net.WebUtility.HtmlEncode(link.Label).Replace(" ", "&nbsp;"))</a>
+                        </li>
                     }
-                    else
-                    {
-                        <text>|</text>
-                    }
-                    <a href="@link.Url">@Html.Raw(System.Net.WebUtility.HtmlEncode(link.Label).Replace(" ", "&nbsp;"))</a>
+                    </ul>
                 }
                 
                 @foreach (VideoGroupViewModel group in this.Model.VideoGroups)
