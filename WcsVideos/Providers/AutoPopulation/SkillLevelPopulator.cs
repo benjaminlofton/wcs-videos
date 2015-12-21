@@ -27,10 +27,10 @@ namespace WcsVideos.Providers.AutoPopulation
             {
                 return SkillLevel.Juniors;
             }
-            // else if (matcher.ContainsWord("Pro-am") || matcher.ContainsWord("Pro Am") || matcher.ContainsWord("ProAm"))
-            // {
-            //     return SkillLevel.ProAm;
-            // }
+            else if (matcher.ContainsWord("Pro-am") || matcher.ContainsWord("Pro Am") || matcher.ContainsWord("ProAm"))
+            {
+                return SkillLevel.ProAm;
+            }
             else if (matcher.ContainsWord("Intermediate"))
             {
                 return SkillLevel.Intermediate;

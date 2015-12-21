@@ -77,6 +77,6 @@ namespace WcsVideos.Contracts
         public const string Allstar = "ALLSTAR";
         public const string ChampionInvitational = "CHAMPION_INVITATIONAL";
         public const string Open = "OPEN";
-        //public const string ProAm = "PRO_AM";
+        public const string ProAm = "PRO_AM";
     }
 }
