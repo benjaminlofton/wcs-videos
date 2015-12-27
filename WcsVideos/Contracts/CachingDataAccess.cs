@@ -293,7 +293,7 @@ namespace WcsVideos.Contracts
             foreach (string eventId in modifiedEvents)
             {
                 List<string> eventVideos;
-                this.eventVideos.TryRemove(video.EventId, out eventVideos);
+                this.eventVideos.TryRemove(eventId, out eventVideos);
             }
             
             this.videos.TryRemove(video.Id, out video);
