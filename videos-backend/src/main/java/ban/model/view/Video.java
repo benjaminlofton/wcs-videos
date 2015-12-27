@@ -3,6 +3,7 @@ package ban.model.view;
 import java.util.HashSet;
 import java.util.Set;
 
+import ban.model.persistence.DanceCategory;
 import ban.model.persistence.SkillLevel;
 
 /**
@@ -63,4 +64,13 @@ public class Video {
   public void setSkillLevel(SkillLevel skillLevel) {
     this.skillLevel = skillLevel;
   }
+
+  private DanceCategory danceCategory;
+  public DanceCategory getDanceCategory() {
+    return danceCategory;
+  }
+  public void setDanceCategory(DanceCategory danceCategory) {
+    this.danceCategory = danceCategory;
+  }
+
 }

@@ -7,13 +7,12 @@ public enum DanceCategory {
 
   CLASSIC,
   SHOWCASE,
+  ROUTINE,
   RISING_STAR,
   JACK_AND_JILL,
   STRICTLY,
-  ALL_AMERICAN,
   THREE_FOR_ALL,
   JILL_AND_JACK,
-  PRO_AM,
   SOCIAL,
   DEMO
 }

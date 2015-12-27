@@ -43,6 +43,10 @@ public class VideoD {
   @DynamoDBMarshalling(marshallerClass = SkillLevelConverter.class)
   private SkillLevel skillLevel;
 
+  @DynamoDBAttribute(attributeName = "DanceCategory")
+  @DynamoDBMarshalling(marshallerClass = DanceCategoryConverter.class)
+  private DanceCategory danceCategory;
+
   public String getId() {
     return id;
   }
@@ -81,5 +85,12 @@ public class VideoD {
   }
   public void setSkillLevel(SkillLevel skillLevel) {
     this.skillLevel = skillLevel;
+  }
+
+  public DanceCategory getDanceCategory() {
+    return danceCategory;
+  }
+  public void setDanceCategory(DanceCategory danceCategory) {
+    this.danceCategory = danceCategory;
   }
 }

@@ -43,6 +43,10 @@ public class FlaggedVideoD {
   @DynamoDBMarshalling(marshallerClass = SkillLevelConverter.class)
   private SkillLevel skillLevel;
 
+  @DynamoDBAttribute(attributeName = "DanceCategory")
+  @DynamoDBMarshalling(marshallerClass = DanceCategoryConverter.class)
+  private DanceCategory danceCategory;
+
   public String getFlagId() {
     return flagId;
   }
@@ -113,5 +117,13 @@ public class FlaggedVideoD {
 
   public void setSkillLevel(SkillLevel skillLevel) {
     this.skillLevel = skillLevel;
+  }
+
+  public DanceCategory getDanceCategory() {
+    return danceCategory;
+  }
+
+  public void setDanceCategory(DanceCategory danceCategory) {
+    this.danceCategory = danceCategory;
   }
 }

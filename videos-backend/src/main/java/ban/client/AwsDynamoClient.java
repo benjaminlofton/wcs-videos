@@ -6,8 +6,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.document.DeleteItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Expected;
 import com.amazonaws.services.dynamodbv2.document.Index;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ban.model.persistence.DanceCategory;
 import ban.model.persistence.DancerD;
 import ban.model.persistence.EventD;
 import ban.model.persistence.FlaggedVideoD;
@@ -100,58 +103,16 @@ public class AwsDynamoClient {
 
   public List<FlaggedVideoD> getAllFlaggedVideos() {
 
-    ScanRequest scanRequest = new ScanRequest()
-        .withTableName("FlaggedVideo");
+    DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
 
-    ScanResult scanResult = dynamoClient.scan(scanRequest);
+    List<FlaggedVideoD> scanResults = dynamoMapper.scan(FlaggedVideoD.class, scanExpression);
 
-    List<FlaggedVideoD> result = new ArrayList<>();
-    for(Map<String,AttributeValue> item : scanResult.getItems()) {
-
-      FlaggedVideoD flaggedVideo = new FlaggedVideoD();
-      flaggedVideo.setFlagId(item.get("FlagId").getS());
-      flaggedVideo.setFlaggedVideoId(item.get("FlaggedVideoId").getS());
-
-      if(item.get("SkillLevel") != null) {
-        flaggedVideo.setSkillLevel(SkillLevel.valueOf(item.get("SkillLevel").getS()));
-      }
-
-      if(item.get("ProviderId") != null) {
-        flaggedVideo.setProviderId(Integer.parseInt(item.get("ProviderId").getN()));
-      }
-
-      if(item.get("ProviderVideoId") != null) {
-        flaggedVideo.setProviderVideoId(item.get("ProviderVideoId").getS());
-      }
-
-      if(item.get("Title") != null) {
-        flaggedVideo.setTitle(item.get("Title").getS());
-      }
-
-      if(item.get("EventId") != null) {
-        flaggedVideo.setEventId(item.get("EventId").getS());
-      }
-
-      if(item.get("Explanation") != null) {
-        flaggedVideo.setExplanation(item.get("Explanation").getS());
-      }
-
-      if(item.get("DancerIdList") != null) {
-
-        Set<Integer> dancerList = new HashSet<>();
-
-        List<String> rawDancerList = item.get("DancerIdList").getNS();
-        for(String strId : rawDancerList) {
-          dancerList.add(Integer.parseInt(strId));
-        }
-
-        flaggedVideo.setDancerIdList(dancerList);
-      }
-
-      result.add(flaggedVideo);
+    List<FlaggedVideoD> results = new ArrayList<>();
+    for(FlaggedVideoD videoD : scanResults) {
+      results.add(videoD);
     }
 
-    return result;
+    return results;
   }
 
   public VideoD recordSuggestedVideo(VideoD video) {
@@ -217,49 +178,16 @@ public class AwsDynamoClient {
    */
   public List<VideoD> getAllVideos(String tableName) {
 
-    ScanRequest scanRequest = new ScanRequest()
-        .withTableName(tableName);
+    DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
 
-    ScanResult scanResult = dynamoClient.scan(scanRequest);
+    List<VideoD> scanResults = dynamoMapper.scan(VideoD.class, scanExpression);
 
-    List<VideoD> result = new ArrayList<>();
-    for(Map<String,AttributeValue> item : scanResult.getItems()) {
-
-      VideoD videoD = new VideoD();
-      videoD.setId(item.get("VideoId").getS());
-      videoD.setProviderId(Integer.parseInt(item.get("ProviderId").getN()));
-      videoD.setProviderVideoId(item.get("ProviderVideoId").getS());
-      videoD.setTitle(item.get("Title").getS());
-
-      if(item.get("SkillLevel") != null) {
-        videoD.setSkillLevel(SkillLevel.valueOf(item.get("SkillLevel").getS()));
-      }
-
-      if(item.get("CreatedDateTime") != null) {
-        videoD.setCreatedDateTime(item.get("CreatedDateTime").getS());
-      }
-
-      if(item.get("EventId") != null) {
-        videoD.setEventId(item.get("EventId").getS());
-      }
-
-      if(item.get("DancerIdList") != null) {
-
-        Set<Integer> dancerList = new HashSet<>();
-
-        List<String> rawDancerList = item.get("DancerIdList").getNS();
-        for(String strId : rawDancerList) {
-          dancerList.add(Integer.parseInt(strId));
-        }
-
-        videoD.setDancerIdList(dancerList);
-      }
-
-      result.add(videoD);
+    List<VideoD> results = new ArrayList<>();
+    for(VideoD videoD : scanResults) {
+      results.add(videoD);
     }
 
-    return result;
-
+    return results;
   }
 
   public List<DancerD> getAllDancers() {
