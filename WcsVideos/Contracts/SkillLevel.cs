@@ -16,14 +16,16 @@ namespace WcsVideos.Contracts
             { SkillLevel.Allstar, "Allstar" },
             { SkillLevel.ChampionInvitational, "Champion / Invitational" },
             { SkillLevel.Open, "Open" },
+            { SkillLevel.ProAm, "Pro-Am" },
         };
         
         private static readonly Dictionary<string, int> OrderMap = new Dictionary<string, int>
         {
-            { string.Empty, 10},
-            { SkillLevel.Masters, 9 },
-            { SkillLevel.Sophisticated, 8 },
-            { SkillLevel.Juniors, 7},
+            { string.Empty, 11},
+            { SkillLevel.Masters, 10 },
+            { SkillLevel.Sophisticated, 9 },
+            { SkillLevel.Juniors, 8 },
+            { SkillLevel.ProAm, 7 },
             { SkillLevel.Newcomer, 6 },
             { SkillLevel.Novice, 5 },
             { SkillLevel.Intermediate, 4 },
@@ -75,5 +77,6 @@ namespace WcsVideos.Contracts
         public const string Allstar = "ALLSTAR";
         public const string ChampionInvitational = "CHAMPION_INVITATIONAL";
         public const string Open = "OPEN";
+        public const string ProAm = "PRO_AM";
     }
 }

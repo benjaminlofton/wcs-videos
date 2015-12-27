@@ -6,6 +6,7 @@ using WcsVideos.Models.Population;
 using WcsVideos.Contracts;
 using Microsoft.AspNet.Http;
 using WcsVideos.Providers;
+using WcsVideos.Providers.AutoPopulation;
 
 namespace WcsVideos.Controllers
 {
@@ -67,20 +68,31 @@ namespace WcsVideos.Controllers
                 {
                     validationErrorMessage = "There doesn't appear to be a video at that URL";
                 }
+                else if (this.dataAccess.ProviderVideoIdExists(
+                    videoDetails.ProviderId.ToString(),
+                    videoDetails.ProviderVideoId))
+                {
+                    validationErrorMessage = "The selected video already exists";
+                }
                 else
                 {
+                    string skillLevel = SkillLevelPopulator.GetSkillLevel(videoDetails);
+                    string dancerIdList = new DancerPopulator(this.dataAccess).GetDancers(videoDetails);
                     return this.RedirectToAction(
                         "Add",
                         new
                         {
-                            ProviderVideoId = videoDetails.ProviderVideoId,
-                            Title = videoDetails.Title,
+                            providerId = videoDetails.ProviderId,
+                            providerVideoId = videoDetails.ProviderVideoId,
+                            title = videoDetails.Title,
+                            skillLevel = skillLevel,
+                            dancerIdList = dancerIdList,
                         });
                 }
             }
             else
             {
-                validationErrorMessage = "Only www.youtube.com URLs are supported";
+                validationErrorMessage = "Videos from the provided site are not supported";
             }
             
             CookieOptions cookieOptions = new CookieOptions();
@@ -97,7 +109,12 @@ namespace WcsVideos.Controllers
             return this.RedirectToAction("AddUrl");
         }
         
-        public IActionResult Add(string title, string providerVideoId)
+        public IActionResult Add(
+            string title,
+            int providerId,
+            string providerVideoId,
+            string skillLevel,
+            string dancerIdList)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
                 this.Context.Request.Cookies,
@@ -109,7 +126,14 @@ namespace WcsVideos.Controllers
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
             IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            model.ProviderId = 1;  //requestCookies.Get("ProviderId");
+            string rawProviderId = requestCookies.Get("ProviderId");
+            int parsedProviderId;
+            if (string.IsNullOrEmpty(rawProviderId) || !int.TryParse(rawProviderId, out parsedProviderId))
+            {
+                parsedProviderId = 1;    
+            }
+            
+            model.ProviderId = parsedProviderId;
             model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderIdValid") ?? "True");
             model.ProviderVideoId = requestCookies.Get("ProviderVideoId");
             model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderVideoIdValid") ?? "True");
@@ -143,6 +167,21 @@ namespace WcsVideos.Controllers
             if (!string.IsNullOrEmpty(providerVideoId))
             {
                 model.ProviderVideoId = providerVideoId;
+            }
+
+            if (!string.IsNullOrEmpty(skillLevel))
+            {
+                model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(skillLevel);
+            }
+
+            if (!string.IsNullOrEmpty(dancerIdList))
+            {
+                model.DancerIdList = dancerIdList;
+            }
+
+            if (providerId != 0)
+            {
+                model.ProviderId = providerId;
             }
 
             Event contractEvent = null;
@@ -202,7 +241,7 @@ namespace WcsVideos.Controllers
             int parsedProviderId = 0;
             if (string.IsNullOrEmpty(providerId) ||
                 !int.TryParse(providerId, out parsedProviderId) ||
-                parsedProviderId != 1)
+                (parsedProviderId != 1 && parsedProviderId != 2))
             {
                 providerIdValid = false;
             }
@@ -458,7 +497,7 @@ namespace WcsVideos.Controllers
             int parsedProviderId = 0;
             if (string.IsNullOrEmpty(providerId) ||
                 !int.TryParse(providerId, out parsedProviderId) ||
-                parsedProviderId != 1)
+                (parsedProviderId != 1 && parsedProviderId != 2))
             {
                 providerIdValid = false;
             }

@@ -8,10 +8,14 @@ chrome.runtime.onInstalled.addListener(function() {
                 conditions: [
                     new chrome.declarativeContent.PageStateMatcher({
                         pageUrl: {
-                            hostEquals: "www.youtube.com"//,
-                            //pathContains: 'watch'
+                            hostEquals: "www.youtube.com",
                         }
-                    })
+                    }),
+                    new chrome.declarativeContent.PageStateMatcher({
+                        pageUrl: {
+                            hostEquals: "vimeo.com",
+                        }
+                    }),
                 ],
                 // And shows the extension's page action.
                 actions: [ new chrome.declarativeContent.ShowPageAction() ]

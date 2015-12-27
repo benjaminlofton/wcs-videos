@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', function() {
 function onReceiveResponse(tab, response)
 {
     var statusElement = document.getElementById("status");
-    if (response.videoId && response.videoName)
+    if (response.providerId && response.providerVideoId)
     {
         statusElement.textContent = "Checking to see if video exists...";
         statusElement.className = "";
         var xhr = new XMLHttpRequest();
-        var url = "http://" + host + "/Videos/CheckVideo?providerVideoId=" + response.videoId;
+        var url = "http://" + host + "/Videos/CheckVideo?providerVideoId=" + response.providerVideoId;
         xhr.open("GET", url);
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4)
@@ -38,9 +38,8 @@ function onReceiveResponse(tab, response)
                         statusElement.textContent = "Taking you there!"
                         statusElement.className = "success";
                         
-                        var url = "http://" + host + "/Videos/Add" +
-                            "?providerVideoId=" + encodeURIComponent(response.videoId) +
-                            "&title=" + encodeURIComponent(response.videoName);
+                        var url = "http://" + host + "/Videos/SubmitUrl" +
+                            "?url=" + encodeURIComponent(response.url);
                         
                         chrome.tabs.create({
                             url: url,

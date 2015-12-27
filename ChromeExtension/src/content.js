@@ -2,25 +2,28 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.method == "getVideoInfo")
         {
-            var videoId;
-            var canonicalUrl = document.URL;
+            var providerVideoId;
+            var cannonicalUrl = document.URL;
+            var index;
             
-            if (canonicalUrl)
+            if (cannonicalUrl)
             {
-                var index = canonicalUrl.indexOf("=") + 1;
-                videoId = canonicalUrl.substr(index).split('&')[0];
-            }
-            
-            var videoNameNode = document.getElementById("eow-title");
-            var videoName;
-            if (videoNameNode)
-            {
-                videoName = videoNameNode.innerText;
+                if (cannonicalUrl.indexOf("www.youtube.com/") > -1)
+                {
+                    index = cannonicalUrl.indexOf("=") + 1;
+                    providerVideoId = cannonicalUrl.substr(index).split('&')[0];
+                }
+                else if (cannonicalUrl.indexOf("vimeo.com/") > -1)
+                {
+                    index = cannonicalUrl.indexOf("vimeo.com/") + "vimeo.com/".length;
+                    providerVideoId = cannonicalUrl.substring(index);
+                }
             }
             
             sendResponse({
-                videoName: videoName,
-                videoId: videoId
+                providerId: 1,
+                providerVideoId: providerVideoId,
+                url: cannonicalUrl,
             });
         }
     }

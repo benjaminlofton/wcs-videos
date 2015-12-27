@@ -6,6 +6,7 @@ namespace WcsVideos.Models
     using System.Linq;
     using Microsoft.AspNet.Mvc;
     using WcsVideos.Contracts;
+    using WcsVideos.Models.Population;
     
     public static class ViewModelHelper
     {
@@ -56,13 +57,11 @@ namespace WcsVideos.Models
         public static VideoListItemViewModel PopulateVideoListItem(Video video, IUrlHelper urlHelper)
         {
             VideoListItemViewModel listItem = new VideoListItemViewModel();
-            listItem.Title = video.Title;
+            IVideoViewModelPopulator populator = VideoViewModelPopulatorFactory.GetPopulator(video);
+            populator.Populate(listItem);
             listItem.Url = urlHelper.Link(
                 "default",
                 new { controller = "Videos", action = "Watch", id = video.Id });
-            listItem.ThumbnailUrl = string.Format(
-                "http://img.youtube.com/vi/{0}/default.jpg",
-                video.ProviderVideoId);
             
             return listItem;
         }
