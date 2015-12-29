@@ -14,7 +14,7 @@ namespace WcsVideos.Contracts
             { DanceCategory.Strictly, "Strictly Swing" },
             { DanceCategory.ThreeForAll, "Three for All" },
             { DanceCategory.JillAndJack, "Jill and Jack" },
-            { DanceCategory.Social, "Social" },
+            { DanceCategory.Social, "Social Dancing" },
             { DanceCategory.Demo, "Demo" },
         };
         
@@ -33,6 +33,14 @@ namespace WcsVideos.Contracts
             { DanceCategory.Demo, 0 },
         };
         
+        public static bool IncludeSkillLevel(string danceCategoryId)
+        {
+            return string.IsNullOrEmpty(danceCategoryId) ||
+                danceCategoryId.Equals(DanceCategory.Routine) ||
+                danceCategoryId.Equals(DanceCategory.JackAndJill) ||
+                danceCategoryId.Equals(DanceCategory.Strictly);
+        }
+        
         public static string GetValidatedDanceCategory(string danceCategoryId)
         {
             if (string.IsNullOrEmpty(danceCategoryId) || !DanceCategory.DisplayNames.ContainsKey(danceCategoryId))
@@ -46,7 +54,8 @@ namespace WcsVideos.Contracts
         public static string GetDanceCategoryDisplayName(string danceCategoryId)
         {
             string ret;
-            if (string.IsNullOrEmpty(danceCategoryId) || !DanceCategory.DisplayNames.TryGetValue(danceCategoryId, out ret))
+            if (string.IsNullOrEmpty(danceCategoryId) ||
+                !DanceCategory.DisplayNames.TryGetValue(danceCategoryId, out ret))
             {
                 ret = "(None)";
             }

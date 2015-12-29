@@ -45,30 +45,43 @@ namespace WcsVideos.Controllers
             
             var videos = this.dataAccess.GetEventVideos(id);
             
-            Dictionary<string, VideoGroupViewModel> groups;
-            groups = new Dictionary<string, VideoGroupViewModel>();
+            Dictionary<Tuple<string, string>, VideoGroupViewModel> groups;
+            groups = new Dictionary<Tuple<string, string>, VideoGroupViewModel>();
             
             foreach (Video video in videos)
             {
-                string groupId;
-                if (string.IsNullOrEmpty(video.SkillLevel))
-                {
-                    groupId = string.Empty;
-                }
-                else
-                {
-                    groupId = SkillLevel.GetValidatedSkillLevel(video.SkillLevel);
-                }
+                Tuple<string, string> groupId = Tuple.Create(
+                    string.IsNullOrEmpty(video.SkillLevel) ?  string.Empty : video.SkillLevel,
+                    string.IsNullOrEmpty(video.DanceCategory) ? string.Empty : video.DanceCategory);
                 
                 VideoGroupViewModel group;
                 if (!groups.TryGetValue(groupId, out group))
                 {
+                    string anchor = (string.IsNullOrEmpty(groupId.Item1) ? "Default" : groupId.Item1) + "_" +
+                        (string.IsNullOrEmpty(groupId.Item2) ? "Default" : groupId.Item2);
+                    
+                    string name;
+                    if (string.IsNullOrEmpty(video.DanceCategory) &&
+                        string.IsNullOrEmpty(video.SkillLevel))
+                    {
+                        name = "Uncategorized Videos";
+                    }
+                    else
+                    {
+                        name =
+                            (DanceCategory.IncludeSkillLevel(video.DanceCategory) ? 
+                                (string.IsNullOrEmpty(video.SkillLevel) ?
+                                    "Uncategorized" :
+                                    SkillLevel.GetSkillLevelDisplayName(video.SkillLevel) + " ") :
+                                string.Empty) +
+                            (string.IsNullOrEmpty(video.DanceCategory) ?
+                                "Uncategorized" :
+                                DanceCategory.GetDanceCategoryDisplayName(video.DanceCategory)) + " Videos";
+                    }
                     group = new VideoGroupViewModel
                     {
-                        Anchor = string.IsNullOrEmpty(groupId) ? "Default" : groupId,
-                        Name = string.IsNullOrEmpty(video.SkillLevel) ?
-                            "Uncategorized Videos" :
-                            SkillLevel.GetSkillLevelDisplayName(video.SkillLevel) + " Division Videos",
+                        Anchor = anchor,
+                        Name = name,
                         Videos = new List<VideoListItemViewModel>()
                     };
                     
@@ -78,7 +91,10 @@ namespace WcsVideos.Controllers
                 group.Videos.Add(ViewModelHelper.PopulateVideoListItem(video, this.Url));
             }
             
-            model.VideoGroups = groups.OrderBy(x => SkillLevel.GetOrder(x.Key)).Select(x => x.Value).ToList();
+            model.VideoGroups = groups
+                .OrderBy(x => SkillLevel.GetOrder(x.Key.Item1))
+                .ThenBy(x => DanceCategory.GetOrder(x.Key.Item2))
+                .Select(x => x.Value).ToList();
             
             model.JumpList = new List<JumpListItemViewModel>();
             if (model.VideoGroups.Count > 1)
