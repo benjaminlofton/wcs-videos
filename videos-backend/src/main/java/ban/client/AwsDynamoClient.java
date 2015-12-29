@@ -180,7 +180,8 @@ public class AwsDynamoClient {
 
     DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
 
-    List<VideoD> scanResults = dynamoMapper.scan(VideoD.class, scanExpression);
+    DynamoDBMapperConfig config = new DynamoDBMapperConfig(new DynamoDBMapperConfig.TableNameOverride(tableName));
+    List<VideoD> scanResults = dynamoMapper.scan(VideoD.class, scanExpression, config);
 
     List<VideoD> results = new ArrayList<>();
     for(VideoD videoD : scanResults) {
