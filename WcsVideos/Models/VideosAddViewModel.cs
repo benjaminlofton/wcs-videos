@@ -25,5 +25,7 @@ namespace WcsVideos.Models
         public bool EventIdValidationError { get; set; }
         
         public string SkillLevelId { get; set; }
+        
+        public string DanceCategoryId { get; set; }
 	}
 }

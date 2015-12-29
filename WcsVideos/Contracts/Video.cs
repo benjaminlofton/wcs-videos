@@ -15,6 +15,8 @@ namespace WcsVideos.Contracts
         public string EventId { get; set; }
         
         public string SkillLevel { get; set; }
+        
+        public string DanceCategory { get; set; }
 
         public Video Clone()
         {
@@ -26,6 +28,7 @@ namespace WcsVideos.Contracts
                 Title = this.Title,
                 DancerIdList = this.DancerIdList == null ? null : (string[])DancerIdList.Clone(),
                 EventId = this.EventId,
+                DanceCategory = this.DanceCategory,
             };
         }
     }

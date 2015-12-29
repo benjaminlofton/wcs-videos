@@ -24,6 +24,8 @@ namespace WcsVideos.Models
         
         public string SkillLevel { get; set; }
         
+        public string DanceCategory { get; set; }
+        
         public string EventName { get; set; }
         
         public string EventUrl { get; set; }

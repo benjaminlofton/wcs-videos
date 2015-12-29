@@ -40,6 +40,14 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>
+                        Category
+                    </td>
+                    <td>
+                        @this.Model.Existing.DanceCategory
+                    </td>
+                </tr>
+                <tr>
                     <td rowspan="@Math.Max(1, this.Model.Existing.Dancers.Count)">
                         Dancers
                     </td>
@@ -88,9 +96,26 @@
                 <label for="skillLevelId" class="control-label">Level</label>
                 <select class="form-control" name="skillLevelId" id="skillLevelId">
                     <option value="">(None)</option>
-                    @foreach (KeyValuePair<string, string> entry in SkillLevel.DisplayNames)
+                    @foreach (KeyValuePair<string, string> entry in SkillLevel.DisplayNames.OrderBy(e => SkillLevel.GetOrder(e.Key)))
                     {
                         @if (string.Equals(this.Model.SkillLevelId, entry.Key, StringComparison.Ordinal))
+                        {
+                            <option value="@(entry.Key)" selected="selected">@entry.Value</option>
+                        }
+                        else
+                        {
+                            <option value="@(entry.Key)">@entry.Value</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="danceCategoryId" class="control-label">Category</label>
+                <select class="form-control" name="danceCategoryId" id="danceCategoryId">
+                    <option value="">(None)</option>
+                    @foreach (KeyValuePair<string, string> entry in DanceCategory.DisplayNames.OrderBy(e => DanceCategory.GetOrder(e.Key)))
+                    {
+                        @if (string.Equals(this.Model.DanceCategoryId, entry.Key, StringComparison.Ordinal))
                         {
                             <option value="@(entry.Key)" selected="selected">@entry.Value</option>
                         }

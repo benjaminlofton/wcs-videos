@@ -77,6 +77,7 @@ namespace WcsVideos.Controllers
                 else
                 {
                     string skillLevel = SkillLevelPopulator.GetSkillLevel(videoDetails);
+                    string danceCategory = DanceCategoryPopulator.GetDanceCategory(videoDetails);
                     string dancerIdList = new DancerPopulator(this.dataAccess).GetDancers(videoDetails);
                     return this.RedirectToAction(
                         "Add",
@@ -86,6 +87,7 @@ namespace WcsVideos.Controllers
                             providerVideoId = videoDetails.ProviderVideoId,
                             title = videoDetails.Title,
                             skillLevel = skillLevel,
+                            danceCategory = danceCategory,
                             dancerIdList = dancerIdList,
                         });
                 }
@@ -114,6 +116,7 @@ namespace WcsVideos.Controllers
             int providerId,
             string providerVideoId,
             string skillLevel,
+            string danceCategory,
             string dancerIdList)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
@@ -144,6 +147,7 @@ namespace WcsVideos.Controllers
             model.EventId = requestCookies.Get("EventId");
             model.EventIdValidationError = !bool.Parse(requestCookies.Get("EventIdValid") ?? "True");
             model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies.Get("SkillLevelId"));
+            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(requestCookies.Get("DanceCategoryId"));
             
             CookieOptions cookieOptions = new CookieOptions();
             IResponseCookies responseCookies = this.Context.Response.Cookies;
@@ -167,6 +171,11 @@ namespace WcsVideos.Controllers
             if (!string.IsNullOrEmpty(providerVideoId))
             {
                 model.ProviderVideoId = providerVideoId;
+            }
+
+            if (!string.IsNullOrEmpty(danceCategory))
+            {
+                model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(danceCategory);
             }
 
             if (!string.IsNullOrEmpty(skillLevel))
@@ -231,7 +240,8 @@ namespace WcsVideos.Controllers
             string title,
             string dancerIdList,
             string eventId,
-            string skillLevelId)
+            string skillLevelId,
+            string danceCategoryId)
         {
             bool providerIdValid = true;
             bool providerVideoIdValid = true;
@@ -299,6 +309,7 @@ namespace WcsVideos.Controllers
                 video.DancerIdList = dancerIds;
                 video.EventId = eventId;
                 video.SkillLevel = SkillLevel.GetValidatedSkillLevel(skillLevelId);
+                video.DanceCategory = DanceCategory.GetValidatedDanceCategory(danceCategoryId);
                 string videoId = this.dataAccess.AddSuggestedVideo(video);
                 
                 return this.RedirectToAction("AddSuccess", new { id = videoId });
@@ -323,6 +334,7 @@ namespace WcsVideos.Controllers
                 responseCookies.Append("EventId", eventId, cookieOptions);
                 responseCookies.Append("EventIdValid", eventIdValid.ToString(), cookieOptions);
                 responseCookies.Append("SkillLevelId", skillLevelId, cookieOptions);
+                responseCookies.Append("DanceCategoryId", danceCategoryId, cookieOptions);
                 
                 return this.RedirectToAction("Add");
             }
@@ -373,6 +385,7 @@ namespace WcsVideos.Controllers
                 new { controller = "SuggestedVideos", action = "Add" });
 
             model.SkillLevel = SkillLevel.GetSkillLevelDisplayName(video.SkillLevel);
+            model.DanceCategory = DanceCategory.GetDanceCategoryDisplayName(video.DanceCategory);
 
             return this.View(model);
         }
@@ -417,6 +430,7 @@ namespace WcsVideos.Controllers
             model.EventId = requestCookies.Get("EventId");
             model.EventIdValidationError = !bool.Parse(requestCookies.Get("EventIdValid") ?? "True");
             model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies.Get("SkillLevelId"));
+            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(requestCookies.Get("DanceCategoryId"));
             
             CookieOptions cookieOptions = new CookieOptions();
             IResponseCookies responseCookies = this.Context.Response.Cookies;
@@ -427,6 +441,7 @@ namespace WcsVideos.Controllers
             responseCookies.Delete("EventId", cookieOptions);
             responseCookies.Delete("EventIdValid", cookieOptions);
             responseCookies.Delete("SkillLevelId", cookieOptions);
+            responseCookies.Delete("DanceCategoryId", cookieOptions);
 
             if (!model.TitleValidationError &&
                 !model.DancerIdListValidationError &&
@@ -437,6 +452,7 @@ namespace WcsVideos.Controllers
                 model.DancerIdList = string.Join(";", video.DancerIdList ?? new string[] {});
                 model.EventId = video.EventId;
                 model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(video.SkillLevel);
+                model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(video.DanceCategory);
             }
             
             string[] dancerIds = (model.DancerIdList ?? string.Empty).Split(
@@ -478,7 +494,8 @@ namespace WcsVideos.Controllers
             string title,
             string dancerIdList,
             string eventId,
-            string skillLevelId)
+            string skillLevelId,
+            string danceCategoryId)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
                 this.Context.Request.Cookies,
@@ -555,6 +572,7 @@ namespace WcsVideos.Controllers
                 video.DancerIdList = dancerIds;
                 video.EventId = eventId;
                 video.SkillLevel = SkillLevel.GetValidatedSkillLevel(skillLevelId);
+                video.DanceCategory = SkillLevel.GetValidatedSkillLevel(danceCategoryId);
                 this.dataAccess.AddVideo(video);
                 this.dataAccess.DeleteSuggestedVideo(suggestedVideoId);
                 
@@ -580,6 +598,10 @@ namespace WcsVideos.Controllers
                 responseCookies.Append("EventId", eventId, cookieOptions);
                 responseCookies.Append("EventIdValid", eventIdValid.ToString(), cookieOptions);
                 responseCookies.Append("SkillLevelId", SkillLevel.GetValidatedSkillLevel(skillLevelId), cookieOptions);
+                responseCookies.Append(
+                    "DanceCategoryId",
+                    DanceCategory.GetValidatedDanceCategory(danceCategoryId),
+                    cookieOptions);
                 
                 return this.RedirectToAction("Review", new { id = suggestedVideoId });
             }
@@ -634,6 +656,7 @@ namespace WcsVideos.Controllers
             } 
             
             model.SkillLevel = SkillLevel.GetSkillLevelDisplayName(video.SkillLevel);
+            model.DanceCategory = DanceCategory.GetDanceCategoryDisplayName(video.DanceCategory);
             
             return model;
         }
