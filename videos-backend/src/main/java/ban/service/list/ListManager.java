@@ -26,6 +26,7 @@ public class ListManager {
     listNameToBeanNameMap.put("no-event", "videosWithNoEventAggregator");
     listNameToBeanNameMap.put("videos-needing-dancers", "videosWithNoDancers");
     listNameToBeanNameMap.put("no-level", "videosWithNoLevelAggregator");
+    listNameToBeanNameMap.put("no-category", "videosWithNoCategoryAggregator");
   }
 
   public List<String> getAllListerNames() {
