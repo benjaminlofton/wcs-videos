@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 import ban.model.view.Dancer;
 import ban.model.view.WscVideoStats;
+import ban.service.AdminService;
 import ban.service.DancerService;
 import ban.service.LocalIndexedDataService;
 import ban.service.StatsService;
+import ban.service.VideoSearchService;
 
 /**
  * Created by bnorrish on 7/11/15.
@@ -31,6 +34,9 @@ public class AdminController {
   @Autowired
   StatsService statsService;
 
+  @Autowired
+  AdminService adminService;
+
   @RequestMapping(value="/admin/add-by-frag", method = RequestMethod.POST)
   public List<Dancer> addDancersByFrag(@RequestParam(value = "frag", required = true) String fragment) {
     return dancerService.addDancersByFragment(fragment);
@@ -42,6 +48,11 @@ public class AdminController {
     localIndexedDataService.load();
 
     return statsService.getBasicStats();
+  }
+
+  @RequestMapping(value="admin/correct-bad-dancers", method = RequestMethod.GET)
+  public Set<String> getBadDancers() {
+    return adminService.correctDancersWithMissingVideos();
   }
 
 }
