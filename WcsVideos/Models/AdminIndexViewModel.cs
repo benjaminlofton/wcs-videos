@@ -7,5 +7,7 @@ namespace WcsVideos.Models
         public string MissingDancersVideoListUrl { get; set; }
         
         public string MissingLevelVideoListUrl { get; set; }
+        
+        public string MissingCategoryVideoListUrl { get; set; }
     }
 }
