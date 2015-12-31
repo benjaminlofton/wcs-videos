@@ -69,7 +69,10 @@ namespace WcsVideos.Providers.AutoPopulation
                 matcher.ContainsWord("Champion") ||
                 matcher.ContainsWord("Invitational") ||
                 matcher.ContainsWord("Inspirational") ||
-                matcher.ContainsWord("Demo"))
+                matcher.ContainsWord("Demo") ||
+                matcher.ContainsWord("Pro") ||
+                matcher.ContainsWord("Champ") ||
+                matcher.ContainsWord("Champs"))
             {
                 return SkillLevel.ChampionInvitational;
             }

@@ -574,6 +574,24 @@ namespace WcsVideos.Controllers
                 model.EventId = video.EventId;
                 model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(video.SkillLevel);
                 model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(video.DanceCategory);
+                
+                VideoDetails details = new VideoDetails { Title = model.Title };
+                if (string.IsNullOrEmpty(model.SkillLevelId))
+                {
+                    
+                    model.SkillLevelId = SkillLevelPopulator.GetSkillLevel(details);
+                }
+                
+                if (string.IsNullOrEmpty(model.DanceCategoryId))
+                {
+                    model.DanceCategoryId = DanceCategoryPopulator.GetDanceCategory(details);
+                }
+                
+                if (string.IsNullOrEmpty(model.DancerIdList))
+                {
+                    DancerPopulator dancerPopulator = new DancerPopulator(this.dataAccess);
+                    model.DancerIdList = dancerPopulator.GetDancers(details);
+                }
             }
 
             string[] dancerIds = (model.DancerIdList ?? string.Empty).Split(
