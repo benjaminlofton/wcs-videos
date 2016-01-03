@@ -107,7 +107,11 @@ namespace WcsVideos.Controllers
                 this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
 
             model.Title = dancer.Name;
-            model.Videos = new List<VideoListItemViewModel>();
+            List<Tuple<DateTime, Video>> videos;
+            Dictionary<DateTime, VideoGroupViewModel> groups;
+            
+            videos = new List<Tuple<DateTime, Video>>();
+            groups = new Dictionary<DateTime, VideoGroupViewModel>();
             
             if (dancer.VideoIdList != null)
             {
@@ -116,12 +120,48 @@ namespace WcsVideos.Controllers
                     Video video = this.dataAccess.GetVideoById(videoId);
                     if (video != null)
                     {
-                        VideoListItemViewModel listItemModel = ViewModelHelper.PopulateVideoListItem(video, this.Url);
-                        model.Videos.Add(listItemModel);
+                        Event evt  = null;
+                        if (!string.IsNullOrEmpty(video.EventId))
+                        {
+                            evt = this.dataAccess.GetEvent(video.EventId);
+                        }
+                        
+                        DateTime rawDate = evt == null ? DateTime.MinValue : evt.EventDate;
+                        videos.Add(Tuple.Create(rawDate, video));
                     }  
                 }
+                
+                foreach (Tuple<DateTime, Video> entry in videos)
+                {
+                    DateTime date = new DateTime(
+                        entry.Item1.Date.Year,
+                        entry.Item1.Date.Month,
+                        1,
+                        0,
+                        0,
+                        0,
+                        DateTimeKind.Utc);
+                    
+                    VideoGroupViewModel groupView;
+                    if (!groups.TryGetValue(date, out groupView))
+                    {
+                        groupView = new VideoGroupViewModel
+                        {
+                            Name = date > DateTime.MinValue ?
+                                "Videos from " + date.ToString("MMMM yyyy") :
+                                "Undated Videos",
+                            Videos = new List<VideoListItemViewModel>(),
+                        };
+                        
+                        groups[date] = groupView;
+                    }
+                                            
+                    VideoListItemViewModel listItemModel = ViewModelHelper.PopulateVideoListItem(entry.Item2, this.Url);
+                    groupView.Videos.Add(listItemModel);
+                }
             }
-            
+           
+            model.VideoGroups = groups.OrderByDescending(e => e.Key).Select(e => e.Value).ToList();
             return View(model);
         }
         
