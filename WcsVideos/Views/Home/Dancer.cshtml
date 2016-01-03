@@ -12,8 +12,12 @@
                 </h1>
             </div>
             <div class="panel-body">
-                <h2 class="h4">Videos</h2>
-                @Html.Partial("VideoListGroup", this.Model.Videos)
+                @foreach (VideoGroupViewModel group in this.Model.VideoGroups)
+                {
+                    <a name="@group.Anchor"></a>
+                    <h2 class="h4">@group.Name</h2>
+                    @Html.Partial("VideoListGroup", group.Videos)
+                }
             </div>
         </div>
     </div>

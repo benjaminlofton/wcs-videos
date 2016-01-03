@@ -56,7 +56,8 @@ namespace WcsVideos.Providers.AutoPopulation
             {
                 return DanceCategory.Classic;
             }
-            else if (matcher.ContainsWord("Routine"))
+            else if (matcher.ContainsWord("Routine") ||
+                matcher.ContainsWord("Routines"))
             {
                 return DanceCategory.Routine;
             }

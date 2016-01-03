@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Text;
@@ -250,6 +251,13 @@ namespace WcsVideos.Contracts
                 client.BaseAddress = this.WebserviceTarget;
                 HttpResponseMessage response = await client.GetAsync(relativeUrl);
                 string serialized = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return default(T);
+                }
+                
+                response.EnsureSuccessStatusCode();
+                
                 T result = JsonConvert.DeserializeObject<T>(
                     serialized,
                     new JsonSerializerSettings { ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() });  
