@@ -5,7 +5,13 @@ package ban.model.view;
  */
 public class WscVideoStats {
 
+  private long numEvents;
+  private long numEventsWithVideos;
+
   private Integer numVideos;
+  private Integer numVideosWithEvents;
+  private Integer numVideosWithSkillLevel;
+  private Integer numVideosWithDanceCategory;
   private Integer numDancers;
   private Integer numDancersWithVideos;
   private Integer cacheSizeItems;
@@ -42,4 +48,43 @@ public class WscVideoStats {
     this.numDancersWithVideos = numDancersWithVideos;
   }
 
+  public Integer getNumVideosWithEvents() {
+    return numVideosWithEvents;
+  }
+
+  public void setNumVideosWithEvents(Integer numVideosWithEvents) {
+    this.numVideosWithEvents = numVideosWithEvents;
+  }
+
+  public Integer getNumVideosWithSkillLevel() {
+    return numVideosWithSkillLevel;
+  }
+
+  public void setNumVideosWithSkillLevel(Integer numVideosWithSkillLevel) {
+    this.numVideosWithSkillLevel = numVideosWithSkillLevel;
+  }
+
+  public Integer getNumVideosWithDanceCategory() {
+    return numVideosWithDanceCategory;
+  }
+
+  public void setNumVideosWithDanceCategory(Integer numVideosWithDanceCategory) {
+    this.numVideosWithDanceCategory = numVideosWithDanceCategory;
+  }
+
+  public long getNumEvents() {
+    return numEvents;
+  }
+
+  public void setNumEvents(long numEvents) {
+    this.numEvents = numEvents;
+  }
+
+  public long getNumEventsWithVideos() {
+    return numEventsWithVideos;
+  }
+
+  public void setNumEventsWithVideos(long numEventsWithVideos) {
+    this.numEventsWithVideos = numEventsWithVideos;
+  }
 }
