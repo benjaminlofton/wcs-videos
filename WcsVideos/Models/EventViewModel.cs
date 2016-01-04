@@ -15,5 +15,7 @@ namespace WcsVideos.Models
 		public List<VideoGroupViewModel> VideoGroups { get; set; }
         
         public List<JumpListItemViewModel> JumpList { get; set; }
+        
+        public string AddVideoUrl { get; set; }
 	}
 }

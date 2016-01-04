@@ -21,10 +21,11 @@ namespace WcsVideos.Controllers
         
         public IActionResult Index()
         {
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies, this.Context.Response.Cookies);
             IndexViewModel model = new IndexViewModel();
-            ViewModelHelper.PopulateUserInfo(
-                model,
-                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+            
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
 
             var events = this.dataAccess.GetRecentEvents();
             List<EventListItemViewModel> modelEvents = new List<EventListItemViewModel>(events.Count);
@@ -73,6 +74,19 @@ namespace WcsVideos.Controllers
                         }
                     }
                 }
+            }
+            
+            if (loggedIn)
+            {
+                model.AddVideoUrl = this.Url.Link(
+                    "default",
+                    new { controller = "Videos", action = "AddUrl" });
+            }
+            else
+            {
+                model.AddVideoUrl = this.Url.Link(
+                    "default",
+                    new { controller = "SuggestedVideos", action = "AddUrl" });
             }
             
             return this.View(model);
