@@ -552,5 +552,10 @@ namespace WcsVideos.Contracts
             this.suggestedVideos = new List<Video>(
                 this.suggestedVideos.Where(x => !string.Equals(x.Id, suggestedVideoId, StringComparison.Ordinal)));
         }
+        
+        public Stats GetStats()
+        {
+            return new Stats();
+        }
     }
 }

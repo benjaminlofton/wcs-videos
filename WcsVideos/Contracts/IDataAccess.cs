@@ -52,5 +52,7 @@ namespace WcsVideos.Contracts
         List<Video> GetSuggestedVideos();
         
         void DeleteSuggestedVideo(string suggestedVideoId);
+        
+        Stats GetStats();
     }
 }

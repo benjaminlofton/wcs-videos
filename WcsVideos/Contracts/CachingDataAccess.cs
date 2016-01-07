@@ -403,5 +403,10 @@ namespace WcsVideos.Contracts
             this.HttpPost("admin/cache-reset").Wait();
             return eventId;
         }
+        
+        public Stats GetStats()
+        {
+            return this.baseDataAccess.GetStats();
+        }
 	}
 }

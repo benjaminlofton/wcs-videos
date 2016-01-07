@@ -167,7 +167,7 @@ namespace WcsVideos.Contracts
 
         public ResourceList GetResourceList(string name)
         {
-            return this.HttpGet<ResourceList>("list/" + Uri.EscapeUriString(name)).Result;
+            return this.HttpGet<ResourceList>("list/" + Uri.EscapeUriString(name) + "?take=10000").Result;
         }
 
         public string AddFlaggedVideo(FlaggedVideo flaggedVideo)
@@ -241,6 +241,11 @@ namespace WcsVideos.Contracts
         public void DeleteSuggestedVideo(string suggestedVideoId)
         {
             this.HttpDelete("sv/" + Uri.EscapeUriString(suggestedVideoId)).Wait();
+        }
+        
+        public Stats GetStats()
+        {
+            return this.HttpGet<Stats>("stats").Result;
         }
         
         private async Task<T> HttpGet<T>(string relativeUrl)
