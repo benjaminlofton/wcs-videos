@@ -28,6 +28,8 @@ namespace WcsVideos.Contracts
         
         List<Video> SearchForVideo(
             IEnumerable<string> titleFragments,
+            IEnumerable<string> skillLevels,
+            IEnumerable<string> danceCategories,
             IEnumerable<string> dancerIds,
             IEnumerable<string> eventIds);
             

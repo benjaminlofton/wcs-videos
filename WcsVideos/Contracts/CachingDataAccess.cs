@@ -301,10 +301,17 @@ namespace WcsVideos.Contracts
         
         public List<Video> SearchForVideo(
             IEnumerable<string> titleFragments,
+            IEnumerable<string> skillLevels,
+            IEnumerable<string> danceCategories,
             IEnumerable<string> dancerIds,
             IEnumerable<string> eventIds)
         {
-            return this.baseDataAccess.SearchForVideo(titleFragments, dancerIds, eventIds);
+            return this.baseDataAccess.SearchForVideo(
+                titleFragments,
+                skillLevels,
+                danceCategories,
+                dancerIds,
+                eventIds);
         }
         
         public bool ProviderVideoIdExists(string providerId, string providerVideoId)

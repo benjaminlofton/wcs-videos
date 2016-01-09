@@ -128,6 +128,8 @@ namespace WcsVideos.Contracts
         
         public List<Video> SearchForVideo(
             IEnumerable<string> titleFragments,
+            IEnumerable<string> skillLevels,
+            IEnumerable<string> danceCategories,
             IEnumerable<string> dancerIds,
             IEnumerable<string> eventIds)
         {
@@ -145,6 +147,16 @@ namespace WcsVideos.Contracts
             if (eventIds != null && eventIds.Any())
             {
                 queryFragments.Add("event-id=" + Uri.EscapeUriString(string.Join(",", eventIds)));
+            }
+            
+            if (skillLevels != null && skillLevels.Any())
+            {
+                queryFragments.Add("level=" + Uri.EscapeUriString(string.Join(",", skillLevels)));
+            }
+            
+            if (danceCategories != null && danceCategories.Any())
+            {
+                queryFragments.Add("category=" + Uri.EscapeUriString(string.Join(",", danceCategories)));
             }
             
             if (queryFragments.Count > 0)
@@ -167,7 +179,8 @@ namespace WcsVideos.Contracts
 
         public ResourceList GetResourceList(string name)
         {
-            return this.HttpGet<ResourceList>("list/" + Uri.EscapeUriString(name) + "?take=10000").Result;
+            return this.HttpGet<ResourceList>(
+                "list/" + Uri.EscapeUriString(name) + (name != "latest-videos" ? "?take=10000" : "")).Result;
         }
 
         public string AddFlaggedVideo(FlaggedVideo flaggedVideo)

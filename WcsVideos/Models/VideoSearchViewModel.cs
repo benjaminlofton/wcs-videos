@@ -14,6 +14,10 @@ namespace WcsVideos.Models
         
         public string DancerNameList { get; set; }
         
+        public string SkillLevelId { get; set; }
+        
+        public string DanceCategoryId { get; set; }
+        
         public bool AdvancedSearch { get; set; }
 	}
 }

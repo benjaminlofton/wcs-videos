@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.AspNet.Mvc;
 using WcsVideos.Models;
 using WcsVideos.Contracts;
@@ -31,7 +29,14 @@ namespace WcsVideos.Controllers
             return this.Dancers(query, 1);
         }
         
-        public IActionResult Videos(string query, bool advancedSearch, string eventId, string dancerIdList, int start)
+        public IActionResult Videos(
+            string query,
+            bool advancedSearch,
+            string skillLevelId,
+            string danceCategoryId,
+            string eventId,
+            string dancerIdList,
+            int start)
         {
             VideoSearchViewModel model = new VideoSearchViewModel();
             ViewModelHelper.PopulateUserInfo(
@@ -43,6 +48,8 @@ namespace WcsVideos.Controllers
             model.EventId = eventId;
             model.DancerIdList = dancerIdList;
             model.AdvancedSearch = advancedSearch;
+            model.SkillLevelId = skillLevelId;
+            model.DanceCategoryId = danceCategoryId;
             
             Event contractEvent = null;
             if (!string.IsNullOrEmpty(model.EventId))
@@ -52,7 +59,7 @@ namespace WcsVideos.Controllers
             
             if (string.IsNullOrEmpty(model.DancerIdList))
             {
-                model.DancerNameList = "(None)";
+                model.DancerNameList = "(Unfiltered)";
             }
             else
             {
@@ -75,14 +82,18 @@ namespace WcsVideos.Controllers
             
             if (contractEvent == null)
             {
-                model.EventName = "(None)";
+                model.EventName = "(Unfiltered)";
             }
             else
             {
                 model.EventName = contractEvent.Name + " " + contractEvent.EventDate.Year;
             } 
             
-            if (!string.IsNullOrEmpty(query) || !string.IsNullOrEmpty(eventId) || !string.IsNullOrEmpty(dancerIdList))
+            if (!string.IsNullOrEmpty(query) ||
+                !string.IsNullOrEmpty(eventId) ||
+                !string.IsNullOrEmpty(dancerIdList) ||
+                !string.IsNullOrEmpty(skillLevelId) ||
+                !string.IsNullOrEmpty(danceCategoryId))
             {
                 string[] titleFragments = (query ?? string.Empty).Split(
                     new char[] { ' ' },
@@ -99,7 +110,24 @@ namespace WcsVideos.Controllers
                     10,
                     StringSplitOptions.RemoveEmptyEntries);
                 
-                List<Video> fullResults = this.dataAccess.SearchForVideo(titleFragments, dancerIds, eventIds);
+                string validatedSkillLevel = SkillLevel.GetValidatedSkillLevel(skillLevelId);
+                string[] skillLevels = string.IsNullOrEmpty(validatedSkillLevel) ?
+                    new string[0] :
+                    new string[] { validatedSkillLevel };
+                
+                string validatedDanceCategory = DanceCategory.GetValidatedDanceCategory(danceCategoryId);
+                string[] danceCategories = string.IsNullOrEmpty(validatedDanceCategory) ?
+                    new string[0] :
+                    new string[] { validatedDanceCategory };
+                
+                
+                List<Video> fullResults = this.dataAccess.SearchForVideo(
+                    titleFragments,
+                    skillLevels,
+                    danceCategories,
+                    dancerIds,
+                    eventIds);
+                    
                 ViewModelHelper.PopulateSearchResults(
                     model,
                     fullResults,
@@ -113,6 +141,10 @@ namespace WcsVideos.Controllers
                             controller = "Search",
                             action = "Videos",
                             query = query,
+                            skillLevelId = skillLevelId,
+                            danceCategoryId = danceCategoryId,
+                            eventId = eventId,
+                            dancerIdList = dancerIdList,
                             start = s
                         }));
             }
