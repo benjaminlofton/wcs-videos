@@ -94,16 +94,12 @@ namespace WcsVideos.Controllers
 
         public IActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            BasePageViewModel model = new BasePageViewModel();
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies, this.Context.Response.Cookies);
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
+            
+            return View(model);
         }
         
         public IActionResult Dancer(string id)
