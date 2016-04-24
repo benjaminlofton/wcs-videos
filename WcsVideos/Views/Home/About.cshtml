@@ -1,6 +1,25 @@
 @{
     ViewBag.Title = "About";
 }
-<h2>@ViewBag.Title</h2>
 
-<p>Blah blah blah.</p>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="h3">
+                    About
+                </h1>
+            </div>
+            <div class="panel-body">
+                <h2 class="h4">
+                    Our Mission
+                </h2>
+                <hr>
+                <p><i>Whether you want to find videos from a certain event to see what you missed, videos of your favorite professional dancer for inspiration, or videos of yourself to track your progress, our goal at westie connection is to be your source for finding the west coast swing videos you want to watch.</i></p>
+                <hr>
+                </p>When west coast swing videos are added to conventional video sharing sites they can often be a challenge.  Titles and descriptions lack the information required to find them in a simple search, names of people or events are misspelled, and videos not containing dancing often muddy up search results.  To make things worse, one often needs to search multiple video sharing sites to find a desired video.  When a video is added to westie connection (linked from normal video sharing site), it is tagged with a set of common attributes which it easy to find, and make it easy to find similar videos.  Videos are searchable using these attributes including video title, dancers, event, category, and level.</p>
+                <p>Westie connection is a free site which is powered by its users.  Anyone can <a asp-controller="SuggestedVideos" asp-action="AddUrl">add a video <span class="glyphicon glyphicon-cloud-upload"> </span></a> to the site from their favorite video sharing sites (vimeo and youtube are currently supported). Upon being added they are screened by moderators for content after which they appear on the site for anyone to find.  If you enjoy the breadth of content on the site, we highly encourage you to give back to all those who have aggregated videos before you by contributing your own videos or the videos you most enjoy watching to the site.  Additionally, if you find issues with the site or any content therein, or have any suggestions, complaints, or criticisms, please don't hesitate to send us an e-mail at <a href="mailto:info@westieconnection.com">info@westieconnection.com</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>

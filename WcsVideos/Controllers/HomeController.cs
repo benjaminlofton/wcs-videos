@@ -21,10 +21,11 @@ namespace WcsVideos.Controllers
         
         public IActionResult Index()
         {
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies, this.Context.Response.Cookies);
             IndexViewModel model = new IndexViewModel();
-            ViewModelHelper.PopulateUserInfo(
-                model,
-                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+            
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
 
             var events = this.dataAccess.GetRecentEvents();
             List<EventListItemViewModel> modelEvents = new List<EventListItemViewModel>(events.Count);
@@ -75,21 +76,30 @@ namespace WcsVideos.Controllers
                 }
             }
             
+            if (loggedIn)
+            {
+                model.AddVideoUrl = this.Url.Link(
+                    "default",
+                    new { controller = "Videos", action = "AddUrl" });
+            }
+            else
+            {
+                model.AddVideoUrl = this.Url.Link(
+                    "default",
+                    new { controller = "SuggestedVideos", action = "AddUrl" });
+            }
+            
             return this.View(model);
         }
 
         public IActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            BasePageViewModel model = new BasePageViewModel();
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies, this.Context.Response.Cookies);
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
+            
+            return View(model);
         }
         
         public IActionResult Dancer(string id)

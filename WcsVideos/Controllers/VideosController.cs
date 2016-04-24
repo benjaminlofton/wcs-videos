@@ -68,7 +68,11 @@ namespace WcsVideos.Controllers
             
             model.Dancers = new List<DancerLinkViewModel>();
             
-            if (video.DancerIdList != null)
+            if (video.DancerIdList == null || video.DancerIdList.Length == 0)
+            {
+                model.ShowAddDancerLink = true;
+            }
+            else
             {
                 foreach (string dancerId in video.DancerIdList)
                 {
@@ -86,7 +90,11 @@ namespace WcsVideos.Controllers
             }
             
             Event contractEvent = null;
-            if (!string.IsNullOrEmpty(video.EventId))
+            if (string.IsNullOrEmpty(video.EventId))
+            {
+                model.ShowAddEventLink = true;
+            }
+            else
             {
                 contractEvent = this.dataAccess.GetEvent(video.EventId);
             }
@@ -94,6 +102,7 @@ namespace WcsVideos.Controllers
             if (contractEvent == null)
             {
                 model.EventName = "(None)";
+                model.ShowAddEventLink = true;
             }
             else
             {
@@ -104,7 +113,16 @@ namespace WcsVideos.Controllers
             } 
             
             model.SkillLevel = SkillLevel.GetSkillLevelDisplayName(video.SkillLevel);
+            if (string.IsNullOrEmpty(video.SkillLevel))
+            {
+                model.ShowAddSkillLevelLink = true;
+            }
+            
             model.DanceCategory = DanceCategory.GetDanceCategoryDisplayName(video.DanceCategory);
+            if (string.IsNullOrEmpty(video.DanceCategory))
+            {
+                model.ShowAddDanceCategoryLink = true;
+            }
             
             return model;
         }

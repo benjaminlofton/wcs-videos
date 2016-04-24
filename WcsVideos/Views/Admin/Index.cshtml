@@ -14,18 +14,22 @@
                         <span class="glyphicon glyphicon-facetime-video"> </span>
                     </li>
                     <li class="list-group-item">
+                        <span class="badge">@this.Model.VideoCount</span>
                         <span class="glyphicon glyphicon-plus-sign"> </span> &nbsp;
                         <a asp-controller="Videos" asp-action="AddUrl">Add a new video</a>
                     </li>
                     <li class="list-group-item">
+                        <span class="badge">@this.Model.SuggestedVideoCount</span>
                         <span class="glyphicon glyphicon-cloud-upload"> </span> &nbsp;
                         <a asp-controller="Admin" asp-action="SuggestedVideoList">Review suggested videos</a>
                     </li>
                     <li class="list-group-item">
+                        <span class="badge">@this.Model.FlaggedVideoCount</span>
                         <span class="glyphicon glyphicon-flag"> </span> &nbsp;
                         <a asp-controller="Admin" asp-action="FlaggedVideoList">Review flagged videos</a>
                     </li>
                     <li class="list-group-item">
+                        <span class="badge">@this.Model.MissingEventCount</span>
                         <span class="glyphicon glyphicon-home"> </span> &nbsp;
                         <a href="@this.Model.MissingEventVideoListUrl">Edit videos missing events</a>
                     </li>
@@ -34,10 +38,12 @@
                         <a href="@this.Model.MissingDancersVideoListUrl">Edit videos missing dancers</a>
                     </li>
                     <li class="list-group-item">
+                        <span class="badge">@this.Model.MissingLevelCount</span>
                         <span class="glyphicon glyphicon-dashboard"> </span> &nbsp;
                         <a href="@this.Model.MissingLevelVideoListUrl">Edit videos missing a skill level</a>
                     </li>
                     <li class="list-group-item">
+                        <span class="badge">@this.Model.MissingCategoryCount</span>
                         <span class="glyphicon glyphicon-folder-open"> </span> &nbsp;
                         <a href="@this.Model.MissingCategoryVideoListUrl">Edit videos missing a category</a>
                     </li>
@@ -48,6 +54,7 @@
                         <span class="glyphicon glyphicon-home"> </span>
                     </li>
                     <li class="list-group-item">
+                        <span class="badge">@this.Model.EventCount</span>
                         <span class="glyphicon glyphicon-plus-sign"> </span> &nbsp;
                         <a asp-controller="Events" asp-action="Add">Add a new event</a>
                     </li>

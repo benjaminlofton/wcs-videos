@@ -33,10 +33,12 @@ namespace WcsVideos.Controllers
                 return this.Error();
             }
             
+            bool loggedIn = this.userSessionHandler.GetUserLoginState(
+                this.Context.Request.Cookies,
+                this.Context.Response.Cookies);
+            
             EventViewModel model = new EventViewModel();
-            ViewModelHelper.PopulateUserInfo(
-                model,
-                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+            ViewModelHelper.PopulateUserInfo(model, loggedIn);
             model.EventDate = contractEvent.EventDate.ToString("MMMM d, yyyy");
             model.Location = contractEvent.LocationName;
             model.Pointed = contractEvent.WsdcPointed;
@@ -106,6 +108,19 @@ namespace WcsVideos.Controllers
                         Url = "#" + x.Anchor
                     }
                 ));
+            }
+            
+            if (loggedIn)
+            {
+                model.AddVideoUrl = this.Url.Link(
+                    "default",
+                    new { controller = "Videos", action = "AddUrl" });
+            }
+            else
+            {
+                model.AddVideoUrl = this.Url.Link(
+                    "default",
+                    new { controller = "SuggestedVideos", action = "AddUrl" });
             }
             
             return this.View(model);

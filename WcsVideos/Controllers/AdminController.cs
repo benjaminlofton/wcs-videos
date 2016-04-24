@@ -55,21 +55,33 @@ namespace WcsVideos.Controllers
             AdminIndexViewModel model = new AdminIndexViewModel();
             ViewModelHelper.PopulateUserInfo(model, loggedIn);
             
+            Stats stats = this.dataAccess.GetStats();
+            List<Video> suggestedVideos = this.dataAccess.GetSuggestedVideos();
+            List<FlaggedVideo> flaggedVideos = this.dataAccess.GetFlaggedVideos();            
+            
             model.MissingDancersVideoListUrl = this.Url.Link(
                 "default",
                 new { controller = "Admin", action = "VideoList", id = AdminController.MissingDancersVideoListId });
             
+            model.MissingEventCount = stats.NumVideos.Value - stats.NumVideosWithEvents.Value;
             model.MissingEventVideoListUrl = this.Url.Link(
                 "default",
                 new { controller = "Admin", action = "VideoList", id = AdminController.MissingEventVideoListId });
                 
+            model.MissingLevelCount = stats.NumVideos.Value - stats.NumVideosWithSkillLevel.Value;
             model.MissingLevelVideoListUrl = this.Url.Link(
                 "default",
                 new { controller = "Admin", action = "VideoList", id = AdminController.MissingLevelVideoListId });
             
+            model.MissingCategoryCount = stats.NumVideos.Value - stats.NumVideosWithDanceCategory.Value;
             model.MissingCategoryVideoListUrl = this.Url.Link(
                 "default",
                 new { controller = "Admin", action = "VideoList", id = AdminController.MissingCategoryVideoListId });
+            
+            model.EventCount = stats.NumEvents.Value;
+            model.VideoCount = stats.NumVideos.Value;
+            model.SuggestedVideoCount = suggestedVideos == null ? 0 : suggestedVideos.Count;
+            model.FlaggedVideoCount = flaggedVideos == null ? 0 : flaggedVideos.Count;
             
             return this.View(model);
         }
@@ -189,7 +201,7 @@ namespace WcsVideos.Controllers
                         action = "VideoList",
                         start = s
                     }));
-            
+
             return this.View(model);
         }
         

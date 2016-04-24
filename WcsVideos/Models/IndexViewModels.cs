@@ -20,5 +20,7 @@ namespace WcsVideos.Models
 		public List<VideoListItemViewModel> Videos { get; set; }
         
         public List<EventListItemViewModel> Events { get; set; }
+        
+        public string AddVideoUrl { get; set; }
 	}
 }

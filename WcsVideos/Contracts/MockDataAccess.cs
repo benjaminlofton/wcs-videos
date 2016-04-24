@@ -477,6 +477,8 @@ namespace WcsVideos.Contracts
         
         public List<Video> SearchForVideo(
             IEnumerable<string> titleFragments,
+            IEnumerable<string> skillLevels,
+            IEnumerable<string> danceCategories,
             IEnumerable<string> dancerIds,
             IEnumerable<string> eventIds)
         {
@@ -551,6 +553,11 @@ namespace WcsVideos.Contracts
         {
             this.suggestedVideos = new List<Video>(
                 this.suggestedVideos.Where(x => !string.Equals(x.Id, suggestedVideoId, StringComparison.Ordinal)));
+        }
+        
+        public Stats GetStats()
+        {
+            return new Stats();
         }
     }
 }

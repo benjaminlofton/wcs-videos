@@ -56,6 +56,10 @@
                                 @if (string.IsNullOrEmpty(this.Model.EventUrl))
                                 {
                                     @this.Model.EventName
+                                    <text> - </text>
+                                    <a href="@this.Model.EditUrl">
+                                        add an event <span class="glyphicon glyphicon-edit"> </span>
+                                    </a>
                                 }
                                 else
                                 {
@@ -69,6 +73,13 @@
                             </td>
                             <td>
                                 @this.Model.SkillLevel
+                                @if (this.Model.ShowAddSkillLevelLink)
+                                {
+                                    <text> - </text>
+                                    <a href="@this.Model.EditUrl">
+                                        add a level <span class="glyphicon glyphicon-edit"> </span>
+                                    </a>
+                                }
                             </td>
                         </tr>
                         <tr>
@@ -77,6 +88,13 @@
                             </td>
                             <td>
                                 @this.Model.DanceCategory
+                                @if (this.Model.ShowAddDanceCategoryLink)
+                                {
+                                    <text> - </text>
+                                    <a href="@this.Model.EditUrl">
+                                        add a category <span class="glyphicon glyphicon-edit"> </span>
+                                    </a>
+                                }
                             </td>
                         </tr>
                         <tr>
@@ -92,6 +110,13 @@
                                 else
                                 {
                                     <text>(None)</text>
+                                    @if (this.Model.ShowAddDancerLink)
+                                    {
+                                        <text> - </text>
+                                        <a href="@this.Model.EditUrl">
+                                            add dancer(s) <span class="glyphicon glyphicon-edit"> </span>
+                                        </a>
+                                    }
                                 }
                             </td>
                         </tr>

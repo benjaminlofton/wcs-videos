@@ -22,13 +22,21 @@ namespace WcsVideos.Models
 		
 		public List<DancerLinkViewModel> Dancers { get; set; }
         
+        public bool ShowAddDancerLink { get; set; }
+        
         public string SkillLevel { get; set; }
         
+        public bool ShowAddSkillLevelLink { get; set; }
+        
         public string DanceCategory { get; set; }
+        
+        public bool ShowAddDanceCategoryLink { get; set; }
         
         public string EventName { get; set; }
         
         public string EventUrl { get; set; }
+        
+        public bool ShowAddEventLink { get; set; }
         
         public string EditUrl { get; set; }
 	}
