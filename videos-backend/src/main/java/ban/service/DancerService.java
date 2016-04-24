@@ -73,6 +73,10 @@ public class DancerService {
     awsDynamoClient.saveDancer(dancerD);
   }
 
+  public List<WsdcDancer> getWsdcDancerByWsdcId(Integer wsdcId) {
+    return wsdcRestClient.getDancersByFragment(wsdcId.toString());
+  }
+
   /***
    * WARNING: At worst, this will iterate over every Dancer in the Dancer repository
    * @param fragment The string fragment by which to search for dancers

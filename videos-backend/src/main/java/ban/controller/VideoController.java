@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +57,7 @@ public class VideoController {
     return video;
   }
 
+  @CrossOrigin
   @RequestMapping(value="/v", method = RequestMethod.GET)
   public ResponseEntity<List<Video>> searchVideos(
       @RequestParam(value = "wsdc-id", required = false) String wsdcIdList,

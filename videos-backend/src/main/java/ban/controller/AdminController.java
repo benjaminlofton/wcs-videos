@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Set;
 
+import ban.client.WsdcDancer;
 import ban.model.view.Dancer;
 import ban.model.view.WscVideoStats;
 import ban.service.AdminService;
@@ -53,6 +54,11 @@ public class AdminController {
   @RequestMapping(value="admin/correct-bad-dancers", method = RequestMethod.GET)
   public Set<String> getBadDancers() {
     return adminService.correctDancersWithMissingVideos();
+  }
+
+  @RequestMapping(value="admin/wsdc-by-id", method = RequestMethod.GET)
+  public List<WsdcDancer> getById(@RequestParam(value = "wsdcid", required = true) String wsdcId) {
+    return dancerService.getWsdcDancerByWsdcId(Integer.parseInt(wsdcId));
   }
 
 }
