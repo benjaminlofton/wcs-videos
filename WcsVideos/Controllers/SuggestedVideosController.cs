@@ -594,7 +594,7 @@ namespace WcsVideos.Controllers
                 video.DancerIdList = dancerIds;
                 video.EventId = eventId;
                 video.SkillLevel = SkillLevel.GetValidatedSkillLevel(skillLevelId);
-                video.DanceCategory = SkillLevel.GetValidatedSkillLevel(danceCategoryId);
+                video.DanceCategory = DanceCategory.GetValidatedDanceCategory(danceCategoryId);
                 this.dataAccess.AddVideo(video);
                 this.dataAccess.DeleteSuggestedVideo(suggestedVideoId);
                 
