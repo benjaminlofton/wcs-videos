@@ -1,5 +1,4 @@
 using WcsVideos.Contracts;
-using WcsVideos.Providers;
 using System.Collections.Generic;
 
 namespace WcsVideos.Providers.AutoPopulation
@@ -14,12 +13,23 @@ namespace WcsVideos.Providers.AutoPopulation
         
         public string GetDancers(VideoDetails videoDetails)
         {
-            if (string.IsNullOrEmpty(videoDetails.Title))
+            string result = GetDancersFromString(videoDetails.Title);
+            if (!string.IsNullOrEmpty(result))
+            {
+                return result;
+            }
+            
+            return GetDancersFromString(videoDetails.Description);
+        }
+        
+        private string GetDancersFromString(string title)
+        {
+            if (string.IsNullOrEmpty(title))
             {
                 return null;
             }
             
-            WordMatcher matcher = new WordMatcher(videoDetails.Title);
+            WordMatcher matcher = new WordMatcher(title);
             List<string> ids = new List<string>();
             
             foreach (Dancer dancer in this.dataAccess.GetAllDancers())

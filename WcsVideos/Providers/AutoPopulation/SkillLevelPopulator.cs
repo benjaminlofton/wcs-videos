@@ -6,7 +6,17 @@ namespace WcsVideos.Providers.AutoPopulation
     {
         public static string GetSkillLevel(VideoDetails details)
         {
-            string title = details.Title;
+            string result = GetSkillLevelFromString(details.Title);
+            if (!string.IsNullOrEmpty(result))
+            {
+                return result;
+            }
+            
+            return GetSkillLevelFromString(details.Description);
+        }
+        
+        private static string GetSkillLevelFromString(string title)
+        {
             if (string.IsNullOrEmpty(title))
             {
                 return string.Empty;
@@ -31,11 +41,13 @@ namespace WcsVideos.Providers.AutoPopulation
             {
                 return SkillLevel.ProAm;
             }
-            else if (matcher.ContainsWord("Intermediate"))
+            else if (matcher.ContainsWord("Intermediate") ||
+                matcher.ContainsWord("int"))
             {
                 return SkillLevel.Intermediate;
             }
-            else if (matcher.ContainsWord("Novice"))
+            else if (matcher.ContainsWord("Novice") ||
+                matcher.ContainsWord("nov"))
             {
                 return SkillLevel.Novice;
             }
@@ -68,6 +80,7 @@ namespace WcsVideos.Providers.AutoPopulation
             else if (matcher.ContainsWord("Champions") ||
                 matcher.ContainsWord("Champion") ||
                 matcher.ContainsWord("Invitational") ||
+                matcher.ContainsWord("Invitation") ||
                 matcher.ContainsWord("Inspirational") ||
                 matcher.ContainsWord("Demo") ||
                 matcher.ContainsWord("Pro") ||
