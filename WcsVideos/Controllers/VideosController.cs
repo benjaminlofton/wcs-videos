@@ -27,8 +27,8 @@ namespace WcsVideos.Controllers
         public IActionResult Watch(string id)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
                 
             Video video = this.dataAccess.GetVideoById(id);
             
@@ -61,7 +61,9 @@ namespace WcsVideos.Controllers
             WatchViewModel model = new WatchViewModel();
             ViewModelHelper.PopulateUserInfo(
                 model,
-                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+                this.userSessionHandler.GetUserLoginState(
+                    this.HttpContext.Request.Cookies,
+                    this.HttpContext.Response.Cookies));
             
             IVideoViewModelPopulator populator = VideoViewModelPopulatorFactory.GetPopulator(video);
             populator.Populate(model);
@@ -130,14 +132,14 @@ namespace WcsVideos.Controllers
         public IActionResult AddUrl()
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
                 CookieOptions loginCookieOptions = new CookieOptions();
                 loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append(
+                this.HttpContext.Response.Cookies.Append(
                     "LoginRedirect",
                     this.Request.Path.ToUriComponent() + this.Request.QueryString,
                     loginCookieOptions);
@@ -149,13 +151,13 @@ namespace WcsVideos.Controllers
             
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
-            IReadableStringCollection requestCookies = this.Context.Request.Cookies;            
-            model.ValidationError = bool.Parse(requestCookies.Get("ValidationError") ?? "False");
-            model.ValidationErrorMessage = requestCookies.Get("ValidationErrorMessage");
-            model.Url = requestCookies.Get("Url");
+            IReadableStringCollection requestCookies = this.HttpContext.Request.Cookies;            
+            model.ValidationError = bool.Parse(requestCookies["ValidationError"].FirstOrDefault() ?? "False");
+            model.ValidationErrorMessage = requestCookies["ValidationErrorMessage"].FirstOrDefault();
+            model.Url = requestCookies["Url"].FirstOrDefault();
             
             CookieOptions cookieOptions = new CookieOptions();
-            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
             responseCookies.Delete("ValidationError", cookieOptions);
             responseCookies.Delete("ValidationErrorMessage", cookieOptions);
             responseCookies.Delete("Url", cookieOptions);
@@ -220,7 +222,7 @@ namespace WcsVideos.Controllers
             // Populate cookies with form data so that we can repopulate the form after the redirect.
             // Traditionally this would be done using session variables, but we are using cookies here so
             // that we don't need to worry about session management.
-            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
             responseCookies.Append("Url", url, cookieOptions);
             responseCookies.Append("ValidationError", true.ToString(), cookieOptions);
             responseCookies.Append("ValidationErrorMessage", validationErrorMessage, cookieOptions);
@@ -237,14 +239,14 @@ namespace WcsVideos.Controllers
             string dancerIdList)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
                 CookieOptions loginCookieOptions = new CookieOptions();
                 loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append(
+                this.HttpContext.Response.Cookies.Append(
                     "LoginRedirect",
                     this.Request.Path.ToUriComponent() + this.Request.QueryString,
                     loginCookieOptions);
@@ -256,8 +258,8 @@ namespace WcsVideos.Controllers
                         
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
-            IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            string rawProviderId = requestCookies.Get("ProviderId");
+            IReadableStringCollection requestCookies = this.HttpContext.Request.Cookies;
+            string rawProviderId = requestCookies["ProviderId"].FirstOrDefault();
             int parsedProviderId;
             if (string.IsNullOrEmpty(rawProviderId) || !int.TryParse(rawProviderId, out parsedProviderId))
             {
@@ -265,20 +267,24 @@ namespace WcsVideos.Controllers
             }
             
             model.ProviderId = parsedProviderId;
-            model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderIdValid") ?? "True");
-            model.ProviderVideoId = requestCookies.Get("ProviderVideoId");
-            model.ProviderVideoIdValidationError = !bool.Parse(requestCookies.Get("ProviderVideoIdValid") ?? "True");
-            model.Title = requestCookies.Get("Title");
-            model.TitleValidationError = !bool.Parse(requestCookies.Get("TitleValid") ?? "True");
-            model.DancerIdList = requestCookies.Get("DancerIdList");
-            model.DancerIdListValidationError = !bool.Parse(requestCookies.Get("DancerIdListValid") ?? "True");
-            model.EventId = requestCookies.Get("EventId");
-            model.EventIdValidationError = !bool.Parse(requestCookies.Get("EventIdValid") ?? "True");
-            model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies.Get("SkillLevelId"));
-            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(requestCookies.Get("danceCategoryId"));
+            model.ProviderVideoIdValidationError = !bool.Parse(
+                requestCookies["ProviderIdValid"].FirstOrDefault() ?? "True");
+            model.ProviderVideoId = requestCookies["ProviderVideoId"].FirstOrDefault();
+            model.ProviderVideoIdValidationError = !bool.Parse(
+                requestCookies["ProviderVideoIdValid"].FirstOrDefault() ?? "True");
+            model.Title = requestCookies["Title"].FirstOrDefault();
+            model.TitleValidationError = !bool.Parse(requestCookies["TitleValid"].FirstOrDefault() ?? "True");
+            model.DancerIdList = (requestCookies["DancerIdList"].FirstOrDefault() ?? string.Empty).Replace('+', ';');
+            model.DancerIdListValidationError = !bool.Parse(
+                requestCookies["DancerIdListValid"].FirstOrDefault() ?? "True");
+            model.EventId = requestCookies["EventId"].FirstOrDefault();
+            model.EventIdValidationError = !bool.Parse(requestCookies["EventIdValid"].FirstOrDefault() ?? "True");
+            model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies["SkillLevelId"].FirstOrDefault());
+            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(
+                requestCookies["danceCategoryId"].FirstOrDefault());
             
             CookieOptions cookieOptions = new CookieOptions();
-            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
             responseCookies.Delete("ProviderId", cookieOptions);
             responseCookies.Delete("ProviderIdValid", cookieOptions);
             responseCookies.Delete("ProviderVideoId", cookieOptions);
@@ -373,8 +379,8 @@ namespace WcsVideos.Controllers
             string danceCategoryId)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
@@ -461,21 +467,22 @@ namespace WcsVideos.Controllers
                 // Populate cookies with form data so that we can repopulate the form after the redirect.
                 // Traditionally this would be done using session variables, but we are using cookies here so
                 // that we don't need to worry about session management.
-                IResponseCookies responseCookies = this.Context.Response.Cookies;
-                responseCookies.Append("ProviderId", providerId, cookieOptions);
+                IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
+                responseCookies.Append("ProviderId", providerId ?? string.Empty, cookieOptions);
                 responseCookies.Append("ProviderIdValid", providerIdValid.ToString(), cookieOptions);
-                responseCookies.Append("ProviderVideoId", providerVideoId, cookieOptions);
+                responseCookies.Append("ProviderVideoId", providerVideoId ?? string.Empty, cookieOptions);
                 responseCookies.Append("ProviderVideoIdValid", providerVideoIdValid.ToString(), cookieOptions);
-                responseCookies.Append("Title", title, cookieOptions);
+                responseCookies.Append("Title", title ?? string.Empty, cookieOptions);
                 responseCookies.Append("TitleValid", titleValid.ToString(), cookieOptions);
-                responseCookies.Append("DancerIdList", dancerIdList, cookieOptions);
+                responseCookies.Append("DancerIdList", (dancerIdList ?? string.Empty).Replace(';', '+'), cookieOptions);
                 responseCookies.Append("DancerIdListValid", dancerIdListValid.ToString(), cookieOptions);
-                responseCookies.Append("EventId", eventId, cookieOptions);
+                responseCookies.Append("EventId", eventId ?? string.Empty, cookieOptions);
                 responseCookies.Append("EventIdValid", eventIdValid.ToString(), cookieOptions);
-                responseCookies.Append("SkillLevelId", SkillLevel.GetValidatedSkillLevel(skillLevelId), cookieOptions);
+                responseCookies.Append("SkillLevelId", SkillLevel.GetValidatedSkillLevel(skillLevelId) ?? string.Empty, cookieOptions);
                 responseCookies.Append(
                     "DanceCategoryId",
-                    DanceCategory.GetValidatedDanceCategory(danceCategoryId), cookieOptions);
+                    DanceCategory.GetValidatedDanceCategory(danceCategoryId) ?? string.Empty,
+                    cookieOptions);
 
                 return this.RedirectToAction("Add");
             }
@@ -532,14 +539,14 @@ namespace WcsVideos.Controllers
         public IActionResult Edit(string id)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
                 CookieOptions loginCookieOptions = new CookieOptions();
                 loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append(
+                this.HttpContext.Response.Cookies.Append(
                     "LoginRedirect",
                     this.Request.Path.ToUriComponent() + this.Request.QueryString,
                     loginCookieOptions);
@@ -561,18 +568,20 @@ namespace WcsVideos.Controllers
             
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
-            IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            model.Title = requestCookies.Get("Title");            
-            model.TitleValidationError = !bool.Parse(requestCookies.Get("TitleValid") ?? "True");
-            model.DancerIdList = requestCookies.Get("DancerIdList");
-            model.DancerIdListValidationError = !bool.Parse(requestCookies.Get("DancerIdListValid") ?? "True");
-            model.EventId = requestCookies.Get("EventId");
-            model.EventIdValidationError = !bool.Parse(requestCookies.Get("EventIdValid") ?? "True");
-            model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies.Get("SkillLevelId"));
-            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(requestCookies.Get("DanceCategoryId"));
+            IReadableStringCollection requestCookies = this.HttpContext.Request.Cookies;
+            model.Title = requestCookies["Title"].FirstOrDefault();            
+            model.TitleValidationError = !bool.Parse(requestCookies["TitleValid"].FirstOrDefault() ?? "True");
+            model.DancerIdList = (requestCookies["DancerIdList"].FirstOrDefault() ?? string.Empty).Replace('+', ';');
+            model.DancerIdListValidationError = !bool.Parse(
+                requestCookies["DancerIdListValid"].FirstOrDefault() ?? "True");
+            model.EventId = requestCookies["EventId"].FirstOrDefault();
+            model.EventIdValidationError = !bool.Parse(requestCookies["EventIdValid"].FirstOrDefault() ?? "True");
+            model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies["SkillLevelId"].FirstOrDefault());
+            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(
+                requestCookies["DanceCategoryId"].FirstOrDefault());
             
             CookieOptions cookieOptions = new CookieOptions();
-            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
             responseCookies.Delete("Title", cookieOptions);
             responseCookies.Delete("TitleValid", cookieOptions);
             responseCookies.Delete("DancerIdList", cookieOptions);
@@ -633,8 +642,8 @@ namespace WcsVideos.Controllers
             string danceCategoryId)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
@@ -712,15 +721,15 @@ namespace WcsVideos.Controllers
                 // Populate cookies with form data so that we can repopulate the form after the redirect.
                 // Traditionally this would be done using session variables, but we are using cookies here so
                 // that we don't need to worry about session management.
-                IResponseCookies responseCookies = this.Context.Response.Cookies;
-                responseCookies.Append("Title", title, cookieOptions);
+                IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
+                responseCookies.Append("Title", title ?? string.Empty, cookieOptions);
                 responseCookies.Append("TitleValid", titleValid.ToString(), cookieOptions);
-                responseCookies.Append("DancerIdList", dancerIdList, cookieOptions);
+                responseCookies.Append("DancerIdList", (dancerIdList ?? string.Empty).Replace(';', '+'), cookieOptions);
                 responseCookies.Append("DancerIdListValid", dancerIdListValid.ToString(), cookieOptions);
-                responseCookies.Append("EventId", eventId, cookieOptions);
+                responseCookies.Append("EventId", eventId ?? string.Empty, cookieOptions);
                 responseCookies.Append("EventIdValid", eventIdValid.ToString(), cookieOptions);
-                responseCookies.Append("SkillLevelId", SkillLevel.GetValidatedSkillLevel(skillLevelId));
-                responseCookies.Append("DanceCategoryId", DanceCategory.GetValidatedDanceCategory(danceCategoryId));
+                responseCookies.Append("SkillLevelId", SkillLevel.GetValidatedSkillLevel(skillLevelId) ?? string.Empty);
+                responseCookies.Append("DanceCategoryId", DanceCategory.GetValidatedDanceCategory(danceCategoryId) ?? string.Empty);
                 
                 return this.RedirectToAction("Edit", new { id = videoId });
             }
@@ -729,8 +738,8 @@ namespace WcsVideos.Controllers
         public IActionResult Flag(string id)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             VideoModifyViewModel model = new VideoModifyViewModel();
 
@@ -747,18 +756,19 @@ namespace WcsVideos.Controllers
             
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
-            IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            model.Title = requestCookies.Get("Title");            
-            model.TitleValidationError = !bool.Parse(requestCookies.Get("TitleValid") ?? "True");
-            model.DancerIdList = requestCookies.Get("DancerIdList");
-            model.DancerIdListValidationError = !bool.Parse(requestCookies.Get("DancerIdListValid") ?? "True");
-            model.EventId = requestCookies.Get("EventId");
-            model.EventIdValidationError = !bool.Parse(requestCookies.Get("EventIdValid") ?? "True");
-            model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies.Get("SkillLevelId"));
-            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(requestCookies.Get("DanceCategoryId"));
+            IReadableStringCollection requestCookies = this.HttpContext.Request.Cookies;
+            model.Title = requestCookies["Title"].FirstOrDefault();            
+            model.TitleValidationError = !bool.Parse(requestCookies["TitleValid"].FirstOrDefault() ?? "True");
+            model.DancerIdList = (requestCookies["DancerIdList"].FirstOrDefault() ?? string.Empty).Replace('+', ';');
+            model.DancerIdListValidationError = !bool.Parse(requestCookies["DancerIdListValid"].FirstOrDefault() ?? "True");
+            model.EventId = requestCookies["EventId"].FirstOrDefault();
+            model.EventIdValidationError = !bool.Parse(requestCookies["EventIdValid"].FirstOrDefault() ?? "True");
+            model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies["SkillLevelId"].FirstOrDefault());
+            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(
+                requestCookies["DanceCategoryId"].FirstOrDefault());
             
             CookieOptions cookieOptions = new CookieOptions();
-            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
             responseCookies.Delete("Title", cookieOptions);
             responseCookies.Delete("TitleValid", cookieOptions);
             responseCookies.Delete("DancerIdList", cookieOptions);
@@ -871,17 +881,18 @@ namespace WcsVideos.Controllers
                 // Populate cookies with form data so that we can repopulate the form after the redirect.
                 // Traditionally this would be done using session variables, but we are using cookies here so
                 // that we don't need to worry about session management.
-                IResponseCookies responseCookies = this.Context.Response.Cookies;
-                responseCookies.Append("Title", title, cookieOptions);
+                IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
+                responseCookies.Append("Title", title ?? string.Empty, cookieOptions);
                 responseCookies.Append("TitleValid", titleValid.ToString(), cookieOptions);
-                responseCookies.Append("DancerIdList", dancerIdList, cookieOptions);
+                responseCookies.Append("DancerIdList", (dancerIdList ?? string.Empty).Replace(';', '+'), cookieOptions);
                 responseCookies.Append("DancerIdListValid", dancerIdListValid.ToString(), cookieOptions);
-                responseCookies.Append("EventId", eventId, cookieOptions);
+                responseCookies.Append("EventId", eventId ?? string.Empty, cookieOptions);
                 responseCookies.Append("EventIdValid", eventIdValid.ToString(), cookieOptions);
-                responseCookies.Append("SkillLevelId", SkillLevel.GetValidatedSkillLevel(skillLevelId), cookieOptions);
+                responseCookies.Append("SkillLevelId", SkillLevel.GetValidatedSkillLevel(skillLevelId) ?? string.Empty, cookieOptions);
                 responseCookies.Append(
                     "DanceCategoryId",
-                    DanceCategory.GetValidatedDanceCategory(danceCategoryId), cookieOptions);
+                    DanceCategory.GetValidatedDanceCategory(danceCategoryId) ?? string.Empty,
+                    cookieOptions);
                 
                 return this.RedirectToAction("Flag", new { id = videoId });
             }
@@ -918,8 +929,8 @@ namespace WcsVideos.Controllers
         public IActionResult FlagSuccess(string id)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             VideoFlagSuccessViewModel model = new VideoFlagSuccessViewModel();            
             ViewModelHelper.PopulateUserInfo(model, loggedIn);
@@ -933,14 +944,14 @@ namespace WcsVideos.Controllers
         public IActionResult ReviewFlag(string id)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
                 CookieOptions loginCookieOptions = new CookieOptions();
                 loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append(
+                this.HttpContext.Response.Cookies.Append(
                     "LoginRedirect",
                     this.Request.Path.ToUriComponent() + this.Request.QueryString,
                     loginCookieOptions);
@@ -970,18 +981,19 @@ namespace WcsVideos.Controllers
             
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
-            IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            model.Title = requestCookies.Get("Title");            
-            model.TitleValidationError = !bool.Parse(requestCookies.Get("TitleValid") ?? "True");
-            model.DancerIdList = requestCookies.Get("DancerIdList");
-            model.DancerIdListValidationError = !bool.Parse(requestCookies.Get("DancerIdListValid") ?? "True");
-            model.EventId = requestCookies.Get("EventId");
-            model.EventIdValidationError = !bool.Parse(requestCookies.Get("EventIdValid") ?? "True");
-            model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies.Get("SkillLevelId"));
-            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(requestCookies.Get("DanceCategoryId"));
+            IReadableStringCollection requestCookies = this.HttpContext.Request.Cookies;
+            model.Title = requestCookies["Title"].FirstOrDefault();            
+            model.TitleValidationError = !bool.Parse(requestCookies["TitleValid"].FirstOrDefault() ?? "True");
+            model.DancerIdList = (requestCookies["DancerIdList"].FirstOrDefault() ?? string.Empty).Replace('+', ';');
+            model.DancerIdListValidationError = !bool.Parse(requestCookies["DancerIdListValid"].FirstOrDefault() ?? "True");
+            model.EventId = requestCookies["EventId"].FirstOrDefault();
+            model.EventIdValidationError = !bool.Parse(requestCookies["EventIdValid"].FirstOrDefault() ?? "True");
+            model.SkillLevelId = SkillLevel.GetValidatedSkillLevel(requestCookies["SkillLevelId"].FirstOrDefault());
+            model.DanceCategoryId = DanceCategory.GetValidatedDanceCategory(
+                requestCookies["DanceCategoryId"].FirstOrDefault());
             
             CookieOptions cookieOptions = new CookieOptions();
-            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
             responseCookies.Delete("Title", cookieOptions);
             responseCookies.Delete("TitleValid", cookieOptions);
             responseCookies.Delete("DancerIdList", cookieOptions);
@@ -1026,8 +1038,8 @@ namespace WcsVideos.Controllers
         public IActionResult SubmitDeleteFlag(string flagId)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
@@ -1055,8 +1067,8 @@ namespace WcsVideos.Controllers
             string danceCategoryId)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
@@ -1135,17 +1147,18 @@ namespace WcsVideos.Controllers
                 // Populate cookies with form data so that we can repopulate the form after the redirect.
                 // Traditionally this would be done using session variables, but we are using cookies here so
                 // that we don't need to worry about session management.
-                IResponseCookies responseCookies = this.Context.Response.Cookies;
-                responseCookies.Append("Title", title, cookieOptions);
+                IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
+                responseCookies.Append("Title", title ?? string.Empty, cookieOptions);
                 responseCookies.Append("TitleValid", titleValid.ToString(), cookieOptions);
-                responseCookies.Append("DancerIdList", dancerIdList, cookieOptions);
+                responseCookies.Append("DancerIdList", (dancerIdList ?? string.Empty).Replace(';', '+'), cookieOptions);
                 responseCookies.Append("DancerIdListValid", dancerIdListValid.ToString(), cookieOptions);
-                responseCookies.Append("EventId", eventId, cookieOptions);
+                responseCookies.Append("EventId", eventId ?? string.Empty, cookieOptions);
                 responseCookies.Append("EventIdValid", eventIdValid.ToString(), cookieOptions);
-                responseCookies.Append("SkillLevelId", SkillLevel.GetValidatedSkillLevel(skillLevelId), cookieOptions);
+                responseCookies.Append("SkillLevelId", SkillLevel.GetValidatedSkillLevel(skillLevelId) ?? string.Empty, cookieOptions);
                 responseCookies.Append(
                     "DanceCategoryId",
-                    DanceCategory.GetValidatedDanceCategory(danceCategoryId), cookieOptions);
+                    DanceCategory.GetValidatedDanceCategory(danceCategoryId) ?? string.Empty,
+                    cookieOptions);
 
                 return this.RedirectToAction("Flag", new { id = flagId });
             }

@@ -557,7 +557,17 @@ namespace WcsVideos.Contracts
         
         public Stats GetStats()
         {
-            return new Stats();
+            Stats stats = new Stats();
+			stats.NumDancers = 1;
+			stats.CacheSizeItems = 1;
+			stats.NumDancersWithVideos = 1;
+			stats.NumEvents = 1;
+			stats.NumEventsWithVideos = 1;
+			stats.NumVideos = 1;
+			stats.NumVideosWithDanceCategory = 1;
+			stats.NumVideosWithEvents = 1;
+			stats.NumVideosWithSkillLevel = 1;
+			return stats;
         }
     }
 }

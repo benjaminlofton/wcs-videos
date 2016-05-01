@@ -38,14 +38,14 @@ namespace WcsVideos.Controllers
         public IActionResult Index()
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
                 CookieOptions loginCookieOptions = new CookieOptions();
                 loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append(
+                this.HttpContext.Response.Cookies.Append(
                     "LoginRedirect",
                     this.Request.Path.ToUriComponent() + this.Request.QueryString,
                     loginCookieOptions);
@@ -89,14 +89,14 @@ namespace WcsVideos.Controllers
         public IActionResult SuggestedVideoList(int start)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
                 CookieOptions loginCookieOptions = new CookieOptions();
                 loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append(
+                this.HttpContext.Response.Cookies.Append(
                     "LoginRedirect",
                     this.Request.Path.ToUriComponent() + this.Request.QueryString,
                     loginCookieOptions);
@@ -142,14 +142,14 @@ namespace WcsVideos.Controllers
         public IActionResult VideoList(string id, int start)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
                 CookieOptions loginCookieOptions = new CookieOptions();
                 loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append(
+                this.HttpContext.Response.Cookies.Append(
                     "LoginRedirect",
                     this.Request.Path.ToUriComponent() + this.Request.QueryString,
                     loginCookieOptions);
@@ -208,14 +208,14 @@ namespace WcsVideos.Controllers
         public IActionResult FlaggedVideoList(int start)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
                 CookieOptions loginCookieOptions = new CookieOptions();
                 loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append(
+                this.HttpContext.Response.Cookies.Append(
                     "LoginRedirect",
                     this.Request.Path.ToUriComponent() + this.Request.QueryString,
                     loginCookieOptions);

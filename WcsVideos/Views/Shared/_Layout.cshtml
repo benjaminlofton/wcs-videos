@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>@if (!string.IsNullOrEmpty(@ViewBag.Title)) { <text>@ViewBag.Title -</text> } @AppSettings.Options.SiteTitle</title>
+        <title>@if (!string.IsNullOrEmpty(@ViewBag.Title)) { <text>@ViewBag.Title -</text> } @AppSettings.Value.SiteTitle</title>
 
         <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -21,7 +21,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a asp-controller="Home" asp-action="Index" class="navbar-brand">@AppSettings.Options.SiteTitle<sup style="color:#ee0000;">Beta</sup></a>
+                    <a asp-controller="Home" asp-action="Index" class="navbar-brand">@AppSettings.Value.SiteTitle<sup style="color:#ee0000;">Beta</sup></a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -59,7 +59,7 @@
                     Have feedback?  E-mail us at
                     <a href="mailto:feedback@("@")westieconnection.com">feedback@@westieconnection.com</a>
                 </p>
-                <p style="text-align:center;">&copy; 2015 - @AppSettings.Options.SiteTitle</p>
+                <p style="text-align:center;">&copy; 2015 - @AppSettings.Value.SiteTitle</p>
             </footer>
         </div>
 

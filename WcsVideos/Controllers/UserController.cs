@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.AspNet.Mvc;
 using WcsVideos.Models;
 using WcsVideos.Contracts;
@@ -19,22 +20,22 @@ namespace WcsVideos.Controllers
         
         public IActionResult Login()
         {
-            IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            IReadableStringCollection requestCookies = this.HttpContext.Request.Cookies;
+            IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
             
             CookieOptions cookieOptions = new CookieOptions();
             cookieOptions.Expires = DateTime.UtcNow.AddMinutes(5);
-            string redirectUrl = requestCookies.Get("LoginRedirect");
+            string redirectUrl = requestCookies["LoginRedirect"].FirstOrDefault();
 
             if (string.IsNullOrEmpty(redirectUrl))
             {            
-                string referer = this.Context.Request.Headers.Get("Referer");
+                string referer = this.HttpContext.Request.Headers["Referer"];
                 if (!string.IsNullOrEmpty(referer))
                 {
                     try
                     {
                         Uri url = new Uri(referer);
-                        if (string.Equals(url.Host, this.Context.Request.Host.ToString().Split(':')[0]))
+                        if (string.Equals(url.Host, this.HttpContext.Request.Host.ToString().Split(':')[0]))
                         {
                             responseCookies.Append("LoginRedirect", referer, cookieOptions);
                         }
@@ -46,9 +47,10 @@ namespace WcsVideos.Controllers
             }
             
             LoginViewModel model = new LoginViewModel();
-            model.Username = requestCookies.Get("Username");
+            model.Username = requestCookies["Username"].FirstOrDefault();
             responseCookies.Delete("Username", cookieOptions);
-            model.ShowFailedLoginAttempt = !string.IsNullOrEmpty(requestCookies.Get("ShowFailedLoginAttempt"));
+            model.ShowFailedLoginAttempt = !string.IsNullOrEmpty(
+                requestCookies["ShowFailedLoginAttempt"].FirstOrDefault());
             responseCookies.Delete("ShowFailedLoginAttempt", cookieOptions);
             
             return this.View(model);
@@ -56,18 +58,18 @@ namespace WcsVideos.Controllers
         
         public IActionResult SubmitLogin(string username, string password)
         {
-            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
             CookieOptions cookieOptions = new CookieOptions();
             cookieOptions.Expires = DateTime.UtcNow.AddMinutes(90);
             
-            if (!this.userSessionHandler.LoginUser(username, password, this.Context.Response.Cookies))
+            if (!this.userSessionHandler.LoginUser(username, password, this.HttpContext.Response.Cookies))
             {
                 responseCookies.Append("ShowFailedLoginAttempt", "true", cookieOptions);
                 return this.RedirectToAction("Login");
             }
             
-            IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            string redirectUrl = requestCookies.Get("LoginRedirect");
+            IReadableStringCollection requestCookies = this.HttpContext.Request.Cookies;
+            string redirectUrl = requestCookies["LoginRedirect"].FirstOrDefault();
             responseCookies.Delete("LoginRedirect", cookieOptions);
             if (!string.IsNullOrEmpty(redirectUrl))
             {
@@ -79,7 +81,7 @@ namespace WcsVideos.Controllers
         
         public IActionResult Logout()
         {
-            this.userSessionHandler.LogoutUser(this.Context.Response.Cookies);
+            this.userSessionHandler.LogoutUser(this.HttpContext.Response.Cookies);
             return this.RedirectToRoute("default", new { controller = "Home", action = "Index" });
         }
     }

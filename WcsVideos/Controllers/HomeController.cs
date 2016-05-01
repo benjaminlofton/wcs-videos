@@ -22,7 +22,7 @@ namespace WcsVideos.Controllers
         public IActionResult Index()
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies, this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies, this.HttpContext.Response.Cookies);
             IndexViewModel model = new IndexViewModel();
             
             ViewModelHelper.PopulateUserInfo(model, loggedIn);
@@ -96,7 +96,7 @@ namespace WcsVideos.Controllers
         {
             BasePageViewModel model = new BasePageViewModel();
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies, this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies, this.HttpContext.Response.Cookies);
             ViewModelHelper.PopulateUserInfo(model, loggedIn);
             
             return View(model);
@@ -114,7 +114,7 @@ namespace WcsVideos.Controllers
             DancerViewModel model = new DancerViewModel();
             ViewModelHelper.PopulateUserInfo(
                 model,
-                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+                this.userSessionHandler.GetUserLoginState(this.HttpContext.Request.Cookies, this.HttpContext.Response.Cookies));
 
             model.Title = dancer.Name;
             List<Tuple<DateTime, Video>> videos;

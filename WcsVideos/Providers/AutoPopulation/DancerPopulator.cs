@@ -13,6 +13,11 @@ namespace WcsVideos.Providers.AutoPopulation
         
         public string GetDancers(VideoDetails videoDetails)
         {
+            if (videoDetails == null)
+            {
+                return string.Empty;
+            }
+            
             string result = GetDancersFromString(videoDetails.Title);
             if (!string.IsNullOrEmpty(result))
             {

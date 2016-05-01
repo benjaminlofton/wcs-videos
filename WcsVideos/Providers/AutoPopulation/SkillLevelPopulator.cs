@@ -6,6 +6,11 @@ namespace WcsVideos.Providers.AutoPopulation
     {
         public static string GetSkillLevel(VideoDetails details)
         {
+            if (details == null)
+            {
+                return string.Empty;    
+            }
+            
             string result = GetSkillLevelFromString(details.Title);
             if (!string.IsNullOrEmpty(result))
             {
@@ -23,7 +28,8 @@ namespace WcsVideos.Providers.AutoPopulation
             }
             
             WordMatcher matcher = new WordMatcher(title);
-            if (matcher.ContainsWord("Masters"))
+            if (matcher.ContainsWord("Masters") ||
+                matcher.ContainsWord("Master's"))
             {
                 return SkillLevel.Masters;
             }
@@ -33,7 +39,9 @@ namespace WcsVideos.Providers.AutoPopulation
             }
             else if (matcher.ContainsWord("Juniors") ||
                 matcher.ContainsWord("Young American") ||
-                matcher.ContainsWord("Young Adult"))
+                matcher.ContainsWord("Young Americans") ||
+                matcher.ContainsWord("Young Adult") ||
+                matcher.ContainsWord("Young Adults"))
             {
                 return SkillLevel.Juniors;
             }
@@ -61,7 +69,13 @@ namespace WcsVideos.Providers.AutoPopulation
             }
             else if (matcher.ContainsWord("Allstar") ||
                 matcher.ContainsWord("All-Star") ||
-                matcher.ContainsWord("All Star"))
+                matcher.ContainsWord("All Star") ||
+                matcher.ContainsWord("Allstars") ||
+                matcher.ContainsWord("All-Stars") ||
+                matcher.ContainsWord("All Stars") ||
+                matcher.ContainsWord("Allstar's") ||
+                matcher.ContainsWord("All-Star's") ||
+                matcher.ContainsWord("All Star's"))
             {
                 return SkillLevel.Allstar;
             }
@@ -78,12 +92,15 @@ namespace WcsVideos.Providers.AutoPopulation
                 return SkillLevel.Open;
             }
             else if (matcher.ContainsWord("Champions") ||
+                matcher.ContainsWord("Champion's") ||
                 matcher.ContainsWord("Champion") ||
                 matcher.ContainsWord("Invitational") ||
                 matcher.ContainsWord("Invitation") ||
                 matcher.ContainsWord("Inspirational") ||
                 matcher.ContainsWord("Demo") ||
+                matcher.ContainsWord("Demos") ||
                 matcher.ContainsWord("Pro") ||
+                matcher.ContainsWord("Pros") ||
                 matcher.ContainsWord("Champ") ||
                 matcher.ContainsWord("Champs"))
             {

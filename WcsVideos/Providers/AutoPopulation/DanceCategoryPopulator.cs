@@ -6,6 +6,11 @@ namespace WcsVideos.Providers.AutoPopulation
     {
         public static string GetDanceCategory(VideoDetails details)
         {
+            if (details == null)
+            {
+                return string.Empty;
+            }
+            
             string result = GetCategoryFromString(details.Title);
             if (!string.IsNullOrEmpty(result))
             {

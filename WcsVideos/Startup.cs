@@ -1,10 +1,9 @@
 using System;
 using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Hosting;
-using Microsoft.Framework.ConfigurationModel;
-using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WcsVideos.Contracts;
 using WcsVideos.Controllers;
 using WcsVideos.Providers;
@@ -16,30 +15,22 @@ namespace WcsVideos
         public Startup(IHostingEnvironment env)
         {           
             // Setup configuration sources.
-            var configuration = new Configuration()
+            var builder = new ConfigurationBuilder()
                 .AddJsonFile("config.json")
-                .AddJsonFile($"config.{env.EnvironmentName}.json", optional: true);
-
-            if (env.IsEnvironment("Development"))
-            {
-                // This reads the configuration keys from the secret store.
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                configuration.AddUserSecrets();
-            }
-            
-            configuration.AddEnvironmentVariables();
-            Configuration = configuration;
+                .AddJsonFile($"config.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
-        public IConfiguration Configuration { get; set; }
+        public IConfigurationRoot Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // Add Application settings to the services container.
-            services.Configure<AppSettings>(Configuration.GetSubKey("AppSettings"));
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
-            YoutubeVideoDetailsProvider.GoogleApiKey = this.Configuration.GetSubKey("AppSettings")["GoogleApiKey"];
+            YoutubeVideoDetailsProvider.GoogleApiKey = this.Configuration.GetSection("AppSettings")["GoogleApiKey"];
 
             // Add MVC services to the services container.
             services.AddMvc();
@@ -49,13 +40,13 @@ namespace WcsVideos
             services.AddSingleton(
                 typeof(IDataAccess),
                 (serviceProvider) => new CachingDataAccess(
-                    this.Configuration.GetSubKey("AppSettings")["DataAccessEndpoint"]));
+                    this.Configuration.GetSection("AppSettings")["DataAccessEndpoint"]));
                     
             services.AddSingleton(
                 typeof(IUserSessionHandler),
                 (serviceProvider) => new UserSessionHandler(
-                    this.Configuration.GetSubKey("AppSettings")["Username"],
-                    this.Configuration.GetSubKey("AppSettings")["Password"],
+                    this.Configuration.GetSection("AppSettings")["Username"],
+                    this.Configuration.GetSection("AppSettings")["Password"],
                     key));
         }
 
@@ -68,16 +59,16 @@ namespace WcsVideos
             loggerfactory.AddConsole(minLevel: LogLevel.Warning);
 
             // Add the following to the request pipeline only in development environment.
-            if (env.IsEnvironment("Development"))
+            if (env.IsDevelopment())
             {
-                app.UseErrorPage(ErrorPageOptions.ShowAll);
+                app.UseDeveloperExceptionPage();
                 // app.UseDatabaseErrorPage(DatabaseErrorPageOptions.ShowAll);
             }
             else
             {
                 // Add Error handling middleware which catches all application specific errors and
                 // sends the request to the following path or controller action.
-                app.UseErrorHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error");
             }
 
             // Add static files to the request pipeline.
