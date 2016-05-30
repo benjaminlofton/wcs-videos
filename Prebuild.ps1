@@ -11,7 +11,8 @@ if($globalJson)
 else
 {
     Write-Warning "Unable to locate global.json to determine using 'latest'"
-    $dnxVersion = "latest"
+    # $dnxVersion = "latest"
+    $dnxVersion = "dnx-clr-win-x86.1.0.0-rc1-update2"
 }
 
 # install DNX
