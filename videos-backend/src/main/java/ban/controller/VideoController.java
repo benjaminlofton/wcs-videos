@@ -28,6 +28,7 @@ import ban.service.VideoService;
 
 @RestController
 @ComponentScan
+@CrossOrigin
 public class VideoController {
 
   @Autowired
@@ -57,7 +58,6 @@ public class VideoController {
     return video;
   }
 
-  @CrossOrigin
   @RequestMapping(value="/v", method = RequestMethod.GET)
   public ResponseEntity<List<Video>> searchVideos(
       @RequestParam(value = "wsdc-id", required = false) String wsdcIdList,
