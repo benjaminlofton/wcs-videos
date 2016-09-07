@@ -5,7 +5,7 @@ namespace WcsVideos.Providers.AutoPopulation
 {
     public class WordMatcher
     {
-        private static readonly char[] Separators = new char[] { ',', '.', ' ', '!' };
+        private static readonly char[] Separators = new char[] { ',', '.', ' ', '!', '/', ':', '-' };
         
         private readonly string text;
         

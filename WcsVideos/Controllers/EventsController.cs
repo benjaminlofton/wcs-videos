@@ -34,8 +34,8 @@ namespace WcsVideos.Controllers
             }
             
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             EventViewModel model = new EventViewModel();
             ViewModelHelper.PopulateUserInfo(model, loggedIn);
@@ -129,14 +129,14 @@ namespace WcsVideos.Controllers
         public IActionResult Add()
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
                 CookieOptions loginCookieOptions = new CookieOptions();
                 loginCookieOptions.Expires = DateTime.UtcNow.AddDays(1);
-                this.Context.Response.Cookies.Append(
+                this.HttpContext.Response.Cookies.Append(
                     "LoginRedirect",
                     this.Request.Path.ToUriComponent() + this.Request.QueryString,
                     loginCookieOptions);
@@ -148,17 +148,17 @@ namespace WcsVideos.Controllers
                         
             // Populate the page based on Cookies.  This will populate the page in the case of an error during submit
             // which will redirect to this page with all of the necessary cookies populated.
-            IReadableStringCollection requestCookies = this.Context.Request.Cookies;
-            model.Name = requestCookies.Get("Name");
-            model.NameValidationError = !bool.Parse(requestCookies.Get("NameValid") ?? "True");
-            model.Location = requestCookies.Get("Location");
-            model.LocationValidationError = !bool.Parse(requestCookies.Get("LocationValid") ?? "True");
-            model.Date = requestCookies.Get("Date");
-            model.DateValidationError = !bool.Parse(requestCookies.Get("DateValid") ?? "True");
-            model.WsdcPointed = bool.Parse(requestCookies.Get("WsdcPointed") ?? "False");
+            IReadableStringCollection requestCookies = this.HttpContext.Request.Cookies;
+            model.Name = requestCookies["Name"].FirstOrDefault();
+            model.NameValidationError = !bool.Parse(requestCookies["NameValid"].FirstOrDefault() ?? "True");
+            model.Location = requestCookies["Location"].FirstOrDefault();
+            model.LocationValidationError = !bool.Parse(requestCookies["LocationValid"].FirstOrDefault() ?? "True");
+            model.Date = requestCookies["Date"].FirstOrDefault();
+            model.DateValidationError = !bool.Parse(requestCookies["DateValid"].FirstOrDefault() ?? "True");
+            model.WsdcPointed = bool.Parse(requestCookies["WsdcPointed"].FirstOrDefault() ?? "False");
             
             CookieOptions cookieOptions = new CookieOptions();
-            IResponseCookies responseCookies = this.Context.Response.Cookies;
+            IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
             responseCookies.Delete("Name", cookieOptions);
             responseCookies.Delete("NameValid", cookieOptions);
             responseCookies.Delete("Location", cookieOptions);
@@ -177,8 +177,8 @@ namespace WcsVideos.Controllers
             bool wsdcPointed)
         {
             bool loggedIn = this.userSessionHandler.GetUserLoginState(
-                this.Context.Request.Cookies,
-                this.Context.Response.Cookies);
+                this.HttpContext.Request.Cookies,
+                this.HttpContext.Response.Cookies);
             
             if (!loggedIn)
             {
@@ -232,7 +232,7 @@ namespace WcsVideos.Controllers
                 // Populate cookies with form data so that we can repopulate the form after the redirect.
                 // Traditionally this would be done using session variables, but we are using cookies here so
                 // that we don't need to worry about session management.
-                IResponseCookies responseCookies = this.Context.Response.Cookies;
+                IResponseCookies responseCookies = this.HttpContext.Response.Cookies;
                 responseCookies.Append("Name", name, cookieOptions);
                 responseCookies.Append("NameValid", nameValid.ToString(), cookieOptions);
                 responseCookies.Append("Location", location, cookieOptions);

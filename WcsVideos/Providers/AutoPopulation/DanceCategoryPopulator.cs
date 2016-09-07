@@ -6,7 +6,22 @@ namespace WcsVideos.Providers.AutoPopulation
     {
         public static string GetDanceCategory(VideoDetails details)
         {
-            string title = details.Title;
+            if (details == null)
+            {
+                return string.Empty;
+            }
+            
+            string result = GetCategoryFromString(details.Title);
+            if (!string.IsNullOrEmpty(result))
+            {
+                return result;
+            }
+            
+            return GetCategoryFromString(details.Description);
+        }
+        
+        private static string GetCategoryFromString(string title)
+        {
             if (string.IsNullOrEmpty(title))
             {
                 return string.Empty;
@@ -39,7 +54,8 @@ namespace WcsVideos.Providers.AutoPopulation
             {
                 return DanceCategory.JillAndJack;
             }
-            else if (matcher.ContainsWord("Strictly"))
+            else if (matcher.ContainsWord("Strictly") ||
+                matcher.ContainsWord("SS"))
             {
                 return DanceCategory.Strictly;
             }
@@ -47,7 +63,6 @@ namespace WcsVideos.Providers.AutoPopulation
                 matcher.ContainsWord("Jack and Jill") ||
                 matcher.ContainsWord("JJ") ||
                 matcher.ContainsWord("Jack & Jill") ||
-                matcher.ContainsWord("JnJ") ||
                 matcher.ContainsWord("J&J"))
             {
                 return DanceCategory.JackAndJill;

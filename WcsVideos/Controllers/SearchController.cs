@@ -41,7 +41,7 @@ namespace WcsVideos.Controllers
             VideoSearchViewModel model = new VideoSearchViewModel();
             ViewModelHelper.PopulateUserInfo(
                 model,
-                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+                this.userSessionHandler.GetUserLoginState(this.HttpContext.Request.Cookies, this.HttpContext.Response.Cookies));
                 
             model.Title = "Video Search";
             model.Query = query;
@@ -157,7 +157,7 @@ namespace WcsVideos.Controllers
             DancerSearchResultsViewModel viewModel = new DancerSearchResultsViewModel();
             ViewModelHelper.PopulateUserInfo(
                 viewModel,
-                this.userSessionHandler.GetUserLoginState(this.Context.Request.Cookies, this.Context.Response.Cookies));
+                this.userSessionHandler.GetUserLoginState(this.HttpContext.Request.Cookies, this.HttpContext.Response.Cookies));
                 
             viewModel.Query = query;
             viewModel.Title = "Dancer Search";

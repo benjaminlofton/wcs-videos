@@ -61,12 +61,14 @@ namespace WcsVideos.Providers
                 }
                 
                 string title = (string)items[0]["snippet"]["title"];
+                string description = (string)items[0]["snippet"]["description"];
                 
                 return new VideoDetails
                 {
                     ProviderVideoId = this.providerVideoId,
                     ProviderId = 1,
                     Title = title,    
+                    Description = description,
                 };
             }
         }

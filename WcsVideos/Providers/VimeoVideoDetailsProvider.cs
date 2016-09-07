@@ -39,12 +39,14 @@ namespace WcsVideos.Providers
 
                 string title = (string)parsed["title"];
                 string providerVideoId = (string)parsed["video_id"];
+                string description = (string)parsed["description"];
                 
                 return new VideoDetails
                 {
                     ProviderVideoId = providerVideoId,
                     ProviderId = 2,
-                    Title = title,    
+                    Title = title,
+                    Description = description,    
                 };
             }
         }
