@@ -59,7 +59,12 @@ public class SuggestedVideoService {
   }
 
   private static final Comparator<VideoD> byCreatedDateTime = (v1, v2) -> {
-    if (v1.getCreatedDateTime() == null) {
+
+    if (v1.getCreatedDateTime() == null && v2.getCreatedDateTime() == null) {
+      return 0;
+    }
+
+    if(v1.getCreatedDateTime() == null) {
       return 1;
     }
 
