@@ -44,7 +44,7 @@ public class VideoSearchServiceTest {
 
     when(localIndexedDataService.getAllVideos()).thenReturn(videoList);
 
-    List<Video> results = videoSearchService.search(null,null,null,null);
+    List<Video> results = videoSearchService.search(null,null,null,null, null);
 
 
   }
